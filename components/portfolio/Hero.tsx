@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import React from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail } from "lucide-react";
@@ -29,6 +30,16 @@ export function Hero({ fadeInUp }: HeroProps) {
       alert("Failed to download PDF. Please try again.");
     }
   };
+
+  const [showFixedButton, setShowFixedButton] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setShowFixedButton(window.scrollY > 300);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <motion.section
@@ -75,8 +86,26 @@ export function Hero({ fadeInUp }: HeroProps) {
         </div>
       </div>
       <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-        <Button asChild size="lg" className="rounded-lg font-semibold">
-          <a href="mailto:ahmednnasser111@gmail.com">Contact Me</a>
+        <Button
+          onClick={handleDownload}
+          variant="secondary"
+          size="lg"
+          className="rounded-full font-bold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg border-2 border-white/20 dark:border-black/20"
+        >
+          Download CV
+          <svg
+            className="w-4 h-4 ml-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            ></path>
+          </svg>
         </Button>
         <Button
           asChild
@@ -106,11 +135,24 @@ export function Hero({ fadeInUp }: HeroProps) {
             NPM Profile
           </a>
         </Button>
+      </div>
+
+      {/* Floating Download Button */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{
+          opacity: showFixedButton ? 1 : 0,
+          scale: showFixedButton ? 1 : 0.8,
+          y: showFixedButton ? 0 : 20,
+        }}
+        transition={{ duration: 0.3 }}
+        className="fixed bottom-6 right-6 z-50 pointer-events-none"
+        style={{ pointerEvents: showFixedButton ? "auto" : "none" }}
+      >
         <Button
           onClick={handleDownload}
-          variant="secondary"
           size="lg"
-          className="rounded-lg font-medium text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/20 hover:bg-cyan-100 dark:hover:bg-cyan-900/40 border border-cyan-200 dark:border-cyan-800"
+          className="rounded-full font-bold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-xl border-4 border-white/20 dark:border-black/20 animate-pulse"
         >
           Download CV
           <svg
@@ -127,7 +169,7 @@ export function Hero({ fadeInUp }: HeroProps) {
             ></path>
           </svg>
         </Button>
-      </div>
+      </motion.div>
     </motion.section>
   );
 }
