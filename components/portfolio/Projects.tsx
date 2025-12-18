@@ -31,7 +31,7 @@ export function Projects({ fadeInUp, staggerContainer }: ProjectsProps) {
         className="text-3xl font-bold mb-12 flex items-center text-slate-900 dark:text-white"
       >
         <span className="w-8 h-1 bg-cyan-500 rounded-full mr-4"></span>
-        Featured Projects
+        Freelance Projects
       </motion.h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
