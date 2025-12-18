@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import { getBrowser } from "@/lib/puppeteer";
 import fs from "fs";
 import path from "path";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function GET() {
     try {
         const filePath = path.join(process.cwd(), "public", "ahmed_cv_ats.html");
         const htmlContent = fs.readFileSync(filePath, "utf-8");
 
-        const browser = await puppeteer.launch();
+        const browser = await getBrowser();
         const page = await browser.newPage();
 
         // Set the content of the page
