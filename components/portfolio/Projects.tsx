@@ -11,13 +11,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { fadeInUp, staggerContainer } from "@/lib/animations";
 
-interface ProjectsProps {
-  fadeInUp: any;
-  staggerContainer: any;
-}
-
-export function Projects({ fadeInUp, staggerContainer }: ProjectsProps) {
+export function Projects() {
   return (
     <motion.section
       initial="hidden"

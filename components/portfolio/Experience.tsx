@@ -2,13 +2,9 @@
 
 import { motion } from "motion/react";
 import { Badge } from "@/components/ui/badge";
+import { fadeInUp, staggerContainer } from "@/lib/animations";
 
-interface ExperienceProps {
-  fadeInUp: any;
-  staggerContainer: any;
-}
-
-export function Experience({ fadeInUp, staggerContainer }: ExperienceProps) {
+export function Experience() {
   return (
     <motion.section
       initial="hidden"

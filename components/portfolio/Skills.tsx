@@ -3,13 +3,9 @@
 import { motion } from "motion/react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { fadeInUp, staggerContainer } from "@/lib/animations";
 
-interface SkillsProps {
-  fadeInUp: any;
-  staggerContainer: any;
-}
-
-export function Skills({ fadeInUp, staggerContainer }: SkillsProps) {
+export function Skills() {
   return (
     <motion.section
       initial="hidden"

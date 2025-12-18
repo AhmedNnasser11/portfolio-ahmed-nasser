@@ -5,12 +5,9 @@ import React from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Loader2 } from "lucide-react";
+import { fadeInUp } from "@/lib/animations";
 
-interface HeroProps {
-  fadeInUp: any;
-}
-
-export function Hero({ fadeInUp }: HeroProps) {
+export function Hero() {
   const [isDownloading, setIsDownloading] = React.useState(false);
   const [showFixedButton, setShowFixedButton] = React.useState(false);
 
