@@ -25,28 +25,50 @@ export function Skills() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {[
           {
-            category: "Frontend",
-            items: ["React.js", "Next.js", "TypeScript", "ES6+"],
+            category: "Core Technologies",
+            items: [
+              "JavaScript (ES6+)",
+              "TypeScript",
+              "React.js",
+              "Next.js",
+              "HTML5",
+              "CSS3",
+            ],
           },
           {
             category: "State Management",
-            items: ["Redux", "Zustand", "Signals"],
+            items: ["Redux Toolkit", "Zustand", "React Context API", "Signals"],
           },
           {
-            category: "Styling",
-            items: ["Tailwind CSS", "Shadcn", "RizzUI", "MUI"],
+            category: "Styling & UI",
+            items: [
+              "Tailwind CSS",
+              "MUI",
+              "Shadcn/UI",
+              "Headless UI",
+              "RizzUI",
+              "Styled-components",
+            ],
           },
           {
-            category: "APIs & Tools",
-            items: ["TanStack Query", "Axios", "REST APIs"],
+            category: "Data Fetching & APIs",
+            items: [
+              "TanStack Query (React Query)",
+              "Axios",
+              "RESTful APIs",
+              "WebSockets",
+            ],
           },
           {
-            category: "Forms & Valid",
-            items: ["React Hook Form", "Zod", "Yup"],
-          },
-          {
-            category: "General",
-            items: ["Git", "SEO", "Optimization", "Responsive"],
+            category: "Architecture & Tools",
+            items: [
+              "Git",
+              "Vite",
+              "Webpack",
+              "Performance Optimization",
+              "SEO Best Practices",
+              "Responsive Design",
+            ],
           },
         ].map((skillGroup, idx) => (
           <motion.div key={idx} variants={fadeInUp}>

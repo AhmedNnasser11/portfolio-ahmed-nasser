@@ -64,13 +64,18 @@ export function Hero() {
         Ahmed Nasser
       </h1>
       <h2 className="text-2xl md:text-3xl font-light text-slate-600 dark:text-slate-400 mb-8">
-        Front End Web Developer (React.js & Next.js)
+        Senior Frontend Developer (React.js & Next.js)
       </h2>
-      <p className="max-w-2xl text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-6 mx-auto md:mx-0">
-        Highly skilled and results-driven Front End Web Developer with extensive
-        experience in React.js, Next.js, and TypeScript. I build scalable,
-        high-performance web applications with a focus on intuitive, data-driven
-        dashboards and seamless user experiences.
+      <p className="max-w-3xl text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-6 mx-auto md:mx-0">
+        Dynamic and results-oriented Frontend Engineer with over 4 years of
+        experience specializing in React.js and Next.js. Expert in building
+        scalable, high-performance web applications and enterprise-grade
+        dashboards. Proven track record in optimizing application performance
+        through advanced techniques like code splitting and lazy loading.
+        Skilled in modern state management (Redux, Zustand) and UI frameworks
+        (Tailwind CSS, MUI, Shadcn). Adept at transforming complex business
+        requirements into intuitive user experiences across education,
+        insurance, and logistics sectors.
       </p>
       <div className="flex flex-wrap gap-6 justify-center md:justify-start mb-10 text-slate-600 dark:text-slate-400">
         <div className="flex items-center gap-2">

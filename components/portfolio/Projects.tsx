@@ -33,42 +33,48 @@ export function Projects() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {[
           {
+            title: "Ajzaa E-commerce Vendor & Admin Dashboard",
+            desc: "Engineered a comprehensive multi-tenant e-commerce management system. Developed core modules for multi-store onboarding, employee management, and shipping representative tracking. Built a robust RBAC (Role-Based Access Control) system for store employees and customers, alongside integrated real-time chat support, promotional code management, and detailed analytical reporting tools.",
+            tags: ["React.js", "Redux", "Tailwind CSS", "Pusher"],
+            link: null,
+          },
+          {
+            title: "Rayan Water Distribution Platform",
+            desc: "Successfully developed a mission-critical web application using Next.js and TypeScript to manage water distribution during the Hajj season. Implemented tracking for distribution points and a comprehensive supervisor evaluation system to ensure service quality and operational efficiency.",
+            tags: ["Next.js", "TypeScript", "Tailwind CSS"],
+            link: null,
+          },
+          {
             title: "Kenzytours",
-            desc: "Tourism & Travel Website built with Next.js",
-            tags: ["Next.js", "TypeScript", "Tailwind"],
+            desc: "Developed a high-performance tourism platform utilizing Next.js SSR to achieve superior SEO rankings and lightning-fast page transitions. Engineered complex booking systems and trip management flows, ensuring a seamless conversion path for users.",
+            tags: ["Next.js", "TypeScript", "Tailwind CSS"],
             link: "https://kenzytours.com/",
             linkText: "kenzytours.com",
           },
           {
             title: "Kemet Travel",
-            desc: "Tourism Platform with comprehensive booking flow",
-            tags: ["Next.js", "TypeScript", "Tailwind"],
+            desc: "Architected a global tourism marketplace leveraging Next.js SSR for dynamic page rendering and optimized SEO. Implemented robust filtering and advanced search capabilities to manage an extensive catalog of international travel offerings.",
+            tags: ["Next.js", "TypeScript", "Tailwind CSS"],
             link: "https://www.kemet.travel/",
             linkText: "kemet.travel",
           },
           {
-            title: "Agza E-commerce Dashboard",
-            desc: "A powerful dashboard for managing e-commerce operations",
-            tags: ["React.js", "Redux", "Tailwind"],
-            link: null,
+            title: "SeenShow",
+            desc: "Advanced Movies Streaming UI. Technologies: Next.js, Shadcn/UI, Tailwind CSS, TypeScript",
+            tags: ["Next.js", "Shadcn/UI", "TypeScript", "Tailwind CSS"],
+            link: "https://seenshow.com/",
+            linkText: "seenshow.com",
           },
           {
-            title: "Kayef Partners & Kayef App",
-            desc: "Landing Pages for Kayef App",
+            title: "Kayef Partners & App",
+            desc: "Enterprise Landing Pages. Technologies: HTML, CSS, JavaScript, Bootstrap",
             tags: ["HTML", "CSS", "JavaScript", "Bootstrap"],
             link: "https://kayef.app/partners",
             linkText: "kayef.app/partners",
           },
-          {
-            title: "SeenShow",
-            desc: "Modern Movies Website UI with Shadcn",
-            tags: ["Next.js", "Shadcn/UI", "TypeScript"],
-            link: "https://seenshow.com/",
-            linkText: "seenshow.com",
-          },
         ].map((project, index) => (
-          <motion.div key={index} variants={fadeInUp}>
-            <Card className="h-full bg-white dark:bg-neutral-900/50 border-slate-200 dark:border-neutral-800 hover:border-cyan-500/50 dark:hover:border-cyan-500/50 transition-all duration-300">
+          <motion.div key={index} variants={fadeInUp} className="h-full">
+            <Card className="h-full flex flex-col bg-white dark:bg-neutral-900/50 border-slate-200 dark:border-neutral-800 hover:border-cyan-500/50 dark:hover:border-cyan-500/50 transition-all duration-300">
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
@@ -76,8 +82,8 @@ export function Projects() {
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardContent>
-                <CardDescription className="text-slate-600 dark:text-slate-400 mb-4 h-12">
+              <CardContent className="flex-1">
+                <CardDescription className="text-slate-600 dark:text-slate-400 mb-4">
                   {project.desc}
                 </CardDescription>
                 <div className="flex flex-wrap gap-2">
