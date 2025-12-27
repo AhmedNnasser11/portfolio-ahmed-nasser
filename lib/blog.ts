@@ -62,3 +62,28 @@ export function getAllPosts() {
         .sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
     return posts;
 }
+
+export function getRelatedPosts(currentSlug: string, tags: string[], limit: number = 3) {
+    const allPosts = getAllPosts();
+    const related = allPosts
+        .filter((post) => post.slug !== currentSlug) // Exclude current post
+        .map((post) => ({
+            post,
+            score: post.tags.filter((tag) => tags.includes(tag)).length, // Intersect tags
+        }))
+        .filter(({ score }) => score > 0) // Must share at least one tag
+        .sort((a, b) => b.score - a.score) // Sort by relevance
+        .slice(0, limit)
+        .map(({ post }) => post);
+
+    // If we don't have enough related posts, fill with recent ones
+    if (related.length < limit) {
+        const remaining = limit - related.length;
+        const recent = allPosts
+            .filter((post) => post.slug !== currentSlug && !related.find(r => r.slug === post.slug))
+            .slice(0, remaining);
+        return [...related, ...recent];
+    }
+
+    return related;
+}
