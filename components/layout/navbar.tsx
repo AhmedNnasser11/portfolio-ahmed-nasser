@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Download, Menu, X } from "lucide-react";
+import { Download, Menu, X, Loader2 } from "lucide-react";
+import { useCvDownload } from "@/hooks/use-cv-download";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
@@ -21,6 +22,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { isDownloading, handleDownload } = useCvDownload();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,11 +90,19 @@ export function Navbar() {
               variant="default"
               size="sm"
               className="animate-pulse hover:animate-none"
-              asChild
+              onClick={handleDownload}
+              disabled={isDownloading}
             >
-              <a href="/api/export-pdf">
-                cv <Download className="ml-2 w-4 h-4" />
-              </a>
+              {isDownloading ? (
+                <>
+                  Generating...{" "}
+                  <Loader2 className="ml-2 w-4 h-4 animate-spin" />
+                </>
+              ) : (
+                <>
+                  cv <Download className="ml-2 w-4 h-4" />
+                </>
+              )}
             </Button>
           </li>
           <li>
@@ -131,10 +141,23 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Button variant="default" size="lg" className="w-full mt-4" asChild>
-              <a href="/api/export-pdf">
-                Download CV <Download className="ml-2 w-4 h-4" />
-              </a>
+            <Button
+              variant="default"
+              size="lg"
+              className="w-full mt-4"
+              onClick={handleDownload}
+              disabled={isDownloading}
+            >
+              {isDownloading ? (
+                <>
+                  Generating...{" "}
+                  <Loader2 className="ml-2 w-4 h-4 animate-spin" />
+                </>
+              ) : (
+                <>
+                  Download CV <Download className="ml-2 w-4 h-4" />
+                </>
+              )}
             </Button>
           </motion.div>
         )}

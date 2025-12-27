@@ -6,33 +6,11 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail, Loader2 } from "lucide-react";
 import { fadeInUp } from "@/lib/animations";
+import { useCvDownload } from "@/hooks/use-cv-download";
 
 export function Hero() {
-  const [isDownloading, setIsDownloading] = React.useState(false);
+  const { isDownloading, handleDownload } = useCvDownload();
   const [showFixedButton, setShowFixedButton] = React.useState(false);
-
-  const handleDownload = async () => {
-    try {
-      setIsDownloading(true);
-      const response = await fetch("/api/export-pdf");
-      if (!response.ok) throw new Error("Download failed");
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "Ahmed_Nasser_CV.pdf";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error downloading PDF:", error);
-      alert("Failed to download PDF. Please try again.");
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   React.useEffect(() => {
     const handleScroll = () => {
