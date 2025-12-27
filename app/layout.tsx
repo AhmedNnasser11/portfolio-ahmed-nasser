@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+  ),
   title: "Ahmed Nasser | Front End Web Developer",
   description:
     "Portfolio of Ahmed Nasser, a highly skilled Front End Web Developer specializing in React.js, Next.js, and TypeScript. View projects, skills, and experience.",

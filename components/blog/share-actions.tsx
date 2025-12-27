@@ -19,10 +19,13 @@ export function ShareActions({
   orientation = "vertical",
 }: ShareActionsProps) {
   const [copied, setCopied] = React.useState(false);
-  const url =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/blog/${slug}`
-      : "";
+  const [url, setUrl] = React.useState("");
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUrl(`${window.location.origin}/blog/${slug}`);
+    }
+  }, [slug]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(url);

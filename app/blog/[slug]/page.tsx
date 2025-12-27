@@ -11,6 +11,8 @@ import { TableOfContents } from "@/components/blog/table-of-contents";
 import { AuthorCard } from "@/components/blog/author-card";
 import { RelatedPosts } from "@/components/blog/related-posts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { JsonLd } from "@/components/seo/json-ld";
+import { PROFILE } from "@/lib/data";
 
 export async function generateStaticParams() {
   const slugs = getPostSlugs();
@@ -29,6 +31,9 @@ export async function generateMetadata({
   return {
     title: `${metadata.title} | Ahmed Nasser`,
     description: metadata.description,
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
   };
 }
 
@@ -43,8 +48,35 @@ export default async function BlogPostPage({
   // Calculate related posts
   const relatedPosts = getRelatedPosts(slug, metadata.tags);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: metadata.title,
+    description: metadata.description,
+    image: metadata.image ? [metadata.image] : [],
+    datePublished: metadata.date,
+    author: {
+      "@type": "Person",
+      name: metadata.author?.name || PROFILE.name,
+      url: PROFILE.links.linkedin,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Ahmed Nasser",
+      logo: {
+        "@type": "ImageObject",
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/icon.png`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${process.env.NEXT_PUBLIC_BASE_URL}/blog/${slug}`,
+    },
+  };
+
   return (
     <>
+      <JsonLd data={jsonLd} />
       <ScrollProgress />
 
       <Container className="max-w-6xl py-24 md:py-32 relative">
