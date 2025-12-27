@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -91,6 +92,7 @@ export default function RootLayout({
           <Footer />
           <ScrollToTop />
         </Providers>
+        <GoogleAnalytics gaId="G-NEL46ECT9Y" />
       </body>
     </html>
   );
