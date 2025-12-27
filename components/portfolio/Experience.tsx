@@ -40,6 +40,21 @@ export function Experience() {
           <div className="space-y-6 mt-6">
             <div className="group">
               <h5 className="text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-cyan-500 transition-colors">
+                Convest - Installment & Supplier Management Dashboard
+              </h5>
+              <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                Developed <strong>Convest</strong>, an innovative dashboard
+                seamlessly integrated with <strong>Shopify</strong> to
+                streamline payment installments and supplier management.
+                Empowered merchants to track <strong>installments</strong>,
+                centralize
+                <strong>supplier relationships</strong>, and leverage
+                <strong>real-time analytics</strong> for optimized cash flow and
+                workflows.
+              </p>
+            </div>
+            <div className="group">
+              <h5 className="text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-cyan-500 transition-colors">
                 Elli - School Management Ecosystem
               </h5>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
