@@ -33,14 +33,14 @@ export default function BlogPage() {
               className="flex flex-col md:flex-row gap-6"
             >
               <div className="md:w-32 pt-1 text-sm text-muted-foreground font-mono">
-                {format(new Date(post.publishedAt), "MMM d, yyyy")}
+                {format(new Date(post.date), "MMM d, yyyy")}
               </div>
               <div className="flex-1">
                 <h2 className="text-2xl font-bold group-hover:text-primary transition-colors mb-2">
                   {post.title}
                 </h2>
                 <p className="text-muted-foreground mb-4 line-clamp-2">
-                  {post.summary}
+                  {post.summary || post.description}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {post.tags.map((tag) => (

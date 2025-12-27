@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { label: "Experience", href: "/#experience" },
   { label: "Projects", href: "/#projects" },
   { label: "Blog", href: "/blog" },
-  { label: "Uses", href: "/uses" },
+  // { label: "Uses", href: "/uses" },
 ];
 
 export function Navbar() {
@@ -71,7 +71,12 @@ export function Navbar() {
             </li>
           ))}
           <li>
-            <Button variant="default" size="sm" asChild>
+            <Button
+              variant="default"
+              size="sm"
+              className="animate-pulse hover:animate-none"
+              asChild
+            >
               <a href="/api/export-pdf">
                 cv <Download className="ml-2 w-4 h-4" />
               </a>

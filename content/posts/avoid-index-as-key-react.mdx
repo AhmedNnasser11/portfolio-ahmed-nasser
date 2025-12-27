@@ -1,0 +1,130 @@
+---
+title: "Why You Should Not Use Index as Key in React Lists"
+description: "Discover why using array indices as keys in React can lead to performance issues and bugs, and learn the best practices for proper list rendering."
+date: "2024-03-05"
+author: "Ahmed Nasser"
+tags: ["React", "Next.js", "Performance", "Best Practices", "JavaScript"]
+featured: true
+---
+
+Using the index of an array as the key when rendering a list in React might seem convenient, but it can lead to performance issues and bugs. The `key` prop is crucial for helping React identify which items have changed, been added, or removed. Here's why you should avoid using indices as keys and what you should do instead.
+
+## Why Not Use Index as Key?
+
+### 1. Incorrect Identification of Elements
+
+The `key` prop is used by React to identify elements in the DOM. If you use the index of an array as the key, React can get confused when the array is modified, as the indices of items can change.
+
+### 2. Performance Issues
+
+Arrays in JavaScript are zero-indexed, so their indices start from 0 and increment by 1 (e.g., 0, 1, 2, 3...). When you add a new item at the beginning of the array, all subsequent items will have their indices shifted. React will interpret this as if the entire list has changed and will re-render all the items, leading to unnecessary performance costs.
+
+### 3. State Preservation Problems
+
+If you use indices as keys and the order of items changes, the state associated with each item may get mixed up. For example, if you have a list of inputs and their order changes, the input values might get swapped.
+
+## Example Using Index as Key (❌ Bad Practice)
+
+```jsx
+import React, { useState } from "react";
+
+const ItemListWithIndexKey = () => {
+  const [items, setItems] = useState(["Item 1", "Item 2", "Item 3"]);
+
+  const addItem = () => {
+    const newItem = `Item ${items.length + 1}`;
+    setItems([newItem, ...items]);
+  };
+
+  return (
+    <div>
+      <button onClick={addItem}>Add Item</button>
+      <ul>
+        {items.map((item, index) => (
+          <li key={index}>{item}</li> // ❌ Using index as key
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ItemListWithIndexKey;
+```
+
+In this example, when you add a new item at the beginning of the list, React will re-render all the items because the indices have changed. This can lead to:
+
+- **Performance degradation** with large lists
+- **Lost component state** (form inputs, scroll position, etc.)
+- **Incorrect animations** and transitions
+
+## What to Use Instead? ✅
+
+Instead of using indices, use **unique identifiers** (such as IDs) for each item. This way, React can properly track and manage the items, leading to better performance and fewer bugs.
+
+### Example Using Unique IDs (✅ Best Practice)
+
+```jsx
+import React, { useState } from "react";
+
+const ItemList = () => {
+  const [items, setItems] = useState([
+    { id: 1, name: "Item 1" },
+    { id: 2, name: "Item 2" },
+    { id: 3, name: "Item 3" },
+  ]);
+
+  const addItem = () => {
+    const newItem = {
+      id: Date.now(), // Generate unique ID
+      name: `Item ${items.length + 1}`,
+    };
+    setItems([newItem, ...items]);
+  };
+
+  return (
+    <div>
+      <button onClick={addItem}>Add Item</button>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>{item.name}</li> // ✅ Use unique ID as key
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ItemList;
+```
+
+In this example, each item in the list has a unique `id`. When a new item is added to the beginning of the list, only the new item gets rendered without affecting the rest of the list, preserving performance and ensuring correct state management.
+
+## Best Practices for Keys
+
+1. **Use stable, unique identifiers** from your data (database IDs, UUIDs, etc.)
+2. **Generate IDs when creating items** if they don't have natural unique identifiers
+3. **Never use `Math.random()`** as it changes on every render
+4. **Avoid using indices** unless the list is static and will never reorder
+
+## When Can You Use Index?
+
+Using index as a key is acceptable only when **ALL** of these conditions are true:
+
+- The list is static and will not change
+- The items have no IDs
+- The list will never be reordered or filtered
+- The items don't have internal state
+
+## Try It Yourself
+
+Check out the live example on CodeSandbox to see the difference in behavior:
+[Live Demo](https://codesandbox.io/p/sandbox/why-you-should-not-use-index-as-key-when-looping-through-a-list-zlh472?file=%2Fsrc%2FApp.tsx%3A8%2C28)
+
+## Conclusion
+
+By using unique identifiers as keys, you help React efficiently update the DOM and avoid common pitfalls associated with using indices. This simple change can significantly improve your application's:
+
+- **Performance** - Only changed items re-render
+- **Reliability** - Component state is preserved correctly
+- **User experience** - Animations and transitions work as expected
+
+Remember: **Keys are not just for React's warnings—they're essential for correct and performant list rendering!**

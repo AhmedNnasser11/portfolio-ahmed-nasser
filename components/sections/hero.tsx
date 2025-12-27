@@ -102,7 +102,12 @@ export function Hero() {
                 View Projects <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" asChild>
+            <Button
+              variant="outline"
+              size="lg"
+              className="shadow-lg hover:shadow-xl transition-shadow"
+              asChild
+            >
               <a href="/api/export-pdf">
                 Download CV <Download className="ml-2 w-4 h-4" />
               </a>

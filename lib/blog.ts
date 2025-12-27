@@ -6,8 +6,9 @@ const POSTS_PATH = path.join(process.cwd(), "content/posts");
 
 export type PostMetadata = {
     title: string;
-    publishedAt: string;
-    summary: string;
+    date: string;
+    summary?: string;
+    description?: string;
     image?: string;
     slug: string;
     tags: string[];
@@ -34,6 +35,6 @@ export function getAllPosts() {
     const slugs = getPostSlugs();
     const posts = slugs
         .map((slug) => getPostBySlug(slug).metadata)
-        .sort((a, b) => (new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()));
+        .sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
     return posts;
 }

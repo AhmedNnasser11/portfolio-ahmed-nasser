@@ -132,3 +132,31 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50;
   }
 }
+
+@layer components {
+  /* Rehype Pretty Code Styles */
+  figure[data-rehype-pretty-code-figure] {
+    @apply relative mb-6 rounded-lg border bg-zinc-950;
+  }
+
+  figure[data-rehype-pretty-code-figure] pre {
+    @apply overflow-x-auto py-4 px-0 rounded-lg bg-transparent text-sm leading-relaxed;
+  }
+
+  figure[data-rehype-pretty-code-figure] code {
+    @apply grid min-w-full break-normal bg-transparent p-0 border-0 text-current;
+  }
+
+  figure[data-rehype-pretty-code-figure] [data-line] {
+    @apply px-4 border-l-2 border-transparent;
+  }
+
+  figure[data-rehype-pretty-code-figure] [data-highlighted-line] {
+    @apply bg-white/5 border-primary;
+  }
+  
+  /* Inline code style */
+  :not(pre) > code {
+    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold text-foreground;
+  }
+}

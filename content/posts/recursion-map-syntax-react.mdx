@@ -1,0 +1,197 @@
+---
+title: "How To Make Recursion: Use Case For new Map Syntax"
+description: "Learn how to implement recursion in React components to manage nested radio button groups using JavaScript's Map object for efficient state management."
+date: "2024-02-10"
+author: "Ahmed Nasser"
+tags:
+  [
+    "React",
+    "JavaScript",
+    "Recursion",
+    "Map",
+    "State Management",
+    "Web Development",
+  ]
+featured: false
+---
+
+In this article, I'll demonstrate how to implement recursion in a React component to manage radio button groups. Additionally, we'll explore a use case for the new Map syntax in JavaScript.
+
+## Introducing the Map Object
+
+The Map object in JavaScript holds key-value pairs and remembers the original insertion order of the keys. It allows any value (both objects and primitive values) to be used as either a key or a value. This is particularly useful when we need to:
+
+- Maintain the order of elements
+- Perform frequent lookups
+- Use non-string keys
+- Track nested selections
+
+## 1. Initializing State with Map
+
+First, we declare our state using the Map object:
+
+```typescript
+const [choicesState, setChoicesState] = useState(new Map<number, number>());
+```
+
+This creates a Map where:
+
+- **Keys** represent the nesting level
+- **Values** represent the selected item ID at that level
+
+## 2. Handling Choices with Map
+
+We create a function to handle the selection of radio buttons:
+
+```typescript
+const handleChoices = (level: number, id: number) => {
+  const newChoicesState = new Map(choicesState);
+
+  if (!newChoicesState.has(level)) {
+    newChoicesState.set(level, id);
+  } else {
+    newChoicesState.delete(level);
+    newChoicesState.set(level, id);
+  }
+
+  // Remove selections at deeper levels
+  for (const [key] of newChoicesState) {
+    if (key > level) {
+      newChoicesState.delete(key);
+    }
+  }
+
+  setChoicesState(newChoicesState);
+};
+```
+
+This function:
+
+1. Creates a new Map based on the current state
+2. Adds or updates the selected radio button at the given level
+3. Removes any selections made at levels deeper than the current level
+
+## 3. Creating the RadioGroup Component
+
+Next, we create the RadioGroup component, which will render nested radio groups recursively:
+
+```typescript
+import React from "react";
+import type { Item } from "./data";
+import GroupItem from "./GroupItem";
+
+const RadioGroup = ({
+  data,
+  level = 0,
+  handleChoices,
+  choicesState,
+}: {
+  data: Item[];
+  level?: number;
+  handleChoices: (level: number, id: number) => void;
+  choicesState: Map<number, number>;
+}) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "start",
+        gap: 5,
+        marginLeft: level !== 0 ? `${level + 10}px` : 0,
+      }}
+    >
+      {data?.map((ele) => (
+        <React.Fragment key={ele.id}>
+          <GroupItem
+            name={ele.name}
+            id={ele.id}
+            level={level}
+            handleChoices={handleChoices}
+            choicesState={choicesState}
+          />
+          {ele?.children && choicesState.get(level) === ele?.id ? (
+            <RadioGroup
+              data={ele?.children}
+              level={level + 1}
+              handleChoices={handleChoices}
+              choicesState={choicesState}
+            />
+          ) : null}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
+export default RadioGroup;
+```
+
+This component:
+
+1. Maps over the data to render GroupItem components
+2. Recursively renders child RadioGroup components if the current item is selected
+3. Indents nested levels for visual hierarchy
+
+## 4. Creating the GroupItem Component
+
+The GroupItem component represents each radio button item:
+
+```typescript
+import type { Item } from "./data";
+
+const GroupItem = ({
+  name,
+  id,
+  handleChoices,
+  level = 0,
+  choicesState,
+}: Item) => {
+  const checked =
+    level !== undefined &&
+    choicesState.has(level) &&
+    choicesState.get(level) === id;
+
+  return (
+    <div>
+      <label htmlFor={String(id)}>{name}</label>
+      <input
+        type="radio"
+        id={String(id)}
+        checked={checked}
+        onChange={() => {
+          if (level !== undefined) {
+            handleChoices(level, id);
+          }
+        }}
+      />
+    </div>
+  );
+};
+
+export default GroupItem;
+```
+
+This component:
+
+1. Renders a radio button and label
+2. Checks if the radio button is selected based on the Map state
+3. Calls handleChoices when the radio button is selected
+
+## Conclusion
+
+By leveraging recursion and the Map object, we've created a flexible and efficient way to manage nested radio button groups in React. This approach:
+
+- **Maintains selection order** using Map's insertion order
+- **Efficiently tracks state** at multiple nesting levels
+- **Automatically clears child selections** when parent changes
+- **Scales to any depth** through recursion
+
+This pattern can be easily adapted to other nested structures, such as:
+
+- Tree views
+- Nested menus
+- Hierarchical lists
+- Category selectors
+
+Check out the live example on StackBlitz: [Live Example](https://stackblitz.com/edit/stackblitz-starters-kvvnjq?description=The%20React%20framework%20for%20production&file=README.md)

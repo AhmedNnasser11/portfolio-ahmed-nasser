@@ -1,0 +1,176 @@
+---
+title: "Clean Your Objects Efficiently in JavaScript"
+description: "Learn how to streamline your API data handling by efficiently removing null, undefined, and empty values from JavaScript objects using Lodash and recursion."
+date: "2024-01-15"
+author: "Ahmed Nasser"
+tags: ["JavaScript", "React", "Lodash", "Clean Code", "Web Development"]
+featured: false
+---
+
+Are you dealing with APIs that require you to avoid sending properties with null values? Instead of handling each property manually, streamline your process with a clean function.
+
+## Check Out the Live Example
+
+View the complete example on CodeSandbox: [Live Example](https://codesandbox.io/p/sandbox/cleanobject-f6jvg7?file=%2Fsrc%2FApp.tsx%3A8%2C1)
+
+## 1. Install Lodash
+
+[Lodash](https://lodash.com/) helps clone the original object without modifying it, ensuring immutability in your data transformations.
+
+```bash
+npm install lodash
+```
+
+## 2. Create the Clean Function
+
+This recursive function removes all null, undefined, and empty string values from your objects:
+
+```javascript
+// cleanObject.js
+import _ from "lodash";
+
+export const cleanObject = (obj) => {
+  const copy = _.cloneDeep(obj);
+
+  const clean = (obj) => {
+    if (typeof obj !== "object" || obj === null) {
+      return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj
+        .map((item) => clean(item))
+        .filter((item) => item !== null && item !== undefined && item !== "");
+    }
+
+    const newObj = {};
+    for (const propName in obj) {
+      if (obj.hasOwnProperty(propName)) {
+        const value = obj[propName];
+
+        if (value === null || value === undefined || value === "") {
+          continue;
+        } else if (typeof value === "object") {
+          const cleanedValue = clean(value);
+
+          if (Array.isArray(cleanedValue) && cleanedValue.length === 0) {
+            continue;
+          }
+
+          if (
+            typeof cleanedValue === "object" &&
+            !Array.isArray(cleanedValue) &&
+            Object.keys(cleanedValue).length === 0
+          ) {
+            continue;
+          }
+
+          newObj[propName] = cleanedValue;
+        } else {
+          newObj[propName] = value;
+        }
+      }
+    }
+    return newObj;
+  };
+
+  return clean(copy);
+};
+```
+
+## 3. Dummy Data for Testing
+
+Here's a sample object with various null, undefined, and empty values:
+
+```javascript
+// dummyData.js
+export const dirtyObject = {
+  name: "John Doe",
+  thing: null,
+  age: 30,
+  address: {
+    street: "123 Main St",
+    city: "",
+    nested: {
+      value1: null,
+      value2: undefined,
+    },
+  },
+  hobbies: [
+    "coding",
+    null,
+    "reading",
+    {
+      name: null,
+      age: 333,
+      hobbies: ["2", null, 3],
+    },
+  ],
+  emptyArray: [],
+  extraProp: undefined,
+};
+```
+
+## 4. Usage Example
+
+Integrate the clean function into your React application:
+
+```javascript
+// App.js
+import { cleanObject } from "./cleanObject";
+import { dirtyObject } from "./dummyData";
+import "./styles.css";
+
+export default function App() {
+  console.log("dirty", dirtyObject);
+  const cleanedObject = cleanObject(dirtyObject);
+  console.log("cleanedObject", cleanedObject);
+
+  return (
+    <div className="App">
+      <h1>Object Cleaning Demo</h1>
+      <div>
+        <h2>Original Object</h2>
+        <pre>{JSON.stringify(dirtyObject, null, 2)}</pre>
+      </div>
+      <div style={{ marginTop: "50px" }}>
+        <h2>Cleaned Object</h2>
+        <pre>{JSON.stringify(cleanedObject, null, 2)}</pre>
+      </div>
+    </div>
+  );
+}
+```
+
+## 5. The Result
+
+After cleaning, your object will look like this:
+
+```json
+{
+  "name": "John Doe",
+  "age": 30,
+  "address": {
+    "street": "123 Main St"
+  },
+  "hobbies": [
+    "coding",
+    "reading",
+    {
+      "age": 333,
+      "hobbies": ["2", 3]
+    }
+  ]
+}
+```
+
+## Conclusion
+
+By following these steps, you can ensure your objects are cleaned of null, undefined, and empty values before sending them to your backend. This approach:
+
+- **Maintains immutability** by cloning the original object
+- **Handles nested structures** through recursion
+- **Filters arrays** to remove invalid values
+- **Removes empty objects and arrays** automatically
+
+This pattern is especially useful when working with forms, API requests, and data validation in modern JavaScript applications.

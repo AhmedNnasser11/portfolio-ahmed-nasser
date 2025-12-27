@@ -16,9 +16,10 @@ export async function generateStaticParams() {
 export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { metadata, content } = getPostBySlug(params.slug);
+  const { slug } = await params;
+  const { metadata, content } = getPostBySlug(slug);
 
   return (
     <Container className="max-w-3xl py-20">
@@ -31,7 +32,7 @@ export default async function BlogPostPage({
 
       <header className="mb-12">
         <div className="text-sm text-muted-foreground font-mono mb-4">
-          {format(new Date(metadata.publishedAt), "MMMM d, yyyy")}
+          {format(new Date(metadata.date), "MMMM d, yyyy")}
         </div>
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
           {metadata.title}
@@ -45,8 +46,37 @@ export default async function BlogPostPage({
         </div>
       </header>
 
-      <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:tracking-tight prose-a:text-primary hover:prose-a:underline">
-        <MDXRemote source={content} />
+      <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:tracking-tight prose-a:text-primary hover:prose-a:underline prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800">
+        <MDXRemote
+          source={content}
+          options={{
+            mdxOptions: {
+              rehypePlugins: [
+                [
+                  // @ts-ignore
+                  (await import("rehype-pretty-code")).default,
+                  {
+                    theme: "github-dark",
+                    keepBackground: false,
+                    defaultLang: "js",
+                  },
+                ],
+                // @ts-ignore
+                (await import("rehype-slug")).default,
+                [
+                  // @ts-ignore
+                  (await import("rehype-autolink-headings")).default,
+                  {
+                    behavior: "wrap",
+                    properties: {
+                      className: ["no-underline"],
+                    },
+                  },
+                ],
+              ],
+            },
+          }}
+        />
       </div>
     </Container>
   );
