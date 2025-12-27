@@ -1,24 +1,82 @@
-import React from "react";
-import { Hero } from "../components/portfolio/Hero";
-import { Experience } from "../components/portfolio/Experience";
-import { Projects } from "../components/portfolio/Projects";
-import { Skills } from "../components/portfolio/Skills";
-import { Footer } from "../components/portfolio/Footer";
+import { Hero } from "@/components/sections/hero";
+import { Experience } from "@/components/sections/experience";
+import { FeaturedProjects } from "@/components/sections/featured-projects";
+import { Skills } from "@/components/sections/skills";
+import { Section } from "@/components/layout/layout-primitives";
+import { PROFILE } from "@/lib/data";
 
-export default function PortfolioPage() {
+export default function Home() {
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans selection:bg-cyan-500/30 transition-colors duration-300">
-      {/* Background Gradient */}
-      <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-50 via-white to-white dark:from-slate-900 dark:via-neutral-950 dark:to-neutral-950 pointer-events-none" />
+    <div className="flex flex-col">
+      <Hero />
+      <Experience />
+      <FeaturedProjects />
+      <Skills />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 py-20">
-        <Hero />
-        <Experience />
-        <Projects />
-        <Skills />
+      {/* Contact Section */}
+      <Section id="contact">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+            Let's <span className="text-primary">Connect</span>
+          </h2>
+          <p className="text-muted-foreground mb-8 text-lg">
+            I'm currently looking for new opportunities. Whether you have a
+            question or just want to say hi, I'll try my best to get back to
+            you!
+          </p>
 
-        <Footer />
-      </div>
+          <div className="flex flex-col gap-4 items-center mb-8">
+            <a
+              href={`mailto:${PROFILE.email}`}
+              className="text-lg font-medium hover:text-primary transition-colors"
+            >
+              {PROFILE.email}
+            </a>
+            <a
+              href={`tel:${PROFILE.phone}`}
+              className="text-lg font-medium hover:text-primary transition-colors"
+            >
+              {PROFILE.phone}
+            </a>
+          </div>
+
+          <div className="flex gap-4 justify-center">
+            <a
+              href={PROFILE.links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              LinkedIn
+            </a>
+            <a
+              href={PROFILE.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-primary px-8 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              GitHub
+            </a>
+            <a
+              href={PROFILE.links.npm}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-primary px-8 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              NPM
+            </a>
+          </div>
+        </div>
+      </Section>
     </div>
   );
 }
+
+const FADE_UP_ANIMATION_VARIANTS = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", bounce: 0.4, duration: 0.8 } as any,
+  },
+};
