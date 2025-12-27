@@ -1,0 +1,161 @@
+---
+title: "Splitting next-intl Locales into Feature-Based JSON Files in Next.js"
+description: "Learn how to organize your next-intl translations into feature-based JSON files using namespaces, with parallel loading and fallback locale support for better maintainability in large Next.js applications."
+date: "2024-12-27"
+author: "Ahmed Nasser"
+tags:
+  [
+    "Next.js",
+    "i18n",
+    "next-intl",
+    "TypeScript",
+    "Internationalization",
+    "Web Development",
+  ]
+featured: false
+---
+
+Below is a “write-up style” explanation + a cleaner pattern you can copy into your article. It uses namespaces (multiple JSON files) and still returns the single messages object that next-intl expects.
+
+### Why split locales into multiple files?
+
+When your app grows, keeping everything in en.json / ar.json becomes painful:
+
+- merge conflicts go up
+- files become huge
+- it’s hard to find keys
+- teams want ownership per feature (auth, dashboard, reports…)
+
+```
+
+src/i18n/locales/
+header/
+en.json
+ar.json
+signup/
+en.json
+ar.json
+projectReport/
+en.json
+ar.json
+
+```
+
+Then we “compose” them at request time into the shape next-intl needs:
+
+```javascript
+messages = {
+  header: {
+    /* ... */
+  },
+  signup: {
+    /* ... */
+  },
+  projectReport: {
+    /* ... */
+  },
+};
+```
+
+Now you can use:
+
+```javascript
+const t = useTranslations("signup");
+t("title");
+```
+
+### Recommended folder structure
+
+Pick one convention and stick to it. The easiest is:
+
+```
+src/i18n/locales/[namespace]/[locale].json
+```
+
+Example:
+
+```
+src/i18n/locales/signup/en.json
+src/i18n/locales/signup/ar.json
+```
+
+### request.ts loader (multi-file namespaces + fallback)
+
+This is a cleaned-up version of your solution:
+
+- loads namespaces in parallel
+- merges with fallback locale (ex: en)
+- returns `{ locale, messages }` exactly like next-intl expects
+
+```typescript
+// src/i18n/request.ts
+import { getRequestConfig } from "next-intl/server";
+import { routing } from "./routing";
+import { headers } from "next/headers";
+
+export default getRequestConfig(async ({ requestLocale }) => {
+  const cookieHeader = (await headers()).get("cookie") ?? "";
+  const cookieLocale = cookieHeader
+    .split(";")
+    .map((s) => s.trim())
+    .find((s) => s.startsWith("NEXT_LOCALE="))
+    ?.split("=")[1];
+
+  const resolvedLocale = await requestLocale;
+  const effectiveLocale = routing.locales.includes(
+    (resolvedLocale ?? cookieLocale) as "en" | "ar"
+  )
+    ? (resolvedLocale ?? cookieLocale)!
+    : routing.defaultLocale;
+
+  const namespaces = [
+    "header",
+    "footer",
+    "forms",
+    "sidebar",
+    "home",
+    "signin",
+    "signup",
+    "steps",
+    "stepsTable",
+    "siteHeader",
+    "projectReport",
+    "createProject",
+    "validations",
+  ];
+
+  async function importNamespace(ns: string, locale: string) {
+    try {
+      const mod = await import(`./locals/${ns}/${locale}.json`);
+      return mod.default as Record<string, string>;
+    } catch {
+      try {
+        const mod = await import(`./locals/${locale}/${ns}.json`);
+        return mod.default as Record<string, string>;
+      } catch {
+        return {};
+      }
+    }
+  }
+
+  async function mergeWithFallback(ns: string, locale: string) {
+    const fallback = await importNamespace(ns, routing.defaultLocale);
+    const current = await importNamespace(ns, locale);
+    return { ...fallback, ...current };
+  }
+
+  const messages = Object.fromEntries(
+    await Promise.all(
+      namespaces.map(async (ns) => [
+        ns,
+        await mergeWithFallback(ns, effectiveLocale),
+      ])
+    )
+  );
+
+  return {
+    locale: effectiveLocale,
+    messages,
+  };
+});
+```

@@ -20,7 +20,8 @@ export function AuthorCard({
       <div>
         <p className="font-semibold text-foreground">{author.name}</p>
         <p className="text-sm text-muted-foreground">
-          Frontend Engineer & Product Designer
+          Front End Web Developer | React.js & Next.js Specialist | Responsive
+          UI/UX | Tailwind CSS | TypeScript | JavaScript
         </p>
       </div>
     </div>
