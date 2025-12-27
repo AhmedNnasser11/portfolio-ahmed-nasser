@@ -18,7 +18,7 @@ export function useCvDownload() {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = "Ahmed_Nasser_CV.pdf";
+            link.download = "Ahmed_Nasser_Frontend_Web_Developer_CV.pdf";
             document.body.appendChild(link);
             link.click();
             link.remove();

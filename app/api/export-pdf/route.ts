@@ -44,7 +44,7 @@ export async function GET() {
         // Create response with PDF
         const response = new NextResponse(Buffer.from(pdfBuffer));
         response.headers.set("Content-Type", "application/pdf");
-        response.headers.set("Content-Disposition", 'attachment; filename="ahmed_cv.pdf"');
+        response.headers.set("Content-Disposition", 'attachment; filename="ahmed_nasser_Frontend_Web_Developer_cv.pdf"');
 
         return response;
     } catch (error) {
