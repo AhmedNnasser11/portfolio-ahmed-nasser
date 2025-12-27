@@ -1,9 +1,11 @@
+const CAREER_START_DATE = new Date("2022-01-01");
+const experienceYears = Math.round((new Date().getTime() - CAREER_START_DATE.getTime()) / (1000 * 60 * 60 * 24 * 365.25));
+
 export const PROFILE = {
     name: "Ahmed Nasser",
     title: "Senior Frontend Developer (React.js & Next.js)",
     location: "Cairo, Egypt",
-    summary:
-        "Dynamic and results-oriented Frontend Engineer with over 4 years of experience specializing in React.js and Next.js. Expert in building scalable, high-performance web applications and enterprise-grade dashboards. Proven track record in optimizing application performance through advanced techniques like code splitting and lazy loading. Skilled in modern state management (Redux, Zustand) and UI frameworks (Tailwind CSS, MUI, Shadcn). Adept at transforming complex business requirements into intuitive user experiences across education, insurance, and logistics sectors.",
+    summary: `Dynamic and results-oriented Frontend Engineer with ${experienceYears} years of experience specializing in React.js and Next.js. Expert in building scalable, high-performance web applications and enterprise-grade dashboards. Proven track record in optimizing application performance through advanced techniques like code splitting and lazy loading. Skilled in modern state management (Redux, Zustand) and UI frameworks (Tailwind CSS, MUI, Shadcn). Adept at transforming complex business requirements into intuitive user experiences across education, insurance, and logistics sectors.`,
     email: "ahmednnasser111@gmail.com",
     phone: "+20 10 686 920 41",
     links: {

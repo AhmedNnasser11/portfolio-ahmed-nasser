@@ -14,8 +14,17 @@ export async function GET() {
         const browser = await getBrowser();
         const page = await browser.newPage();
 
+        // Calculate years of experience dynamically
+        const CAREER_START_DATE = new Date("2022-01-01");
+        const experienceYears = Math.round((new Date().getTime() - CAREER_START_DATE.getTime()) / (1000 * 60 * 60 * 24 * 365.25));
+
+        let contentObj = htmlContent;
+        // Replace "over 4 years" (or similar patterns from original HTML) with dynamic value
+        // Note: The regex handles the static "over 4 years" in the source HTML.
+        contentObj = contentObj.replace(/over \d+ years/, ` ${experienceYears} years`);
+
         // Set the content of the page
-        await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+        await page.setContent(contentObj, { waitUntil: "networkidle0" });
 
         // Generate PDF
         const pdfBuffer = await page.pdf({
