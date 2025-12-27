@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,14 +34,25 @@ export function Navbar() {
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
+    // Only handle scrolling if we're dealing with a hash link
     if (href.startsWith("/#")) {
-      e.preventDefault();
       const id = href.substring(2);
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      // If we're already on the home page, scroll to element
+      if (pathname === "/") {
+        e.preventDefault();
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+          setMobileMenuOpen(false);
+        }
+      } else {
+        // If we're not on home page, let standard navigation happen
+        // The URL will change to /#id and browser will handle scrolling after nav
         setMobileMenuOpen(false);
       }
+    } else {
+      setMobileMenuOpen(false);
     }
   };
 
@@ -61,13 +74,13 @@ export function Navbar() {
         <ul className="hidden md:flex items-center gap-8">
           {NAV_ITEMS.map((item) => (
             <li key={item.href}>
-              <a
+              <Link
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 {item.label}
-              </a>
+              </Link>
             </li>
           ))}
           <li>
@@ -109,14 +122,14 @@ export function Navbar() {
             className="absolute top-full left-0 right-0 bg-background border-b md:hidden p-6 flex flex-col gap-4"
           >
             {NAV_ITEMS.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
                 className="text-lg font-medium cursor-pointer"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
             <Button variant="default" size="lg" className="w-full mt-4" asChild>
               <a href="/api/export-pdf">

@@ -12,15 +12,10 @@ export const metadata = {
 export default function BlogPage() {
   const posts = getAllPosts();
 
-  // Extract all unique tags
-  const allTags = Array.from(
-    new Set(posts.flatMap((post) => post.tags))
-  ).sort();
-
   return (
     <Section className="py-24 md:py-32">
       <Container>
-        <BlogView posts={posts} allTags={allTags} />
+        <BlogView posts={posts} />
       </Container>
     </Section>
   );

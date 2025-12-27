@@ -22,11 +22,8 @@ import { cn } from "@/lib/utils";
 interface BlogHeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  selectedTag: string | null;
-  setSelectedTag: (tag: string | null) => void;
   viewMode: "grid" | "list";
   setViewMode: (mode: "grid" | "list") => void;
-  allTags: string[];
   sortOrder: "newest" | "popular";
   setSortOrder: (order: "newest" | "popular") => void;
 }
@@ -34,11 +31,8 @@ interface BlogHeaderProps {
 export function BlogHeader({
   searchQuery,
   setSearchQuery,
-  selectedTag,
-  setSelectedTag,
   viewMode,
   setViewMode,
-  allTags,
   sortOrder,
   setSortOrder,
 }: BlogHeaderProps) {
@@ -66,33 +60,8 @@ export function BlogHeader({
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between py-4 border-y border-zinc-100 dark:border-zinc-800/50">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto scrollbar-hide">
-          <Button
-            variant={selectedTag === null ? "default" : "ghost"}
-            size="sm"
-            onClick={() => setSelectedTag(null)}
-            className="rounded-full h-8"
-          >
-            All
-          </Button>
-          {allTags.map((tag) => (
-            <Button
-              key={tag}
-              variant={selectedTag === tag ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setSelectedTag(tag)}
-              className={cn(
-                "rounded-full h-8 whitespace-nowrap",
-                selectedTag === tag && "bg-zinc-100 dark:bg-zinc-800"
-              )}
-            >
-              {tag}
-            </Button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 ml-auto bg-zinc-50 dark:bg-zinc-900 p-1 rounded-lg border border-zinc-200 dark:border-zinc-800">
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-end py-4 border-y border-zinc-100 dark:border-zinc-800/50">
+        <div className="flex items-center gap-2 shrink-0 bg-zinc-50 dark:bg-zinc-900 p-1 rounded-lg border border-zinc-200 dark:border-zinc-800">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

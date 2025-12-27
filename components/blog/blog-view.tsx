@@ -8,15 +8,8 @@ import { PostCard } from "@/components/blog/post-card";
 import { SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function BlogView({
-  posts,
-  allTags,
-}: {
-  posts: PostMetadata[];
-  allTags: string[];
-}) {
+export function BlogView({ posts }: { posts: PostMetadata[] }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [sortOrder, setSortOrder] = useState<"newest" | "popular">("newest");
 
@@ -35,11 +28,6 @@ export function BlogView({
       );
     }
 
-    // Filter by tag
-    if (selectedTag) {
-      result = result.filter((post) => post.tags.includes(selectedTag));
-    }
-
     // Sort
     if (sortOrder === "newest") {
       result.sort(
@@ -51,18 +39,15 @@ export function BlogView({
     }
 
     return result;
-  }, [posts, searchQuery, selectedTag, sortOrder]);
+  }, [posts, searchQuery, sortOrder]);
 
   return (
     <>
       <BlogHeader
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        selectedTag={selectedTag}
-        setSelectedTag={setSelectedTag}
         viewMode={viewMode}
         setViewMode={setViewMode}
-        allTags={allTags}
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
       />
@@ -101,17 +86,15 @@ export function BlogView({
           </div>
           <h3 className="text-lg font-semibold mb-2">No posts found</h3>
           <p className="text-muted-foreground max-w-sm mb-6">
-            We couldn't find any articles matching your search query or selected
-            filters.
+            We couldn't find any articles matching your search query.
           </p>
           <Button
             variant="outline"
             onClick={() => {
               setSearchQuery("");
-              setSelectedTag(null);
             }}
           >
-            Clear all filters
+            Clear search
           </Button>
         </motion.div>
       )}
