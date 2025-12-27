@@ -35,18 +35,22 @@ export function FeaturedProjects() {
                 <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
                   {project.title}
                 </h3>
-                {/* {project.link !== "#" && (
-                  <Link
-                    href={project.link}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <ExternalLink size={18} />
-                  </Link>
-                )} */}
               </div>
-              <p className="text-muted-foreground text-sm line-clamp-3">
-                {project.description}
-              </p>
+
+              {project.highlights && project.highlights.length > 0 ? (
+                <ul className="flex flex-col gap-1 list-disc pl-4">
+                  {project.highlights.map((highlight, i) => (
+                    <li key={i} className="text-xs text-muted-foreground">
+                      {highlight}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground text-sm line-clamp-3">
+                  {project.description}
+                </p>
+              )}
+
               <div className="flex flex-wrap gap-2 mt-auto">
                 {project.tags.map((tag) => (
                   <span

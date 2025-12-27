@@ -123,13 +123,36 @@ export function Hero() {
                 </>
               )}
             </Button>
-            <div className="flex gap-2 ml-auto items-center">
-              <Button variant="ghost" size="icon" asChild>
-                <Link href={PROFILE.links.linkedin}>
-                  <Linkedin size={20} />
-                </Link>
-              </Button>
-            </div>
+          </motion.div>
+
+          <motion.div
+            variants={FADE_UP_ANIMATION_VARIANTS}
+            className="flex flex-wrap gap-4 mt-8"
+          >
+            <a
+              href={PROFILE.links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              LinkedIn
+            </a>
+            <a
+              href={PROFILE.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-primary px-8 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              GitHub
+            </a>
+            <a
+              href={PROFILE.links.npm}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-primary px-8 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              NPM
+            </a>
           </motion.div>
         </motion.div>
       </Container>
