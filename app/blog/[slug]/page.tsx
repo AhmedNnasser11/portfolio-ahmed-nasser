@@ -142,7 +142,7 @@ export default async function BlogPostPage({
               className="prose prose-zinc dark:prose-invert max-w-none 
               prose-headings:font-bold prose-headings:tracking-tight 
               prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6
-              prose-p:text-lg prose-p:leading-relaxed prose-p:text-muted-foreground
+              prose-p:text-lg prose-p:leading-relaxed
               prose-a:text-primary prose-a:no-underline hover:prose-a:underline
               prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-xl
               prose-img:rounded-xl prose-img:border prose-img:border-border/50

@@ -1,0 +1,82 @@
+---
+title: 'Why Your React State is "One Step Behind" 🐢'
+description: 'Have you ever tried to log or send state immediately after calling its set function, only to find the old value instead? This is one of the most common "aha!" moments for React developers.'
+date: "2026-01-04"
+author: "Ahmed Nasser"
+tags: ["React", "JavaScript", "State", "Hooks", "Frontend"]
+featured: true
+---
+
+Have you ever tried to log or send state immediately after calling its `set` function, only to find the **old** value instead?
+
+```javascript
+const [name, setName] = useState("");
+
+const handleChange = (e) => {
+  setName(e.target.value);
+  console.log(name); // ❌ Prints "ahme" instead of "ahmed"
+};
+```
+
+This is one of the most common "aha!" moments for React developers. Let's break down why this happens and how to fix it.
+
+---
+
+## 1. The Core Reason: State Updates are Asynchronous
+
+When you call `setName`, React doesn't update the variable immediately. Instead, it **schedules** an update and a re-render.
+
+In the same function execution where you called `set`, the `name` variable still holds the value from the **current render cycle**. It won't change until the component executes again (re-renders) with the new values.
+
+---
+
+## 2. The Closure Snapshot 📸
+
+Think of every render of your component as a **snapshot**.
+
+- **Render 1:** `name` is "ahme".
+- You type "d". `handleChange` triggers.
+- Inside `handleChange`, `name` is **permanently "ahme"** for the duration of that function run.
+- Even if you call `setName("ahmed")`, you can't change the "ahme" snapshot that the current function is looking at.
+
+---
+
+## 3. How to Fix It ✅
+
+### Solution A: Use the direct value (Best for logic)
+
+If you need the new value immediately for a side effect (like an API call), don't wait for state. Use the value coming directly from the event or calculation.
+
+```javascript
+const handleChange = (e) => {
+  const newValue = e.target.value;
+  setName(newValue);
+  sendToServer(newValue); // ✅ Correct! Uses the fresh value
+};
+```
+
+### Solution B: Use `useEffect` (Best for reactive sync)
+
+If you want something to happen whenever a state changes, use `useEffect`. It runs **after** the render is complete and the state has updated.
+
+```javascript
+useEffect(() => {
+  if (name) {
+    sendToServer(name); // ✅ Correct! Runs after state is updated
+  }
+}, [name]);
+```
+
+### Solution C: Functional Updates (Best for sequence)
+
+If you need the previous state to calculate the next state, use a function inside the setter:
+
+```javascript
+setCount((prevCount) => prevCount + 1);
+```
+
+---
+
+## Summary
+
+React state isn't a simple variable; it's a value tied to a specific render cycle. If you need the "latest" value inside the same event handler, **don't look at the state—look at the source of the change!**

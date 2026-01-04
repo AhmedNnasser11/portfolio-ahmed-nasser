@@ -123,9 +123,11 @@
   body {
     @apply bg-background text-foreground selection:bg-primary selection:text-primary-foreground;
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
+    *,
+    ::before,
+    ::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
@@ -164,9 +166,22 @@
   figure[data-rehype-pretty-code-figure] [data-highlighted-line] {
     @apply bg-white/5 border-primary;
   }
-  
+
   /* Inline code style */
+  span[data-rehype-pretty-code-figure] > code,
+  .prose :not(pre) > code,
   :not(pre) > code {
-    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold text-foreground;
+    @apply relative rounded bg-zinc-100 dark:bg-zinc-800 px-[0.3rem] py-[0.1rem] font-mono text-sm font-semibold text-zinc-900 dark:text-zinc-200 border border-zinc-200/50 dark:border-zinc-700/50;
+  }
+
+  span[data-rehype-pretty-code-figure] > code {
+    @apply bg-zinc-900 text-zinc-100 border-zinc-800 py-[0.2rem];
+  }
+
+  span[data-rehype-pretty-code-figure] > code::before,
+  span[data-rehype-pretty-code-figure] > code::after,
+  .prose :not(pre) > code::before,
+  .prose :not(pre) > code::after {
+    content: "";
   }
 }
