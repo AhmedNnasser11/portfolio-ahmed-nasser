@@ -21,7 +21,7 @@ export const EXPERIENCE = [
     {
         company: "INCode",
         role: "Frontend Developer",
-        period: "Feb 2024 – Present",
+        period: "Feb 2024 – Dec 2025",
         description:
             "Architected enterprise-grade systems and Voice AI platforms, focusing on scalability and complex business logic.",
         highlights: [
