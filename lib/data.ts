@@ -19,6 +19,27 @@ export const PROFILE = {
 
 export const EXPERIENCE = [
     {
+        company: "Freelance",
+        role: "Frontend Developer",
+        period: "2024 – Present",
+        description:
+            "Delivered multiple end-to-end web applications for international clients, specializing in e-commerce, tourism, and real-time distribution systems.",
+        highlights: [
+            "Ajzaa: Engineered a multi-tenant e-commerce system with RBAC and real-time chat.",
+            "Kenzytours & Kemet Travel: Developed high-performance tourism platforms with advanced booking and SEO.",
+            "Rayan: Built a mission-critical distribution tracking system for the Hajj season.",
+            "SeenShow: Designed and implemented a modern streaming UI with Shadcn/UI.",
+        ],
+        environment: [
+            "Next.js",
+            "React.js",
+            "TypeScript",
+            "Tailwind CSS",
+            "Redux",
+            "Pusher",
+        ],
+    },
+    {
         company: "INCode",
         role: "Frontend Developer",
         period: "Feb 2024 – Dec 2025",
@@ -63,27 +84,7 @@ export const EXPERIENCE = [
             "i18next",
         ],
     },
-    {
-        company: "Freelance",
-        role: "Frontend Developer",
-        period: "2024 – Present",
-        description:
-            "Delivered multiple end-to-end web applications for international clients, specializing in e-commerce, tourism, and real-time distribution systems.",
-        highlights: [
-            "Ajzaa: Engineered a multi-tenant e-commerce system with RBAC and real-time chat.",
-            "Kenzytours & Kemet Travel: Developed high-performance tourism platforms with advanced booking and SEO.",
-            "Rayan: Built a mission-critical distribution tracking system for the Hajj season.",
-            "SeenShow: Designed and implemented a modern streaming UI with Shadcn/UI.",
-        ],
-        environment: [
-            "Next.js",
-            "React.js",
-            "TypeScript",
-            "Tailwind CSS",
-            "Redux",
-            "Pusher",
-        ],
-    },
+
 ];
 
 export const PROJECTS = [
