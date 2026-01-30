@@ -148,7 +148,7 @@
 @layer components {
   /* Rehype Pretty Code Styles */
   figure[data-rehype-pretty-code-figure] {
-    @apply relative mb-6 rounded-lg border bg-zinc-950;
+    @apply relative mb-6 rounded-lg border bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800;
   }
 
   figure[data-rehype-pretty-code-figure] pre {
@@ -164,7 +164,7 @@
   }
 
   figure[data-rehype-pretty-code-figure] [data-highlighted-line] {
-    @apply bg-white/5 border-primary;
+    @apply bg-zinc-900/5 dark:bg-white/5 border-primary;
   }
 
   /* Inline code style */

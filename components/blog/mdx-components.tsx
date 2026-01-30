@@ -25,7 +25,7 @@ export function Pre({
       <button
         onClick={copyToClipboard}
         className={cn(
-          "absolute right-4 top-4 z-10 h-8 w-8 rounded-lg border border-zinc-800 bg-zinc-950 p-1.5 text-zinc-400 opacity-0 transition-all hover:bg-zinc-900 hover:text-zinc-100 group-hover:opacity-100",
+          "absolute right-4 top-4 z-10 h-8 w-8 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-1.5 text-zinc-500 dark:text-zinc-400 opacity-0 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100 group-hover:opacity-100",
           isCopied && "border-green-500/50 bg-green-500/10 text-green-500 opacity-100"
         )}
       >
@@ -33,7 +33,7 @@ export function Pre({
       </button>
       <pre
         ref={preRef}
-        className={cn("overflow-x-auto text-zinc-300", className)}
+        className={cn("overflow-x-auto", className)}
         {...props}
       >
         {children}

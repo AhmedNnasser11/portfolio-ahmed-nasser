@@ -154,7 +154,7 @@ export default async function BlogPostPage({
               prose-p:text-[1.25rem] prose-p:leading-[1.9] prose-p:text-zinc-700 dark:prose-p:text-zinc-300 prose-p:mb-8
               prose-a:text-primary prose-a:font-semibold prose-a:no-underline hover:prose-a:underline underline-offset-8
               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-8 prose-blockquote:rounded-r-2xl prose-blockquote:not-italic prose-blockquote:text-zinc-700 dark:prose-blockquote:text-zinc-300 prose-blockquote:text-xl
-              prose-pre:bg-zinc-950 prose-pre:text-zinc-300 prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-3xl prose-pre:shadow-2xl prose-pre:my-10
+              prose-pre:bg-zinc-50 dark:prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-zinc-200 dark:prose-pre:border-zinc-800 prose-pre:rounded-3xl prose-pre:shadow-2xl prose-pre:my-10
               prose-code:text-primary prose-code:bg-primary/5 prose-code:px-2 prose-code:py-1 prose-code:rounded-lg prose-code:before:content-none prose-code:after:content-none prose-code:font-medium
               prose-img:rounded-3xl prose-img:border prose-img:border-border/50 prose-img:shadow-2xl prose-img:my-12
               prose-hr:border-zinc-100 dark:prose-hr:border-zinc-800/50 prose-hr:my-20
@@ -172,7 +172,10 @@ export default async function BlogPostPage({
                         // @ts-ignore
                         (await import("rehype-pretty-code")).default,
                         {
-                          theme: "github-dark",
+                          theme: {
+                            dark: "github-dark",
+                            light: "github-light",
+                          },
                           keepBackground: false,
                           defaultLang: "js",
                         },
