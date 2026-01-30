@@ -13,6 +13,8 @@ import { RelatedPosts } from "@/components/blog/related-posts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { JsonLd } from "@/components/seo/json-ld";
 import { PROFILE } from "@/lib/data";
+import { mdxComponents } from "@/components/blog/mdx-components";
+import { BackToTop } from "@/components/blog/back-to-top";
 
 export async function generateStaticParams() {
   const slugs = getPostSlugs();
@@ -78,6 +80,7 @@ export default async function BlogPostPage({
     <>
       <JsonLd data={jsonLd} />
       <ScrollProgress />
+      <BackToTop />
 
       <Container className="max-w-6xl py-24 md:py-32 relative">
         <Link
@@ -91,49 +94,54 @@ export default async function BlogPostPage({
           Back to writing
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-12 lg:gap-24">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-12 lg:gap-24">
           <article className="min-w-0">
-            <header className="mb-12">
-              <div className="flex items-center gap-3 text-sm text-muted-foreground font-mono mb-6">
-                <time dateTime={metadata.date}>
-                  {format(new Date(metadata.date), "MMM d, yyyy")}
+            <header className="mb-20">
+              <div className="flex items-center gap-4 text-base text-muted-foreground font-mono mb-10">
+                <time dateTime={metadata.date} className="bg-zinc-100 dark:bg-zinc-800/50 px-3 py-1 rounded-md">
+                  {format(new Date(metadata.date), "MMMM d, yyyy")}
                 </time>
-                <span>•</span>
-                <div className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
+                <span className="opacity-40">•</span>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
                   <span>{metadata.readingTimeMin} min read</span>
                 </div>
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-8 leading-tight">
+              <h1 className="text-5xl md:text-6xl lg:text-8xl font-bold tracking-tight mb-12 leading-[1.05] text-balance">
                 {metadata.title}
               </h1>
 
-              <div className="flex gap-2 mb-8">
+              <div className="flex flex-wrap gap-3 mb-12">
                 {metadata.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-2 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-xs font-medium text-muted-foreground"
+                    className="px-4 py-1.5 rounded-full bg-primary/5 text-primary border border-primary/10 text-sm font-semibold"
                   >
-                    {tag}
+                    #{tag}
                   </span>
                 ))}
               </div>
 
               {metadata.author && (
-                <div className="flex items-center gap-3">
-                  <Avatar className="w-8 h-8 border border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-center gap-5 p-5 rounded-[1.25rem] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800/50 w-fit">
+                  <Avatar className="w-12 h-12 border-2 border-background shadow-md">
                     <AvatarImage
                       src={metadata.author.avatar}
                       alt={metadata.author.name}
                     />
-                    <AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
                       {metadata.author.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium">
-                    {metadata.author.name}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-base font-bold">
+                      {metadata.author.name}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      Senior Software Engineer
+                    </span>
+                  </div>
                 </div>
               )}
             </header>
@@ -141,16 +149,22 @@ export default async function BlogPostPage({
             <div
               className="prose prose-zinc dark:prose-invert max-w-none 
               prose-headings:font-bold prose-headings:tracking-tight 
-              prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6
-              prose-p:text-lg prose-p:leading-relaxed
-              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-              prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-xl
-              prose-img:rounded-xl prose-img:border prose-img:border-border/50
-              prose-hr:border-border
+              prose-h2:text-4xl prose-h2:mt-20 prose-h2:mb-10 prose-h2:pb-4 prose-h2:border-b prose-h2:border-zinc-100 dark:prose-h2:border-zinc-800/50
+              prose-h3:text-2xl prose-h3:mt-12 prose-h3:mb-6
+              prose-p:text-[1.25rem] prose-p:leading-[1.9] prose-p:text-zinc-700 dark:prose-p:text-zinc-300 prose-p:mb-8
+              prose-a:text-primary prose-a:font-semibold prose-a:no-underline hover:prose-a:underline underline-offset-8
+              prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-8 prose-blockquote:rounded-r-2xl prose-blockquote:not-italic prose-blockquote:text-zinc-700 dark:prose-blockquote:text-zinc-300 prose-blockquote:text-xl
+              prose-pre:bg-zinc-950 prose-pre:text-zinc-300 prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-3xl prose-pre:shadow-2xl prose-pre:my-10
+              prose-code:text-primary prose-code:bg-primary/5 prose-code:px-2 prose-code:py-1 prose-code:rounded-lg prose-code:before:content-none prose-code:after:content-none prose-code:font-medium
+              prose-img:rounded-3xl prose-img:border prose-img:border-border/50 prose-img:shadow-2xl prose-img:my-12
+              prose-hr:border-zinc-100 dark:prose-hr:border-zinc-800/50 prose-hr:my-20
+              prose-ul:list-disc prose-ul:pl-8 prose-ul:mb-8 prose-li:mb-4 prose-li:text-[1.25rem]
+              prose-ol:list-decimal prose-ol:pl-8 prose-ol:mb-8 prose-li:marker:text-primary prose-li:marker:font-bold
             "
             >
               <MDXRemote
                 source={content}
+                components={mdxComponents}
                 options={{
                   mdxOptions: {
                     rehypePlugins: [

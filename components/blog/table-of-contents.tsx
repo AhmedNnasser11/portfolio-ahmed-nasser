@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface ToCItem {
   id: string;
@@ -43,34 +44,53 @@ export function TableOfContents() {
   if (headings.length === 0) return null;
 
   return (
-    <div className="hidden lg:block space-y-4">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+    <div className="hidden lg:block space-y-8">
+      <div className="flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-muted-foreground/60">
+        <div className="w-6 h-px bg-primary/30" />
         On this page
-      </p>
+      </div>
       <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-px bg-zinc-100 dark:bg-zinc-800" />
-        <ul className="space-y-3 text-sm">
+        <ul className="space-y-5 text-base border-l border-zinc-100 dark:border-zinc-800/50">
           {headings.map((item) => (
-            <li key={item.id} className="pl-4 relative">
-              {activeId === item.id && (
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-primary z-10" />
-              )}
+            <li key={item.id} className="relative">
               <a
                 href={`#${item.id}`}
                 className={cn(
-                  "block transition-colors hover:text-foreground line-clamp-2",
+                  "block pl-4 transition-all duration-300 hover:text-primary",
                   activeId === item.id
-                    ? "text-foreground font-medium"
+                    ? "text-primary font-semibold translate-x-1"
                     : "text-muted-foreground"
                 )}
+                style={{
+                  paddingLeft: `${(item.level - 1) * 1}rem`,
+                }}
                 onClick={(e) => {
                   e.preventDefault();
-                  document.getElementById(item.id)?.scrollIntoView({
-                    behavior: "smooth",
-                  });
+                  const element = document.getElementById(item.id);
+                  if (element) {
+                    const offset = 100; // Offset for sticky header
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: "smooth",
+                    });
+                  }
                 }}
               >
-                {item.text}
+                {activeId === item.id && (
+                  <motion.div
+                    layoutId="toc-active"
+                    className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary rounded-full"
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30,
+                    }}
+                  />
+                )}
+                <span className="line-clamp-2">{item.text}</span>
               </a>
             </li>
           ))}
