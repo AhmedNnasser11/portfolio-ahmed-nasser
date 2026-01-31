@@ -19,6 +19,26 @@ export const PROFILE = {
 
 export const EXPERIENCE = [
     {
+        company: "E2E County",
+        role: "Frontend Web Developer (React.js & Next.js)",
+        period: "Jan 2026 – Present",
+        description:
+            "Building dynamic, high-performance interfaces for the TravWare ecosystem using Next.js, ensuring a seamless user experience for complex SaaS ERP dashboards.",
+        highlights: [
+            "Developing scalable UI components for E-commerce booking engines, tailored for diverse travel sectors including DMCs, OTAs, and Hotels.",
+            "Integrating complex APIs and real-time data fetching to manage large-scale travel inventory, ensuring data consistency across the Ecosystem 2.0 platform.",
+            "Collaborating with cross-functional teams to deliver tailored software solutions for Corporate, MICE, and Leisure sectors, focusing on performance and responsiveness.",
+            "Optimizing frontend workflows and ensuring the technical feasibility of UI/UX designs to meet the evolving needs of the travel and tourism industry.",
+        ],
+        environment: [
+            "Next.js",
+            "React.js",
+            "TypeScript",
+            "Tailwind CSS",
+            "SaaS ERP",
+        ],
+    },
+    {
         company: "Freelance",
         role: "Frontend Developer",
         period: "2024 – Present",

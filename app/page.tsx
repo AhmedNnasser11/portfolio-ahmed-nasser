@@ -30,7 +30,7 @@ export default function Home() {
         ],
         worksFor: {
           "@type": "Organization",
-          name: "Freelance",
+          name: "E2E County",
         },
       },
       {
