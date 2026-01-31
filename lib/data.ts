@@ -20,7 +20,7 @@ export const PROFILE = {
 export const EXPERIENCE = [
     {
         company: "E2E County",
-        role: "Frontend Web Developer (React.js & Next.js)",
+        role: "Frontend Developer",
         period: "Jan 2026 – Present",
         description:
             "Building dynamic, high-performance interfaces for the TravWare ecosystem using Next.js, ensuring a seamless user experience for complex SaaS ERP dashboards.",
