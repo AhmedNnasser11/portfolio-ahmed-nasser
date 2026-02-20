@@ -214,6 +214,36 @@ export const PROJECTS = [
         year: "2021",
         featured: false,
     },
+    {
+        title: "First Mas Hajj Services",
+        slug: "first-mas",
+        description:
+            "Egyptian tourism company website for Hajj and Umrah services. Showcases comprehensive pilgrimage packages with pricing and booking information.",
+        highlights: [
+            "Developed responsive website for Hajj and Umrah tourism services.",
+            "Integrated package showcase with pricing and booking details.",
+            "Optimized for tourism industry requirements and user experience.",
+        ],
+        tags: ["Next.js", "TypeScript", "Tailwind CSS", "Tourism"],
+        link: "https://first-mas.com",
+        year: "2024",
+        featured: false,
+    },
+    {
+        title: "Gallery Zidan Furniture",
+        slug: "gallery-zidan",
+        description:
+            "Classic furniture manufacturing company website showcasing premium furniture collections and craftsmanship heritage since 1940.",
+        highlights: [
+            "Created elegant website for classic furniture manufacturer.",
+            "Showcased furniture collections and company heritage.",
+            "Designed with premium aesthetics for luxury furniture market.",
+        ],
+        tags: ["Next.js", "TypeScript", "Tailwind CSS", "Furniture"],
+        link: "https://gallery-zidan-front.vercel.app",
+        year: "2024",
+        featured: false,
+    },
 ];
 
 export const SKILLS = {
