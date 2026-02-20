@@ -49,6 +49,8 @@ export const EXPERIENCE = [
             "Kenzytours & Kemet Travel: Developed high-performance tourism platforms with advanced booking and SEO.",
             "Rayan: Built a mission-critical distribution tracking system for the Hajj season.",
             "SeenShow: Designed and implemented a modern streaming UI with Shadcn/UI.",
+            "First Mas: Developed comprehensive Hajj & Umrah services website with package showcase and booking system.",
+            "Gallery Zidan: Created elegant furniture manufacturer website showcasing premium collections and 80+ years heritage.",
         ],
         environment: [
             "Next.js",
@@ -218,11 +220,12 @@ export const PROJECTS = [
         title: "First Mas Hajj Services",
         slug: "first-mas",
         description:
-            "Egyptian tourism company website for Hajj and Umrah services. Showcases comprehensive pilgrimage packages with pricing and booking information.",
+            "Comprehensive Egyptian tourism company website for Hajj and Umrah pilgrimage services. Features package showcase system with pricing and booking information, optimized for tourism industry requirements.",
         highlights: [
-            "Developed responsive website for Hajj and Umrah tourism services.",
-            "Integrated package showcase with pricing and booking details.",
+            "Developed comprehensive website for Hajj and Umrah pilgrimage services.",
+            "Implemented package showcase system with pricing and booking information.",
             "Optimized for tourism industry requirements and user experience.",
+            "Integrated seamless booking flow for pilgrimage packages.",
         ],
         tags: ["Next.js", "TypeScript", "Tailwind CSS", "Tourism"],
         link: "https://first-mas.com",
@@ -233,11 +236,12 @@ export const PROJECTS = [
         title: "Gallery Zidan Furniture",
         slug: "gallery-zidan",
         description:
-            "Classic furniture manufacturing company website showcasing premium furniture collections and craftsmanship heritage since 1940.",
+            "Elegant furniture manufacturer website showcasing premium collections and 80+ years of craftsmanship heritage. Designed with premium aesthetics for luxury furniture market.",
         highlights: [
             "Created elegant website for classic furniture manufacturer.",
-            "Showcased furniture collections and company heritage.",
+            "Showcased premium furniture collections and 80+ years craftsmanship heritage.",
             "Designed with premium aesthetics for luxury furniture market.",
+            "Featured comprehensive product galleries and company history.",
         ],
         tags: ["Next.js", "TypeScript", "Tailwind CSS", "Furniture"],
         link: "https://gallery-zidan-front.vercel.app",
