@@ -1,0 +1,176 @@
+---
+title: 'Beyond XSS: 10 Security Threats Every Next.js Developer Should Know 🔐'
+description: 'XSS is just the tip of the iceberg. Explore 10 critical security threats and how to defend against them in Next.js, including Phishing, Clickjacking, IDOR, and SSRF.'
+date: "2026-04-12"
+author: "Ahmed Nasser"
+tags: ["Next.js", "Web Security", "React", "Frontend", "AppSec"]
+featured: true
+---
+
+Most frontend developers think XSS is the main problem in web security…
+But if you dive into the MDN security docs, you’ll realize: 👉 **XSS is just the tip of the iceberg.**
+
+As a Next.js / React developer, you're not just building UI — you're building a trust layer between users and your system.
+
+Here are 10 critical threats (and how to defend against them in Next.js) 👇
+
+---
+
+### 🎣 1. Phishing & Open Redirect
+**Threat:** Redirecting users to malicious sites using untrusted input.
+
+❌ **Bad:**
+```javascript
+redirect(searchParams.next)
+```
+
+✅ **Good:**
+```javascript
+const allowedPaths = ['/dashboard', '/profile']
+
+if (allowedPaths.includes(searchParams.next)) {
+  redirect(searchParams.next)
+} else {
+  redirect('/dashboard')
+}
+```
+
+### 🖼️ 2. Clickjacking
+**Threat:** Your app is embedded in an iframe to trick users.
+
+✅ **Fix (middleware.ts):**
+```typescript
+import { NextResponse } from 'next/server'
+
+export function middleware() {
+  const res = NextResponse.next()
+
+  res.headers.set('X-Frame-Options', 'DENY')
+  res.headers.set(
+    'Content-Security-Policy',
+    "frame-ancestors 'self'"
+  )
+
+  return res
+}
+```
+
+### 💧 3. XS-Leaks
+**Threat:** Leaking user info via timing or resource loading.
+
+✅ **Fix:**
+```javascript
+res.headers.set('Cross-Origin-Opener-Policy', 'same-origin')
+res.headers.set('Cross-Origin-Embedder-Policy', 'require-corp')
+```
+*Also: Avoid predictable IDs → use UUID instead.*
+
+### 👻 4. CSRF
+**Threat:** Executing actions without user consent.
+
+🔥 **Next.js advantage:** Server Actions are CSRF-protected by default.
+
+If using API routes:
+```javascript
+import csrf from 'csurf'
+const csrfProtection = csrf({ cookie: true })
+```
+
+### 🔑 5. IDOR (Insecure Direct Object Reference)
+**Threat:** Accessing other users’ data by changing IDs.
+
+❌ **Bad:**
+```javascript
+const user = await db.user.findUnique({
+  where: { id: params.id }
+})
+```
+
+✅ **Good:**
+```javascript
+const session = await auth()
+
+if (session.user.id !== params.id) {
+  throw new Error('Forbidden')
+}
+```
+
+### 🧬 6. Prototype Pollution
+**Threat:** Injecting `__proto__` to manipulate objects.
+
+❌ **Bad:**
+```javascript
+const config = { ...defaultConfig, ...req.body }
+```
+
+✅ **Good (with validation):**
+```javascript
+import { z } from 'zod'
+
+const schema = z.object({
+  name: z.string()
+})
+
+const safeData = schema.parse(req.body)
+```
+
+### 📡 7. MITM (Man-in-the-Middle)
+**Threat:** Intercepting user-server communication.
+
+✅ **Fix:**
+```javascript
+res.headers.set(
+  'Strict-Transport-Security',
+  'max-age=31536000; includeSubDomains'
+)
+```
+
+### 🌐 8. SSRF
+**Threat:** Server makes requests based on user input.
+
+❌ **Very Dangerous:**
+```javascript
+await fetch(req.body.url)
+```
+
+✅ **Safe Pattern:**
+```javascript
+const endpoints = {
+  users: '/api/users',
+  posts: '/api/posts'
+}
+
+await fetch(endpoints[type])
+```
+
+### 🏝️ 9. Subdomain Takeover
+**Threat:** Unused subdomains get hijacked.
+
+✅ **Fix:**
+- Remove unused DNS records.
+- Clean up old environments (Vercel / Netlify).
+
+### 📦 10. Supply Chain Attacks
+**Threat:** Malicious npm packages.
+
+✅ **Fix:**
+- `npm audit fix`
+- `import 'server-only'`
+- Use Dependabot.
+- Never expose secrets to client components.
+
+---
+
+## 🛡️ Final Takeaway
+Security is **NOT** one tool. It’s a layered system (Defense in Depth).
+
+- CSP helps with XSS
+- Server Actions help with CSRF
+- But neither protects you from IDOR or SSRF
+
+👉 **Think like an attacker. Build like an engineer.**
+
+💬 **Question for you:**
+What’s one security threat you thought was “backend-only”… but turned out to affect frontend too?
+
+#NextJS #WebSecurity #CyberSecurity #ReactJS #AppSec #Frontend #InfoSec

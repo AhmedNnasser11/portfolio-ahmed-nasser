@@ -50,6 +50,7 @@ export const EXPERIENCE = [
             "Rayan: Built a mission-critical distribution tracking system for the Hajj season.",
             "SeenShow: Designed and implemented a modern streaming UI with Shadcn/UI.",
             "First Mas: Developed comprehensive Hajj & Umrah services website with package showcase and booking system.",
+            "ShodShop: Developed a price comparison platform for major retailers including Amazon and Noon in Saudi Arabia.",
             "Gallery Zidan: Created elegant furniture manufacturer website showcasing premium collections and 80+ years heritage.",
         ],
         environment: [
@@ -73,6 +74,7 @@ export const EXPERIENCE = [
             "Deraya: Built high-performance analytics dashboards for insurance and education sectors.",
             "Eatery/Kokomo: Developed a multi-brand restaurant management system with dynamic digital menus.",
             "Convest: Created a Shopify-integrated installment and supplier management dashboard.",
+            "Karnly: Developed a grocery price comparison engine for major retailers like Carrefour, Seoudi, and Spinneys.",
         ],
         environment: [
             "Next.js",
@@ -246,6 +248,36 @@ export const PROJECTS = [
         tags: ["Next.js", "TypeScript", "Tailwind CSS", "Furniture"],
         link: "https://gallery-zidan-front.vercel.app",
         year: "2024",
+        featured: false,
+    },
+    {
+        title: "ShodShop Price Comparison",
+        slug: "shodshop",
+        description:
+            "A specialized price comparison platform for the Saudi Arabian market, enabling users to compare real-time prices across major retailers like Amazon and Noon.",
+        highlights: [
+            "Developed a real-time price comparison engine for Saudi Arabian e-commerce giants.",
+            "Integrated data from multiple sources including Amazon and Noon.",
+            "Optimized for fast searching and price tracking across various categories.",
+        ],
+        tags: ["Next.js", "TypeScript", "Tailwind CSS", "E-commerce"],
+        link: "#",
+        year: "2024",
+        featured: false,
+    },
+    {
+        title: "Karnly Grocery Comparison",
+        slug: "karnly",
+        description:
+            "A comprehensive grocery price comparison platform allowing users to find the best deals across major retail chains including Carrefour, Seoudi, and Spinneys.",
+        highlights: [
+            "Engineered a high-concurrency scraping and data normalization engine for diverse grocery inventories.",
+            "Implemented real-time price tracking and automated savings calculations for shopping baskets.",
+            "Designed a mobile-first UI for seamless in-store price checking and list management.",
+        ],
+        tags: ["Next.js", "TypeScript", "TanStack Query", "E-commerce"],
+        link: "#",
+        year: "2025",
         featured: false,
     },
 ];
