@@ -52,6 +52,7 @@ export const EXPERIENCE = [
             "First Mas: Developed comprehensive Hajj & Umrah services website with package showcase and booking system.",
             "ShodShop: Developed a price comparison platform for major retailers including Amazon and Noon in Saudi Arabia.",
             "Gallery Zidan: Created elegant furniture manufacturer website showcasing premium collections and 80+ years heritage.",
+            "Baian: Developed an AI-powered invoice extraction and modification platform with Zoho and Odoo integrations.",
         ],
         environment: [
             "Next.js",
@@ -75,6 +76,7 @@ export const EXPERIENCE = [
             "Eatery/Kokomo: Developed a multi-brand restaurant management system with dynamic digital menus.",
             "Convest: Created a Shopify-integrated installment and supplier management dashboard.",
             "Karnly: Developed a grocery price comparison engine for major retailers like Carrefour, Seoudi, and Spinneys.",
+            "Beesly AI: Engineered the management dashboard for an AI-powered virtual secretary system, enabling real-time call monitoring and booking management.",
         ],
         environment: [
             "Next.js",
@@ -279,6 +281,37 @@ export const PROJECTS = [
         link: "#",
         year: "2025",
         featured: false,
+    },
+    {
+        title: "Beesly AI Management Dashboard",
+        slug: "beesly-ai",
+        description:
+            "Architected and developed the comprehensive management dashboard for Beesly AI, allowing businesses to monitor real-time AI voice interactions, manage automated bookings, and review conversation analytics.",
+        highlights: [
+            "Built a real-time monitoring interface for AI-powered voice conversations and automated call handling.",
+            "Implemented an intuitive booking management system for visualizing and organizing AI-scheduled appointments.",
+            "Integrated detailed conversation analytics and sentiment analysis modules for actionable business insights.",
+        ],
+        tags: ["Next.js", "AI", "Dashboard", "TanStack Query"],
+        link: "https://www.producthunt.com/products/beesly-ai",
+        year: "2024",
+        featured: false,
+    },
+    {
+        title: "Baian AI Invoice Extraction",
+        slug: "baian",
+        description:
+            "A powerful AI-driven platform for automated invoice extraction and modification. Streamlines accounting workflows through seamless integrations with Zoho Books, Odoo, and WhatsApp.",
+        highlights: [
+            "Engineered an AI extraction engine to process and digitize complex, unstructured invoice documents.",
+            "Developed a full integration suite for Zoho Books, enabling secure and automated data synchronization.",
+            "Built dynamic interfaces for real-time document modification and multi-system integration management.",
+            "Architected a scalable workflow for Odoo and WhatsApp-based document processing.",
+        ],
+        tags: ["Next.js", "AI", "SaaS", "Integrations"],
+        link: "#",
+        year: "2024",
+        featured: true,
     },
 ];
 
