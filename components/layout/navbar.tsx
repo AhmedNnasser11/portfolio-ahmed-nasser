@@ -15,7 +15,7 @@ const NAV_ITEMS = [
   { label: "Experience", href: "/#experience" },
   { label: "Projects", href: "/#projects" },
   { label: "Blog", href: "/blog" },
-  // { label: "Uses", href: "/uses" },
+  { label: "Uses", href: "/uses" },
 ];
 
 export function Navbar() {
@@ -105,6 +105,8 @@ export function Navbar() {
           <ThemeToggle />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
             className="p-2 text-muted-foreground hover:text-foreground"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

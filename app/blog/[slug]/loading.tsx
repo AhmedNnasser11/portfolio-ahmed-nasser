@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <Container className="max-w-6xl py-24 md:py-32 relative">
+    <Container className="max-w-6xl py-24 md:py-32 relative" role="status" aria-label="Loading article">
       {/* Back Link Skeleton */}
       <Skeleton className="h-6 w-32 mb-12" />
 

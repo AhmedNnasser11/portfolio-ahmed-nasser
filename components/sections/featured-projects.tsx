@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import { Section } from "@/components/layout/layout-primitives";
 import { PROJECTS } from "@/lib/data";
@@ -35,6 +34,15 @@ export function FeaturedProjects() {
                 <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
                   {project.title}
                 </h3>
+                {project.link !== "#" && (
+                  <Link
+                    href={project.link}
+                    className="text-muted-foreground hover:text-primary transition-colors shrink-0"
+                    aria-label={`View ${project.title} project`}
+                  >
+                    <ExternalLink size={18} />
+                  </Link>
+                )}
               </div>
 
               {project.highlights && project.highlights.length > 0 ? (

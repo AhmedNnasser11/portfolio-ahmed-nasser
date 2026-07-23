@@ -38,6 +38,17 @@ export default function Home() {
         name: "Ahmed Nasser Portfolio",
         url: process.env.NEXT_PUBLIC_BASE_URL,
       },
+      {
+        "@type": "Organization",
+        name: "Ahmed Nasser",
+        url: process.env.NEXT_PUBLIC_BASE_URL,
+        logo: `${process.env.NEXT_PUBLIC_BASE_URL || "https://ahmednasser.com"}/icon.png`,
+        sameAs: [
+          PROFILE.links.github,
+          PROFILE.links.linkedin,
+          PROFILE.links.npm,
+        ],
+      },
     ],
   };
 

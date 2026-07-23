@@ -22,9 +22,8 @@ export function Section({ children, className, id, ...props }: SectionProps) {
   return (
     <section
       id={id}
-      className={cn("py-20 md:py-32 outline-none", className)}
-      tabIndex={-1}
-      {...props}
+      className={cn("py-20 md:py-32", className)}
+      {...(id ? { tabIndex: -1 } : {})}
     >
       <Container>{children}</Container>
     </section>

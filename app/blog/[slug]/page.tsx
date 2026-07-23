@@ -1,9 +1,9 @@
-import React from "react";
 import { getPostBySlug, getRelatedPosts, getPostSlugs } from "@/lib/blog";
 import { format } from "date-fns";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { Container } from "@/components/layout/layout-primitives";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowLeft, Clock } from "lucide-react";
 import { ScrollProgress } from "@/components/blog/scroll-progress";
 import { ShareActions } from "@/components/blog/share-actions";
@@ -27,14 +27,30 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
   const { metadata } = getPostBySlug(slug);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://ahmednasser.com";
   return {
     title: `${metadata.title} | Ahmed Nasser`,
     description: metadata.description,
     alternates: {
       canonical: `/blog/${slug}`,
+    },
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      type: "article",
+      publishedTime: metadata.date,
+      url: `${baseUrl}/blog/${slug}`,
+      ...(metadata.image && {
+        images: [{ url: metadata.image, width: 1200, height: 630 }],
+      }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: metadata.title,
+      description: metadata.description,
     },
   };
 }
@@ -49,31 +65,54 @@ export default async function BlogPostPage({
 
   // Calculate related posts
   const relatedPosts = getRelatedPosts(slug, metadata.tags);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://ahmednasser.com";
+  const wordCount = content.trim().split(/\s+/).length;
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: metadata.title,
-    description: metadata.description,
-    image: metadata.image ? [metadata.image] : [],
-    datePublished: metadata.date,
-    author: {
-      "@type": "Person",
-      name: metadata.author?.name || PROFILE.name,
-      url: PROFILE.links.linkedin,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Ahmed Nasser",
-      logo: {
-        "@type": "ImageObject",
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/icon.png`,
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        headline: metadata.title,
+        description: metadata.description,
+        ...(metadata.image && { image: [metadata.image] }),
+        datePublished: metadata.date,
+        author: {
+          "@type": "Person",
+          name: metadata.author?.name || PROFILE.name,
+          url: PROFILE.links.linkedin,
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Ahmed Nasser",
+          logo: {
+            "@type": "ImageObject",
+            url: `${baseUrl}/icon.png`,
+          },
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `${baseUrl}/blog/${slug}`,
+        },
+        articleBody: content.substring(0, 5000),
+        wordCount,
+        ...(metadata.tags?.length && {
+          about: metadata.tags.map((tag: string) => ({
+            "@type": "Thing",
+            name: tag,
+          })),
+          keywords: metadata.tags.join(", "),
+        }),
       },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${process.env.NEXT_PUBLIC_BASE_URL}/blog/${slug}`,
-    },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
+          { "@type": "ListItem", position: 2, name: "Blog", item: `${baseUrl}/blog` },
+          { "@type": "ListItem", position: 3, name: metadata.title },
+        ],
+      },
+    ],
   };
 
   return (

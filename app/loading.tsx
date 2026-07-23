@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function Loading() {
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-background/80 backdrop-blur-sm z-50">
+    <div className="h-screen w-full flex items-center justify-center bg-background/80 backdrop-blur-sm z-50" role="status" aria-label="Loading page content">
       <div className="relative">
         {/* Outer Ring */}
         <motion.div

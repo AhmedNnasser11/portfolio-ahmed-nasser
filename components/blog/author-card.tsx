@@ -1,11 +1,9 @@
-import React from "react";
 import { PostMetadata } from "@/lib/blog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PROFILE } from "@/lib/data";
 
 export function AuthorCard({
   author,
-  date,
-  readingTime,
 }: {
   author: NonNullable<PostMetadata["author"]>;
   date: string;
@@ -37,9 +35,9 @@ export function AuthorCard({
           <div className="flex flex-col">
             <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Social</span>
             <div className="flex gap-3 text-sm font-medium text-foreground hover:text-primary transition-colors">
-              <a href="#" className="hover:underline">Twitter</a>
-              <a href="#" className="hover:underline">LinkedIn</a>
-              <a href="#" className="hover:underline">GitHub</a>
+              <a href={PROFILE.links.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline">LinkedIn</a>
+              <a href={PROFILE.links.github} target="_blank" rel="noopener noreferrer" className="hover:underline">GitHub</a>
+              <a href={PROFILE.links.npm} target="_blank" rel="noopener noreferrer" className="hover:underline">NPM</a>
             </div>
           </div>
         </div>
