@@ -1,17 +1,19 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import { Section } from "@/components/layout/layout-primitives";
-import { SKILLS } from "@/lib/data";
+import { SKILLS, CORE_COMPETENCIES } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 
 export function Skills() {
   const categories = [
     { title: "Core Technologies", items: SKILLS.core },
+    { title: "Next.js & Rendering", items: SKILLS.nextjs },
     { title: "State Management", items: SKILLS.state },
     { title: "Styling & UI", items: SKILLS.ui },
     { title: "Data Fetching & APIs", items: SKILLS.data },
+    { title: "Dashboards & Access Control", items: SKILLS.dashboards },
+    { title: "Testing & CI/CD", items: SKILLS.testing },
     { title: "Architecture & Tools", items: SKILLS.tools },
   ];
 
@@ -26,6 +28,24 @@ export function Skills() {
             A comprehensive set of tools and technologies I use to build modern,
             scalable web applications.
           </p>
+        </div>
+
+        {/* Core Competencies */}
+        <div>
+          <h3 className="text-xl font-bold mb-4 text-foreground/80">
+            Core Competencies
+          </h3>
+          <div className="flex flex-wrap gap-2 mb-8">
+            {CORE_COMPETENCIES.map((comp) => (
+              <Badge
+                key={comp}
+                variant="secondary"
+                className="text-sm py-1.5 px-3 bg-primary/10 hover:bg-primary/20 text-foreground border-primary/20 transition-all duration-300"
+              >
+                {comp}
+              </Badge>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

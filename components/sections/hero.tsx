@@ -1,11 +1,10 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/layout/layout-primitives";
 import { PROFILE } from "@/lib/data";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Download, Linkedin, Loader2 } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import Link from "next/link";
 import { useCvDownload } from "@/hooks/use-cv-download";
 
@@ -19,7 +18,7 @@ const FADE_UP_ANIMATION_VARIANTS = {
 };
 
 export function Hero() {
-  const { isDownloading, handleDownload } = useCvDownload();
+  const { handleDownload } = useCvDownload();
 
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
@@ -110,18 +109,8 @@ export function Hero() {
               size="lg"
               className="shadow-lg hover:shadow-xl transition-shadow"
               onClick={handleDownload}
-              disabled={isDownloading}
             >
-              {isDownloading ? (
-                <>
-                  Generating...{" "}
-                  <Loader2 className="ml-2 w-4 h-4 animate-spin" />
-                </>
-              ) : (
-                <>
-                  Download CV <Download className="ml-2 w-4 h-4" />
-                </>
-              )}
+              Download CV <Download className="ml-2 w-4 h-4" />
             </Button>
           </motion.div>
 

@@ -7,7 +7,7 @@ import { PROFILE } from "@/lib/data";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = {
-  title: "Ahmed Nasser | Senior Frontend Developer",
+  title: "Ahmed Nasser | Front-End Web Developer | React.js & Next.js Specialist",
   description: PROFILE.summary,
   alternates: {
     canonical: "/",
@@ -51,12 +51,3 @@ export default function Home() {
     </div>
   );
 }
-
-const FADE_UP_ANIMATION_VARIANTS = {
-  hidden: { opacity: 0, y: 10 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", bounce: 0.4, duration: 0.8 } as any,
-  },
-};

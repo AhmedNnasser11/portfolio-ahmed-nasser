@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Download, Menu, X, Loader2 } from "lucide-react";
+import { Download, Menu, X } from "lucide-react";
 import { useCvDownload } from "@/hooks/use-cv-download";
 
 const NAV_ITEMS = [
@@ -22,7 +22,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { isDownloading, handleDownload } = useCvDownload();
+  const { handleDownload } = useCvDownload();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,18 +91,8 @@ export function Navbar() {
               size="sm"
               className="animate-pulse hover:animate-none"
               onClick={handleDownload}
-              disabled={isDownloading}
             >
-              {isDownloading ? (
-                <>
-                  Generating...{" "}
-                  <Loader2 className="ml-2 w-4 h-4 animate-spin" />
-                </>
-              ) : (
-                <>
-                  cv <Download className="ml-2 w-4 h-4" />
-                </>
-              )}
+              cv <Download className="ml-2 w-4 h-4" />
             </Button>
           </li>
           <li>
@@ -146,18 +136,8 @@ export function Navbar() {
               size="lg"
               className="w-full mt-4"
               onClick={handleDownload}
-              disabled={isDownloading}
             >
-              {isDownloading ? (
-                <>
-                  Generating...{" "}
-                  <Loader2 className="ml-2 w-4 h-4 animate-spin" />
-                </>
-              ) : (
-                <>
-                  Download CV <Download className="ml-2 w-4 h-4" />
-                </>
-              )}
+              Download CV <Download className="ml-2 w-4 h-4" />
             </Button>
           </motion.div>
         )}

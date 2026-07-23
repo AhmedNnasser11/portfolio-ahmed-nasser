@@ -1,18 +1,18 @@
 "use client";
 
 import { motion } from "motion/react";
-import React from "react";
+import { useState, useEffect } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Mail, Loader2 } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { fadeInUp } from "@/lib/animations";
 import { useCvDownload } from "@/hooks/use-cv-download";
 
 export function Hero() {
-  const { isDownloading, handleDownload } = useCvDownload();
-  const [showFixedButton, setShowFixedButton] = React.useState(false);
+  const { handleDownload } = useCvDownload();
+  const [showFixedButton, setShowFixedButton] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       setShowFixedButton(window.scrollY > 300);
     };
@@ -72,34 +72,24 @@ export function Hero() {
       <div className="flex flex-wrap gap-4 justify-center md:justify-start">
         <Button
           onClick={handleDownload}
-          disabled={isDownloading}
           variant="secondary"
           size="lg"
           className="cursor-pointer rounded-full font-bold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg border-2 border-white/20 dark:border-black/20"
         >
-          {isDownloading ? (
-            <>
-              Generating PDF...
-              <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-            </>
-          ) : (
-            <>
-              Download CV
-              <svg
-                className="w-4 h-4 ml-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                ></path>
-              </svg>
-            </>
-          )}
+          Download CV
+          <svg
+            className="w-4 h-4 ml-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            ></path>
+          </svg>
         </Button>
         <Button
           asChild
@@ -145,30 +135,23 @@ export function Hero() {
       >
         <Button
           onClick={handleDownload}
-          disabled={isDownloading}
           size="lg"
           className="cursor-pointer rounded-full font-bold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-xl border-4 border-white/20 dark:border-black/20 animate-pulse"
         >
-          {isDownloading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <>
-              Download CV
-              <svg
-                className="w-4 h-4 ml-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                ></path>
-              </svg>
-            </>
-          )}
+          Download CV
+          <svg
+            className="w-4 h-4 ml-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            ></path>
+          </svg>
         </Button>
       </motion.div>
     </motion.section>

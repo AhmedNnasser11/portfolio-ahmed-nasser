@@ -1,19 +1,16 @@
-const CAREER_START_DATE = new Date("2022-01-01");
-const experienceYears = Math.round((new Date().getTime() - CAREER_START_DATE.getTime()) / (1000 * 60 * 60 * 24 * 365.25));
-
 export const PROFILE = {
     name: "Ahmed Nasser",
-    title: "Senior Frontend Developer (React.js & Next.js)",
+    title: "Front-End Web Developer | React.js & Next.js Specialist",
     location: "Cairo, Egypt",
     summary:
-        "I build high-performance dashboards and enterprise systems used by thousands. Focused on clean architecture, type safety, and business results. Expert in React.js, Next.js, and modern UI capabilities.",
+        "Frontend Web Developer with 5+ years of experience building high-performance web applications and enterprise-grade dashboards with React.js and Next.js — including independently architecting and delivering a full-scale cybersecurity intelligence dashboard as sole frontend owner. Skilled at transforming complex, data-heavy requirements — SaaS ERP systems, security intelligence platforms, analytics dashboards — into fast, intuitive user experiences. Proven collaborator across cross-functional teams in travel, insurance, education, hospitality, and cybersecurity sectors, with expertise in performance optimization (SSR, code splitting, lazy loading), state management, authentication & RBAC systems, and scalable component architecture.",
     email: "ahmednnasser111@gmail.com",
     phone: "+20 10 686 920 41",
     links: {
         github: "https://github.com/AhmedNnasser11",
         linkedin: "https://www.linkedin.com/in/ahmed-nasser-931490212/",
         npm: "https://www.npmjs.com/~ahmednnasser111",
-        resume: "/ahmed_cv_ats.pdf",
+        resume: "/Ahmed_Nasser_front_end_react_next_CV.pdf",
     },
 };
 
@@ -23,44 +20,24 @@ export const EXPERIENCE = [
         role: "Frontend Developer",
         period: "Jan 2026 – Present",
         description:
-            "Building dynamic, high-performance interfaces for the TravWare ecosystem using Next.js, ensuring a seamless user experience for complex SaaS ERP dashboards.",
+            "Serving as the Sole Frontend Developer, independently building the entire frontend application from scratch for a cybersecurity intelligence SaaS platform spanning dark web surveillance, phishing & domain protection, vulnerability prioritization, and threat intelligence. Also collaborate with cross-functional teams on the TravWare SaaS ERP ecosystem for the travel industry.",
         highlights: [
-            "Developing scalable UI components for E-commerce booking engines, tailored for diverse travel sectors including DMCs, OTAs, and Hotels.",
-            "Integrating complex APIs and real-time data fetching to manage large-scale travel inventory, ensuring data consistency across the Ecosystem 2.0 platform.",
-            "Collaborating with cross-functional teams to deliver tailored software solutions for Corporate, MICE, and Leisure sectors, focusing on performance and responsiveness.",
-            "Optimizing frontend workflows and ensuring the technical feasibility of UI/UX designs to meet the evolving needs of the travel and tourism industry.",
+            "Independently built a full-scale Next.js dashboard for Cyber-Guardian Intelligence covering credential monitoring, brand protection, VIP monitoring, and incident management with complex nested interfaces, advanced data tables, and filtering.",
+            "Built breach-trend analytics and incident risk-scoring visualizations from scratch, optimized for large, high-volume datasets.",
+            "Designed and implemented a complete Role-Based Access Control (RBAC) system supporting Admin, Analyst, and Viewer permission tiers.",
+            "Established a performant, responsive, reusable component architecture as sole frontend owner, setting the scalability standard for the platform.",
+            "Collaborated with cross-functional engineering teams to build high-performance Next.js interfaces for TravWare, a SaaS ERP ecosystem serving the travel industry.",
+            "Contributed to scalable UI components for e-commerce booking engines (DMCs, OTAs, hotel partners) and implemented frontend features for real-time inventory management tooling.",
+            "Participated in the development of a unified social media management dashboard, working with backend developers and designers to consolidate multiple accounts into a single interface.",
         ],
         environment: [
             "Next.js",
             "React.js",
             "TypeScript",
             "Tailwind CSS",
+            "RBAC",
+            "SaaS Dashboard",
             "SaaS ERP",
-        ],
-    },
-    {
-        company: "Freelance",
-        role: "Frontend Developer",
-        period: "2024 – Present",
-        description:
-            "Delivered multiple end-to-end web applications for international clients, specializing in e-commerce, tourism, and real-time distribution systems.",
-        highlights: [
-            "Ajzaa: Engineered a multi-tenant e-commerce system with RBAC and real-time chat.",
-            "Kenzytours & Kemet Travel: Developed high-performance tourism platforms with advanced booking and SEO.",
-            "Rayan: Built a mission-critical distribution tracking system for the Hajj season.",
-            "SeenShow: Designed and implemented a modern streaming UI with Shadcn/UI.",
-            "First Mas: Developed comprehensive Hajj & Umrah services website with package showcase and booking system.",
-            "ShodShop: Developed a price comparison platform for major retailers including Amazon and Noon in Saudi Arabia.",
-            "Gallery Zidan: Created elegant furniture manufacturer website showcasing premium collections and 80+ years heritage.",
-            "Baian: Developed an AI-powered invoice extraction and modification platform with Zoho and Odoo integrations.",
-        ],
-        environment: [
-            "Next.js",
-            "React.js",
-            "TypeScript",
-            "Tailwind CSS",
-            "Redux",
-            "Pusher",
         ],
     },
     {
@@ -68,15 +45,15 @@ export const EXPERIENCE = [
         role: "Frontend Developer",
         period: "Feb 2024 – Dec 2025",
         description:
-            "Architected enterprise-grade systems and Voice AI platforms, focusing on scalability and complex business logic.",
+            "Architected enterprise-grade systems and Voice AI platforms, focusing on scalability and complex business logic across education, hospitality, insurance, and AI sectors.",
         highlights: [
-            "Elli: Architected a school management ecosystem with dynamic roles, quiz engines, and automated scheduling.",
-            "Olimi.ai: Engineered a Voice AI management dashboard for 20+ languages with real-time analytics and sentiment analysis.",
-            "Deraya: Built high-performance analytics dashboards for insurance and education sectors.",
-            "Eatery/Kokomo: Developed a multi-brand restaurant management system with dynamic digital menus.",
-            "Convest: Created a Shopify-integrated installment and supplier management dashboard.",
-            "Karnly: Developed a grocery price comparison engine for major retailers like Carrefour, Seoudi, and Spinneys.",
-            "Beesly AI: Engineered the management dashboard for an AI-powered virtual secretary system, enabling real-time call monitoring and booking management.",
+            "Architected an enterprise-grade school management platform (Elli) integrating quiz engines, assignment tracking, automated scheduling, and role-based permissions for administrators, teachers, and students.",
+            "Engineered the management dashboard for a MENA-focused Voice AI platform (Olimi.ai) supporting 20+ languages/dialects, real-time analytics (Intent Accuracy, CSAT), AI call summaries, sentiment analysis, and knowledge base integrations.",
+            "Built high-performance analytics dashboards for insurance and education clients (Deraya), improving data visualization and real-time reporting.",
+            "Delivered a multi-brand restaurant management system (Eatery, Kokomo & Otto) with a centralized dashboard for managing brands, branches, and dynamic digital menus.",
+            "Built a Shopify-integrated dashboard (Convest) to streamline payment installments and supplier management with real-time cash-flow analytics.",
+            "Developed a grocery price comparison platform (Karnly) spanning major retail chains, engineering high-concurrency scraping and data normalization pipelines.",
+            "Built a management dashboard (Beesly AI) for an AI-powered virtual secretary, enabling real-time call monitoring, booking visualization, and conversation analytics.",
         ],
         environment: [
             "Next.js",
@@ -150,12 +127,12 @@ export const PROJECTS = [
         title: "Rayan Water Distribution",
         slug: "rayan",
         description:
-            "Mission-critical web application to manage water distribution during Hajj season. Implemented point tracking and supervisor evaluation systems.",
+            "Successfully developed a mission-critical web application using Next.js and TypeScript to manage water distribution during the Hajj season. Implemented tracking for distribution points and a comprehensive supervisor evaluation system to ensure service quality and operational efficiency.",
         highlights: [
-            "Built a mission-critical tracking system for water distribution during Hajj.",
+            "Built a mission-critical tracking system for water distribution during Hajj using Next.js and TypeScript.",
             "Stack: Next.js, TypeScript, Offline-first capabilities.",
             "Guaranteed 100% uptime during peak load (2M+ users).",
-            "Tracked 15,000+ distribution points in real-time.",
+            "Tracked 15,000+ distribution points in real-time with supervisor evaluation system.",
         ],
         tags: ["Next.js", "TypeScript", "Tailwind CSS"],
         link: "#",
@@ -237,14 +214,28 @@ export const PROJECTS = [
         featured: false,
     },
     {
+        title: "HighSkyView Tourism",
+        slug: "high-sky-view",
+        description:
+            "High-performance tourism platform built with Next.js SSR for superior SEO and fast page transitions, featuring complex booking flows and trip management.",
+        highlights: [
+            "Developed tourism platform with Next.js SSR for superior SEO performance.",
+            "Implemented complex booking flows and trip management systems.",
+        ],
+        tags: ["Next.js", "TypeScript", "Tailwind CSS", "Tourism"],
+        link: "#",
+        year: "2024",
+        featured: false,
+    },
+    {
         title: "Gallery Zidan Furniture",
         slug: "gallery-zidan",
         description:
-            "Elegant furniture manufacturer website showcasing premium collections and 80+ years of craftsmanship heritage. Designed with premium aesthetics for luxury furniture market.",
+            "Showcase website for a heritage classic-furniture restoration and manufacturing business (est. 1940), specializing in repair, gilding, and French furniture craftsmanship.",
         highlights: [
-            "Created elegant website for classic furniture manufacturer.",
-            "Showcased premium furniture collections and 80+ years craftsmanship heritage.",
-            "Designed with premium aesthetics for luxury furniture market.",
+            "Built a showcase website for a heritage classic-furniture restoration and manufacturing business established in 1940.",
+            "Highlighted specialization in repair, gilding, and French furniture craftsmanship.",
+            "Designed with premium aesthetics for the luxury furniture market.",
             "Featured comprehensive product galleries and company history.",
         ],
         tags: ["Next.js", "TypeScript", "Tailwind CSS", "Furniture"],
@@ -315,10 +306,46 @@ export const PROJECTS = [
     },
 ];
 
+export const CORE_COMPETENCIES = [
+    "React.js",
+    "Next.js (App Router, SSR, ISR, PPR)",
+    "TypeScript",
+    "JavaScript (ES6+)",
+    "State Management (Redux Toolkit, Zustand)",
+    "TanStack Query",
+    "Tailwind CSS",
+    "RBAC & Authentication",
+    "REST APIs & WebSockets",
+    "Performance Optimization",
+    "Responsive Design & UI/UX",
+    "SaaS Dashboard Architecture",
+];
+
 export const SKILLS = {
     core: ["JavaScript (ES6+)", "TypeScript", "React.js", "Next.js", "HTML5", "CSS3"],
+    nextjs: ["App Router", "Server-Side Rendering (SSR)", "Incremental Static Regeneration (ISR)", "Partial Prerendering (PPR)"],
     state: ["Redux Toolkit", "Zustand", "React Context API", "Signals"],
     ui: ["Tailwind CSS", "MUI", "Shadcn/UI", "Headless UI", "RizzUI", "Styled-components"],
     data: ["TanStack Query", "Axios", "RESTful APIs", "WebSockets"],
-    tools: ["Git", "Vite", "Webpack", "Performance Optimization", "SEO", "Responsive Design"],
+    dashboards: ["Enterprise dashboards", "Real-time data visualization", "Role-Based Access Control (RBAC)", "Authentication & session management", "Multi-module SaaS UIs"],
+    testing: ["Unit & component testing", "GitLab CI", "Automated deployment workflows"],
+    tools: ["Git", "Vite", "Webpack", "Performance Optimization", "SEO Best Practices", "Responsive Design"],
+};
+
+export const EDUCATION = {
+    degree: "Bachelor of Commerce",
+    institution: "Helwan University",
+    period: "2014 - 2020",
+    note: "Self-taught software engineering professional with a continuous learning mindset, focused on modern web architectures since 2015.",
+};
+
+export const LANGUAGES = [
+    { language: "Arabic", proficiency: "Native" },
+    { language: "English", proficiency: "Professional Working Proficiency" },
+];
+
+export const COMMUNITY = {
+    title: "Open Source & Community Contributions",
+    description: "Active contributor to the Open Source community, publishing and maintaining specialized libraries on NPM to assist React and Next.js developers worldwide.",
+    npmUrl: "https://www.npmjs.com/~ahmednnasser111",
 };
