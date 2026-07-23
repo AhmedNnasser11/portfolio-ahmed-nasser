@@ -32,7 +32,7 @@ export async function generateMetadata({
   const { metadata } = getPostBySlug(slug);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://ahmednasser.com";
   return {
-    title: `${metadata.title} | Ahmed Nasser`,
+    title: metadata.title,
     description: metadata.description,
     alternates: {
       canonical: `/blog/${slug}`,

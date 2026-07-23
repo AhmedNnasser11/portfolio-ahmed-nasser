@@ -1,9 +1,15 @@
 import React from "react";
 import { Container, Section } from "@/components/layout/layout-primitives";
+import type { Metadata } from "next";
+import { JsonLd } from "@/components/seo/json-ld";
 
-export const metadata = {
-  title: "Uses | Ahmed Nasser",
-  description: "A list of the software and hardware I use for my daily work.",
+export const metadata: Metadata = {
+  title: "Uses",
+  description:
+    "A list of the software and hardware I use for my daily work.",
+  alternates: {
+    canonical: "/uses",
+  },
 };
 
 const USES_DATA = [
@@ -71,40 +77,57 @@ const USES_DATA = [
 ];
 
 export default function UsesPage() {
-  return (
-    <Section>
-      <div className="max-w-2xl mb-16">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
-          Uses
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          A collection of the software, hardware, and tools I use on a daily
-          basis to stay productive.
-        </p>
-      </div>
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: process.env.NEXT_PUBLIC_BASE_URL || "https://ahmednasser.com",
+      },
+      { "@type": "ListItem", position: 2, name: "Uses" },
+    ],
+  };
 
-      <div className="grid gap-16">
-        {USES_DATA.map((group) => (
-          <div
-            key={group.category}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            <h2 className="text-xl font-bold md:col-span-1">
-              {group.category}
-            </h2>
-            <div className="md:col-span-2 grid gap-6">
-              {group.items.map((item) => (
-                <div key={item.name}>
-                  <h3 className="text-lg font-medium mb-1">{item.name}</h3>
-                  <p className="text-muted-foreground text-sm">
-                    {item.description}
-                  </p>
-                </div>
-              ))}
+  return (
+    <>
+      <JsonLd data={jsonLd} />
+      <Section>
+        <div className="max-w-2xl mb-16">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
+            Uses
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            A collection of the software, hardware, and tools I use on a daily
+            basis to stay productive.
+          </p>
+        </div>
+
+        <div className="grid gap-16">
+          {USES_DATA.map((group) => (
+            <div
+              key={group.category}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
+              <h2 className="text-xl font-bold md:col-span-1">
+                {group.category}
+              </h2>
+              <div className="md:col-span-2 grid gap-6">
+                {group.items.map((item) => (
+                  <div key={item.name}>
+                    <h3 className="text-lg font-medium mb-1">{item.name}</h3>
+                    <p className="text-muted-foreground text-sm">
+                      {item.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </Section>
+          ))}
+        </div>
+      </Section>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -17,11 +17,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
   ),
-  title: "Ahmed Nasser | Front End Web Developer",
+  title: {
+    default: "Ahmed Nasser | Front End Web Developer",
+    template: "%s | Ahmed Nasser",
+  },
   description:
     "Portfolio of Ahmed Nasser, a highly skilled Front End Web Developer specializing in React.js, Next.js, and TypeScript. View projects, skills, and experience.",
   keywords: [
@@ -65,6 +79,7 @@ export const metadata: Metadata = {
     description:
       "Highly skilled Front End Web Developer. React.js, Next.js, TypeScript specialist.",
     creator: "@ahmednnasser111",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,

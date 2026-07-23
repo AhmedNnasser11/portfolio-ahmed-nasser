@@ -7,7 +7,7 @@ import { PROFILE } from "@/lib/data";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = {
-  title: "Ahmed Nasser | Front-End Web Developer | React.js & Next.js Specialist",
+  title: "Front-End Web Developer | React.js & Next.js Specialist",
   description: PROFILE.summary,
   alternates: {
     canonical: "/",
