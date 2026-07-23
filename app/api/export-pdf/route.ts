@@ -24,7 +24,7 @@ export async function GET() {
         contentObj = contentObj.replace(/over \d+ years/, ` ${experienceYears} years`);
 
         // Set the content of the page
-        await page.setContent(contentObj, { waitUntil: "networkidle0" });
+        await page.setContent(contentObj, { waitUntil: "load" });
 
         // Generate PDF
         const pdfBuffer = await page.pdf({
