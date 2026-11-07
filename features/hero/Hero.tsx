@@ -49,7 +49,7 @@ export function Hero() {
           ))}
         </ul>
 
-        <p className="mt-4 font-mono text-[12px] leading-relaxed tracking-[0.04em] text-muted">
+        <p translate="no" className="mt-4 font-mono text-[12px] leading-relaxed tracking-[0.04em] text-muted">
           <span className="sr-only">Also: </span>
           {profile.secondaryStack.map((s, i) => (
             <span key={s}>

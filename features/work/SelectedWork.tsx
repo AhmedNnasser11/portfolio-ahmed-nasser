@@ -21,7 +21,7 @@ export function SelectedWork() {
           >
             <h3 className="text-[24px] leading-tight font-extrabold tracking-[-0.035em]">{p.name}</h3>
             <p className="mt-3 flex-1 text-[16px] leading-relaxed text-secondary">{p.description}</p>
-            <p className="mt-5 font-mono text-[12px] tracking-[0.06em] text-muted">
+            <p translate="no" className="mt-5 font-mono text-[12px] tracking-[0.06em] text-muted">
               <span className="sr-only">Stack: </span>
               {p.stack.join(" · ")}
             </p>

@@ -19,7 +19,7 @@ const SPOTS = [
  */
 export function LayerHotspots() {
   return (
-    <div className="stage-hotspots" aria-label="Layers on the stack">
+    <div className="stage-hotspots" role="group" aria-label="Layers on the stack">
       {layers.map((layer, i) => (
         <button
           key={layer.id}

@@ -49,3 +49,7 @@ assets-src/raw/
 # generated keyframes/clips (large binaries; logged in assets-src/PROGRESS.md)
 assets-src/keyframes/
 assets-src/clips/
+
+# playwright
+test-results/
+playwright-report/

@@ -39,7 +39,7 @@ export function LayerPanels() {
 
             <h3
               id={`layer-${layer.id}-title`}
-              className="panel-title text-[clamp(24px,6.2vw,36px)] leading-[1.02] font-extrabold tracking-[-0.04em]"
+              className="panel-title text-[clamp(24px,6.2vw,36px)] leading-[1.02] font-extrabold tracking-[-0.04em] text-balance"
             >
               <Marked text={layer.title} variant="grad" />
             </h3>

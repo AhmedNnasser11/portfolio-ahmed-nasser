@@ -174,7 +174,7 @@ export default function BreakItDemo() {
       </p>
 
       {results.length > 0 && (
-        <table className="mb-4 w-full text-left font-mono text-[12px]">
+        <table className="mb-4 w-full text-left font-mono text-[12px] tabular-nums">
           <thead className="text-muted">
             <tr>
               <th className="py-1 font-normal">mode</th>
@@ -204,6 +204,8 @@ export default function BreakItDemo() {
           key={mode /* controlled in broken mode, uncontrolled (ref) in fixed mode */}
           ref={inputRef}
           readOnly
+          name="filter"
+          autoComplete="off"
           value={mode === "broken" ? query : undefined}
           defaultValue={mode === "fixed" ? "" : undefined}
           className="mt-1 w-full rounded-xl border border-line bg-surface-2 px-3 py-2 font-mono text-[14px]"

@@ -77,12 +77,21 @@ export function StageBoot({ targetId }: { targetId: string }) {
       import("@/features/demos/open").then((m) => m.openDemo(btn.dataset.demo!, btn));
     };
     document.addEventListener("click", onDemo);
+    // Preload the dialog + that demo's chunk on hover, focus or press (bundle-preload).
+    const onIntentToOpen = (e: Event) => {
+      const id = (e.target as Element).closest?.<HTMLElement>("[data-demo]")?.dataset.demo;
+      if (id) import("@/features/demos/open").then((m) => m.preloadDemo(id));
+    };
+    for (const t of ["pointerover", "focusin", "pointerdown"] as const)
+      document.addEventListener(t, onIntentToOpen, { passive: true });
 
     return () => {
       cancelled = true;
       cancelHero();
       removeTriggers();
       document.removeEventListener("click", onDemo);
+      for (const t of ["pointerover", "focusin", "pointerdown"] as const)
+        document.removeEventListener(t, onIntentToOpen);
       handle?.destroy();
     };
   }, [targetId]);

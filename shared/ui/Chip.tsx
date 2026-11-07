@@ -14,7 +14,7 @@ type Props = {
 export function Chip({ children, filled = false, size = "sm", index }: Props) {
   const cls = `chip${filled ? " chip-key" : ""}${size === "lg" ? " chip-lg" : ""}`;
   return (
-    <li className={cls} style={index === undefined ? undefined : ({ "--i": index } as React.CSSProperties)}>
+    <li className={cls} translate="no" style={index === undefined ? undefined : ({ "--i": index } as React.CSSProperties)}>
       {children}
     </li>
   );

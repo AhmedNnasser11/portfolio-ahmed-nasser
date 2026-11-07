@@ -4,6 +4,8 @@
 import { createRoot, type Root } from "react-dom/client";
 import { DemoDialog } from "./DemoDialog";
 
+export { preloadDemo } from "./DemoDialog";
+
 let root: Root | null = null;
 
 export function openDemo(id: string, trigger: HTMLElement | null) {

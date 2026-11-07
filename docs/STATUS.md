@@ -285,3 +285,18 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
    - real-device test with Ahmed (low-end Android + iPhone Safari, scroll the stage up/down 5×)
 4. Keep budgets: initial JS ≤ 150 KB br (149.5 now), DevTools TBT < 200 ms.
 5. In each summary, name the docs followed (rule 0.7) and update this file.
+
+## P8 progress (2026-11-07) — in progress, not committed
+- P7 committed (`816893f`). Vercel skills installed at project level (`.claude/skills`, `skills-lock.json`).
+- **web-design-guidelines fixes:** dialog animation honors reduced motion; `touch-action: manipulation` + tap highlight; body safe-area side padding; hover states on stage dots/hotspots; `role="group"` on hotspots; `text-balance` on panel/contact titles; `translate="no"` on chips + stack lines; `tabular-nums` on BreakIt results; input `name`/`autoComplete`; curly apostrophes (Monsha’at, Let’s).
+- **vercel-react-best-practices:** demo chunks preload on hover/focus/press (`preloadDemo`); XSS demo lookups hoisted to Set/regex.
+- **Security auditor (nextjs-react-security):** `npm audit --omit=dev` 0; full audit 8 moderate, all dev-only (minimatch GHSA-g3hv-75wg-m249 via eslint-config-next → not shipped). `security_intel.py` on next 16.4.5, react/react-dom 19.3.0, gsap 3.15.1, lenis 1.3.27: GHSA + OSV 0 advisories; Next repo advisories API 404, Snyk/Socket not configured (coverage incomplete, not "no vulns"). No Server Actions / Route Handlers / auth / DB. Hardening: JSON-LD now escapes `<`, `>`, `&`. Raw output in scratchpad `sec-*.json` (for layer 06 replay).
+- **SEO/GEO auditor:** title/description/canonical/robots/OG/h1/h2 OK, sitemap absolute, llms.txt 200, 404 OK, security headers OK. Fixed: removed non-standard `Host:` from robots; JSON-LD Person + `description` + `worksFor`. Open: **no og:image** (P9), twitter card → `summary_large_image` with OG image (P9).
+- Rebuilt and re-verified on `next start`: robots has no Host line; JSON-LD parses, has description + worksFor, no raw < > &.
+- **Layer 06 terminal replay:** `features/demos/audit-run.ts` holds the real run lines (dated 2026-11-07); `AuditorsDemo` replays them line by line (all at once with reduced motion), with Replay + repo links. All lines are reserved up front (no CLS).
+- **CV fact diff** (every site/llms.txt/JSON-LD claim vs the CV PDF): all match except two that come from CLAUDE.md §4, not the CV:
+  1. "Available for work" (hero status line, llms.txt)
+  2. "RTL" (layer 01 chip "i18next · RTL", the RTL demo, llms.txt). The CV says "i18next (internationalization)".
+  - Confirmed in CV: Arabic (native) + English → JSON-LD `knowsLanguage` OK; Monsha’at, Takaful, Paymob, Elli ~6 months, 2,000-row fix, RBAC tiers, two juniors, Kenzy Tours/First Mas on Google.
+- **Playwright** (`npm run test:e2e`, `playwright.config.ts`, `tests/e2e/`): 4 projects (360/390/768/1440), tests a–m + tab-bar visibility. **49 passed, 7 skipped by design, 0 failed** (re-run by the main session). Covers console errors, horizontal scroll, chapters, header, intro skip/replay, all 6 demos, EN/AR RTL, keyboard-only + focus rings, reduced motion, XSS inert (`window.__p` undefined, no `/x` request), JS off, `/_next/static` JS blocked, phone no blur/backdrop/preserve-3d, scroll-mode demo. Reduced-motion `#layers` height bound is < 5× viewport below 768px (six stacked cards), < 3× from 768px up.
+- **Left in P8:** real-device test with Ahmed; commit.

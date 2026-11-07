@@ -19,7 +19,7 @@ export function SiteHeader() {
             <span className="text-subtle"> · </span>
             <span className="text-secondary">{profile.title}</span>
           </span>
-          <span className="truncate font-mono text-[11px] tracking-[0.08em] text-muted lg:text-[12px]">
+          <span translate="no" className="truncate font-mono text-[11px] tracking-[0.08em] text-muted lg:text-[12px]">
             <span className="hidden text-subtle lg:inline">· </span>
             {profile.coreStackShort.join(" · ")}
           </span>

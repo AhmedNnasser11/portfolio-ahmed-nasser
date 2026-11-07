@@ -32,7 +32,7 @@ export const experience: Role[] = [
     period: "Apr 2022 – Feb 2024",
     mode: "Remote",
     points: [
-      "Migrated legacy HTML, Bootstrap and jQuery products *to React* for Saudi clients including *Monsha'at* and *Takaful*.",
+      "Migrated legacy HTML, Bootstrap and jQuery products *to React* for Saudi clients including *Monsha’at* and *Takaful*.",
       "Optimized *Core Web Vitals* across all platforms and mentored a junior developer.",
     ],
   },

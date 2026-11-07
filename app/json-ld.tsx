@@ -10,6 +10,9 @@ const jsonLd = {
       "@id": `${SITE_URL}/#person`,
       name: profile.name,
       jobTitle: profile.title,
+      description: profile.description,
+      // Current employer, as shown in the Experience section (GEO: clear entity relationships).
+      worksFor: { "@type": "Organization", name: "E2E County" },
       url: SITE_URL,
       email: `mailto:${links.email}`,
       address: {
@@ -37,7 +40,11 @@ export function JsonLd() {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        // Escape <, > and & after serialization (nextjs-react-security xss-checklist).
+        __html: JSON.stringify(jsonLd)
+          .replace(/</g, "\\u003c")
+          .replace(/>/g, "\\u003e")
+          .replace(/&/g, "\\u0026"),
       }}
     />
   );

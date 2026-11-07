@@ -1,15 +1,31 @@
 import { lazy, Suspense, useEffect, useRef } from "react";
 import { layers } from "@/content/layers";
 
-// One lazy chunk per demo, fetched only when that demo opens.
-const DEMOS = {
-  interface: lazy(() => import("./RtlDemo")),
-  components: lazy(() => import("./ArchLabDemo")),
-  data: lazy(() => import("./RbacDemo")),
-  shield: lazy(() => import("./XssDemo")),
-  engine: lazy(() => import("./BreakItDemo")),
-  "ai-quality": lazy(() => import("./AuditorsDemo")),
+// One lazy chunk per demo, fetched only when that demo is about to open
+// (hover/focus/press preloads it: vercel-react-best-practices bundle-preload).
+const LOADERS = {
+  interface: () => import("./RtlDemo"),
+  components: () => import("./ArchLabDemo"),
+  data: () => import("./RbacDemo"),
+  shield: () => import("./XssDemo"),
+  engine: () => import("./BreakItDemo"),
+  "ai-quality": () => import("./AuditorsDemo"),
 } as const;
+type DemoId = keyof typeof LOADERS;
+
+const DEMOS = {
+  interface: lazy(LOADERS.interface),
+  components: lazy(LOADERS.components),
+  data: lazy(LOADERS.data),
+  shield: lazy(LOADERS.shield),
+  engine: lazy(LOADERS.engine),
+  "ai-quality": lazy(LOADERS["ai-quality"]),
+} satisfies Record<DemoId, unknown>;
+
+/** Starts fetching a demo chunk early; import() dedupes, so lazy() reuses it. */
+export function preloadDemo(id: string) {
+  if (id in LOADERS) void LOADERS[id as DemoId]().catch(() => {});
+}
 
 type Props = { id: string; onClose: () => void };
 
@@ -17,7 +33,7 @@ type Props = { id: string; onClose: () => void };
 export function DemoDialog({ id, onClose }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const layer = layers.find((l) => l.id === id);
-  const Demo = DEMOS[id as keyof typeof DEMOS];
+  const Demo = DEMOS[id as DemoId];
 
   useEffect(() => {
     const d = ref.current;

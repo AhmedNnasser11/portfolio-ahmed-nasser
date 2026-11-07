@@ -17,6 +17,8 @@ const SAMPLES = [
 ];
 
 type Finding = { tag: string; attr: string; value: string };
+const URL_ATTRS = new Set(["href", "src", "action", "formaction", "xlink:href"]);
+const JS_URL = /^javascript:/i;
 
 function analyse(input: string): { tags: string[]; findings: Finding[] } {
   const doc = new DOMParser().parseFromString(input, "text/html");
@@ -28,7 +30,7 @@ function analyse(input: string): { tags: string[]; findings: Finding[] } {
       const name = attr.name.toLowerCase();
       const value = attr.value.trim();
       const isHandler = name.startsWith("on");
-      const isJsUrl = ["href", "src", "action", "formaction", "xlink:href"].includes(name) && /^javascript:/i.test(value);
+      const isJsUrl = URL_ATTRS.has(name) && JS_URL.test(value);
       if (isHandler || isJsUrl) findings.push({ tag: el.tagName.toLowerCase(), attr: name, value });
     }
     if (el.tagName === "SCRIPT") findings.push({ tag: "script", attr: "(element)", value: el.textContent ?? "" });
@@ -49,6 +51,8 @@ export default function XssDemo() {
         id="xss-input"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        name="untrusted-html"
+        autoComplete="off"
         rows={3}
         spellCheck={false}
         className="w-full rounded-xl border border-line bg-surface-2 p-3 font-mono text-[14px] text-text"

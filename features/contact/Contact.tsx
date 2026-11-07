@@ -19,9 +19,9 @@ export function Contact() {
         <p className="mono-label mb-4">Contact</p>
         <h2
           id="contact-title"
-          className="text-[clamp(44px,12vw,112px)] leading-[0.92] font-extrabold tracking-[-0.05em]"
+          className="text-[clamp(44px,12vw,112px)] leading-[0.92] font-extrabold tracking-[-0.05em] text-balance"
         >
-          Let&apos;s build <span className="grad">yours.</span>
+          Let’s build <span className="grad">yours.</span>
         </h2>
         <a
           href={`mailto:${links.email}`}
