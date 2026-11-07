@@ -123,31 +123,41 @@ label {
 
 
 /* ===================== Intro reel (chapter 0) =====================
-   CSS keyframes only: starts at first paint, zero JS, transform/opacity only
-   (CLAUDE.md §6 rule 7). Timeline: S1 0–2.5 s, S2 2.5–4.3, S3 4.3–6.9,
-   S4 6.9–9.3, overlay out 9.3–9.6. IntroToggle sets html[data-intro="done"]. */
+   One GSAP timeline (features/intro/intro-timeline.ts) loaded after first paint.
+   These are the first-paint states: S1 text + fact line readable, every shape
+   and later scene hidden. transform/opacity only (CLAUDE.md §6 rules 7, 12b).
+   Timeline: S1 0–2.5 s, S2 2.5–4.3, S3 4.3–6.9, S4 6.9–9.3, outro 9.3–10. */
 .intro {
   position: fixed;
   inset: var(--header-h) 0 var(--tabbar-h) 0;
   z-index: 45;
-  display: grid;
-  place-items: center;
-  padding: 2.5rem 1rem 6rem;
-  background: var(--color-bg);
+  overflow: hidden;
   text-align: center;
-  /* opacity fade on the compositor; visibility flips in a 0s animation (no frames) */
-  animation: intro-out 0.3s ease-in 9.3s forwards, intro-gone 0s linear 9.6s forwards;
+}
+/* No JS at all (blocked bundle): hide after S1. IntroToggle sets data-intro on
+   mount, which turns this off; it then skips by itself if GSAP never arrives. */
+html:not([data-intro]) .intro { animation: intro-gone 0s linear 6s forwards; }
+.intro-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
 }
 /* Each scene fills the overlay box, so a font swap can never move a scene box (CLS). */
 .intro-scene {
   position: absolute;
   inset: 0;
   display: grid;
-  place-content: center;
-  justify-items: center;
+  place-items: center;
   padding: 2.5rem 1rem 6rem;
 }
-.intro-scene > * { max-width: 44rem; }
+.s2,
+.s3,
+.s4 { visibility: hidden; opacity: 0; }
+.intro-cam {
+  display: grid;
+  justify-items: center;
+  max-width: 44rem;
+}
 .intro-bars {
   position: absolute;
   top: 0.75rem;
@@ -169,23 +179,24 @@ label {
   background: var(--color-text);
   transform: scaleX(0);
   transform-origin: left;
-  animation: intro-bar linear both;
 }
-.intro-bar:nth-child(1) > span { animation-duration: 2.5s; animation-delay: 0s; }
-.intro-bar:nth-child(2) > span { animation-duration: 1.8s; animation-delay: 2.5s; }
-.intro-bar:nth-child(3) > span { animation-duration: 2.6s; animation-delay: 4.3s; }
-.intro-bar:nth-child(4) > span { animation-duration: 2.4s; animation-delay: 6.9s; }
 
-/* One animation per element so each stays on the compositor: the scene
-   fades out, its inner .intro-in fades in. */
-.s1 { animation: intro-scene-out 0.2s ease-in 2.3s forwards; }
-.s2 { --start: 2.5s; animation: intro-scene-out 0.2s ease-in 4.1s forwards; }
-.s3 { --start: 4.3s; animation: intro-scene-out 0.2s ease-in 6.7s forwards; }
-.s4 { --start: 6.9s; }
-.intro-in { animation: intro-scene-in 0.25s ease-out var(--start) both; }
-
-.intro-title {
+/* S1 — grid frame (1px lines scaled with transform), sweep, pin */
+.s1-box {
+  position: relative;
+  padding: 0.3em 0.45em;
   font-size: clamp(38px, 9.5vw, 84px);
+}
+.s1-frame { position: absolute; inset: 0; }
+.gl { position: absolute; background: rgb(110 155 255 / 0.55); }
+.gl-h { left: -0.8em; right: -0.8em; height: 1px; transform: scaleX(0); }
+.gl-t { top: 0; transform-origin: left; }
+.gl-b { bottom: 0; transform-origin: right; }
+.gl-v { top: -0.55em; bottom: -0.55em; width: 1px; transform: scaleY(0); }
+.gl-l { left: 0; transform-origin: top; }
+.gl-r { right: 0; transform-origin: bottom; }
+.intro-title {
+  font-size: 1em;
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.045em;
@@ -204,11 +215,9 @@ label {
   inset: auto 0 0.06em 0;
   height: 0.36em;
   background: rgb(110 155 255 / 0.85);
-  transform: scaleX(0);
+  transform: scaleX(var(--sweep, 0));
   transform-origin: left;
-  animation: intro-sweep 0.6s cubic-bezier(0.3, 0.7, 0.2, 1) 0.35s forwards;
 }
-.intro-sweep ~ .intro-sweep::after { animation-delay: 0.6s; }
 .intro-sub {
   margin-top: 1.25rem;
   display: flex;
@@ -221,20 +230,46 @@ label {
   text-transform: uppercase;
   color: var(--color-secondary);
 }
+.s1-pin { opacity: 0; }
 
+/* S2 — gauge ring around the counter */
+.s2-gauge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-block: 0.4em;
+  font-size: clamp(104px, 28vw, 210px);
+}
+.s2-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.75em;
+  height: 1.75em;
+  margin: -0.875em 0 0 -0.875em;
+  overflow: visible;
+}
+.ring-track { fill: none; stroke: rgb(255 255 255 / 0.1); stroke-width: 3; }
+.ring-fill {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+.s2-ring line { stroke: rgb(110 155 255 / 0.6); stroke-width: 2; }
 .intro-years {
+  position: relative;
   display: flex;
   justify-content: center;
-  font-size: clamp(104px, 28vw, 210px);
+  font-size: 1em;
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.05em;
 }
 .odo { display: inline-block; height: 1em; overflow: hidden; }
-.odo > span {
-  display: block;
-  animation: intro-odo 0.8s steps(4, end) 2.75s both;
-}
+.odo > span { display: block; }
 .intro-lines {
   margin-top: 1rem;
   font-size: clamp(24px, 6.4vw, 44px);
@@ -243,13 +278,25 @@ label {
   letter-spacing: -0.035em;
 }
 .ml { display: block; overflow: hidden; padding-bottom: 0.06em; }
-.ml > span {
-  display: inline-block;
-  animation: intro-line 0.5s cubic-bezier(0.2, 0.7, 0.2, 1)
-    calc(var(--start) + 0.15s + var(--i) * 0.09s) both;
-}
+.ml > span { display: inline-block; }
 .intro-small { font-size: 0.55em; font-weight: 600; letter-spacing: -0.01em; color: var(--color-muted); }
 
+/* S3 — frame + chips that draw as dashed wireframes, then fill */
+.s3-box {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  padding: 1.5rem 1.25rem 1.75rem;
+}
+.s3-frame,
+.s4-panel {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(110 155 255 / 0.45);
+  border-radius: 22px;
+  opacity: 0;
+}
+.s3-label { margin-bottom: 1.1rem; }
 .intro-chips {
   display: flex;
   flex-wrap: wrap;
@@ -257,16 +304,81 @@ label {
   gap: 0.6rem;
   max-width: 30rem;
 }
-.intro-chips li {
+.ichip {
+  position: relative;
   padding: 0.5rem 1.1rem;
+  font-size: clamp(18px, 5vw, 26px);
+  font-weight: 800;
+}
+.ichip-wire {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0;
+}
+.ichip-wire rect { fill: none; stroke: var(--color-accent); stroke-width: 1.5; stroke-dashoffset: 100; }
+.ichip-ghost { color: var(--color-secondary); opacity: 0; }
+.ichip-fill {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
   border-radius: 999px;
   background: var(--color-accent);
   color: var(--color-bg);
-  font-size: clamp(18px, 5vw, 26px);
-  font-weight: 800;
-  animation: intro-pop 0.4s cubic-bezier(0.3, 1.4, 0.5, 1)
-    calc(var(--start) + 0.2s + var(--i) * 0.14s) both;
+  opacity: 0;
 }
+
+/* S4 — dashboard panel, bars, shield, KSA ↔ Egypt line */
+.s4-box {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  padding: 1.25rem 1.25rem 1rem;
+}
+.s4-panel { border-color: rgb(110 155 255 / 0.3); background: rgb(255 255 255 / 0.02); }
+.s4 .intro-lines { position: relative; margin-top: 0; }
+.s4 .ml { padding-bottom: 0.12em; }
+.s4 .nw { white-space: nowrap; }
+.s4-bars {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.75em;
+  margin-left: 0.25em;
+  overflow: visible;
+}
+.s4-bars rect { fill: var(--color-accent); }
+.s4-shield {
+  display: inline-block;
+  width: 0.78em;
+  height: 0.85em;
+  margin-right: 0.18em;
+  vertical-align: -0.1em;
+  overflow: visible;
+}
+.s4-shield path,
+.map-line {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+.s4-map {
+  position: relative;
+  width: min(15rem, 70vw);
+  margin-top: 0.75rem;
+  overflow: visible;
+  opacity: 0;
+}
+.map-line { stroke-width: 1.5; }
+.map-dot { fill: var(--color-accent); }
+.s4-map text { font: 500 10px var(--font-mono); letter-spacing: 0.14em; fill: var(--color-muted); }
+
 .intro-facts {
   position: absolute;
   left: 1rem;
@@ -281,13 +393,8 @@ label {
   .intro-facts { bottom: 1.5rem; }
 }
 
-@keyframes intro-out { to { opacity: 0; } }
 @keyframes intro-gone { to { visibility: hidden; pointer-events: none; } }
-@keyframes intro-bar { to { transform: scaleX(1); } }
-@keyframes intro-scene-in { from { opacity: 0; transform: translateY(16px); } }
-@keyframes intro-scene-out { to { opacity: 0; transform: translateY(-12px); } }
-@keyframes intro-sweep { to { transform: scaleX(1); } }
-@keyframes intro-odo { to { transform: translateY(-4em); } }
+/* Shared with the Inspect panels (mask reveal, chip pop). */
 @keyframes intro-line { from { transform: translateY(105%); } }
 @keyframes intro-pop { from { opacity: 0; transform: scale(0.6); } }
 
@@ -311,6 +418,105 @@ html:not([data-intro="done"]) .intro-replay { visibility: hidden; }
   .intro,
   .intro-skip,
   .intro-replay { display: none; }
+}
+
+/* ===================== Hero laptop (chapter 1) =====================
+   features/hero/laptop.ts: canvas draw, float, desktop tilt and the scroll
+   handoff on .lap-move (JS transform). CSS: lid light sweep + dot pulse,
+   paused off-screen / hidden tab (data-paused) and with reduced motion. */
+/* z-index auto: the stage (later in the DOM) paints its headline over the
+   travelling laptop; the stage media itself is hidden until the handoff. */
+.hero-laptop { position: relative; }
+/* The travelling laptop may scale past the viewport edge (wider desktop frame
+   mapped onto the phone crop): clip, not hidden, so the sticky stage still works. */
+#main { overflow-x: clip; }
+.lap-move { transform-origin: 0 0; }
+.lap-box { position: relative; aspect-ratio: 720 / 606; }
+.lap-box canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.lap-box canvas[data-ready] { opacity: 1; }
+/* Light sweep: a gradient band moved with transform, clipped to the lid. */
+.lap-sweep {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  clip-path: polygon(36.9% 36.6%, 82.3% 44%, 62.6% 56.3%, 12% 45.7%);
+  pointer-events: none;
+}
+.lap-sweep > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.2) 50%, transparent 80%);
+  transform: translateX(-110%);
+}
+canvas[data-ready] ~ .lap-sweep > span { animation: lap-sweep 6s cubic-bezier(0.45, 0, 0.25, 1) 1.2s infinite; }
+.lap-dots {
+  position: absolute;
+  inset: 0;
+  opacity: var(--teaser, 1);
+  pointer-events: none;
+}
+canvas:not([data-ready]) ~ .lap-dots { visibility: hidden; }
+.lap-dot {
+  position: absolute;
+  left: var(--xm);
+  top: var(--y);
+  width: 8px;
+  height: 8px;
+  margin: -4px;
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+.lap-dot::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 1.5px solid rgb(110 155 255 / 0.75);
+  border-radius: 999px;
+  opacity: 0;
+  animation: lap-pulse 2.4s ease-out calc(var(--i) * 0.4s) infinite;
+}
+.lap-link {
+  display: flex;
+  width: fit-content;
+  min-height: 44px;
+  margin: 0.25rem auto 0;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  opacity: var(--teaser, 1);
+}
+.lap-link:hover { color: var(--color-text); }
+.hero-laptop[data-paused] .lap-sweep > span,
+.hero-laptop[data-paused] .lap-dot::after { animation-play-state: paused; }
+@media (min-width: 48rem) {
+  .lap-box { aspect-ratio: 1600 / 892; }
+  .lap-sweep { clip-path: polygon(41.3% 36.8%, 71.6% 44.3%, 58.4% 56.6%, 24.7% 46%); }
+  .lap-dot { left: var(--x); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lap-sweep,
+  .lap-dot::after { display: none; }
+}
+@keyframes lap-sweep {
+  0% { transform: translateX(-110%); }
+  30%, 100% { transform: translateX(260%); }
+}
+@keyframes lap-pulse {
+  0% { opacity: 0.9; transform: scale(0.4); }
+  70%, 100% { opacity: 0; transform: scale(1.6); }
 }
 
 /* ===================== Stage (chapters 2–4) =====================
@@ -378,6 +584,9 @@ html:not([data-intro="done"]) .intro-replay { visibility: hidden; }
   .stage[data-chapter="inspect"] .stage-head,
   .stage[data-chapter="assemble"] .stage-head { opacity: 0; transform: translateY(-16px); }
   .stage[data-chapter="assemble"] .stage-assembled { opacity: 1; transform: none; }
+  /* Hero → stage handoff (features/hero/laptop.ts): until the stage engages,
+     the hero laptop is travelling onto this frame, so the stage media hides. */
+  .stage[data-handoff="hero"] .stage-media { opacity: 0; }
 }
 
 /* Lenis (desktop only), from lenis/dist/lenis.css */

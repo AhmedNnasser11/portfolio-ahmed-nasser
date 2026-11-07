@@ -4,7 +4,7 @@
 > Update it at the end of every session: phase, what was done, what's next, credits.
 
 **Last updated:** 2026-11-07
-**Current phase:** **P7 done, not committed** — DevTools-throttled TBT now 130–190 ms (was ~450). Next is **P8** (audits, Playwright suite, CV fact check). P6 is committed (`fe78d0b`).
+**Current phase:** **P8 committed** (`bb5b6d0`) + **intro reel / hero laptop upgrade committed** (2026-11-07). Left: real-device test with Ahmed; DevTools TBT is 220–250 ms (budget < 200, see "Intro + laptop upgrade").
 **Branch:** `feat/portfolio`. Commit only when Ahmed asks.
 
 ---
@@ -59,6 +59,44 @@
 - TBT: React hydration ~199 ms task + style/layout. P7 must get it < 200 ms with DevTools throttling.
 - `content-visibility:auto` was tried and reverted (it broke anchor jumps).
 - Checks: no horizontal scroll at 360/390/412/430/767/768/1024/1440. Tab bar 5 × (69–83)×64 px targets at 360–430, hidden ≥ 768. Active tab follows the scroll (Skills covers #layers + #stack). Footer clears the bar by 48 px. A tab tap lands under the header. JS off: hero + tabs work. 0 console errors / CSP violations.
+
+## Intro + laptop upgrade (2026-11-07) — committed
+Spec: CLAUDE.md §1 chapters 0–1 and §6 rule 12b (updated first, then built). 0 Higgsfield credits.
+Docs followed: gsap.com Timeline + "Most common GSAP mistakes", web.dev "High-performance animations", MDN IntersectionObserver / Page Visibility.
+
+**Built:**
+- **Intro reel = one GSAP timeline** (`features/intro/intro-timeline.ts`, lazy chunk imported after hydration). Same 4 scenes and timings (S1 2.5, S2 1.8, S3 2.6, S4 2.4, outro 9.3–10 s).
+  - S1: four 1px grid lines draw a frame (scaleX/Y), highlighter sweeps under DEVELOPER, SVG pin drops on Cairo.
+  - S2: Engine gauge ring fills in 4 steps synced with the 1→4 odometer.
+  - S3: each core-stack chip draws as a dashed wireframe (dash pattern + dashoffset trick), then fills into the solid chip.
+  - S4: bars grow next to "dashboards", hexagon shield draws before "Security", EGYPT ↔ KSA line draws.
+  - Match cuts: S1 frame → S2 background, S2 ring → S3 frame, S3 frame → S4 panel. Camera push-in 1 → 1.04 per scene.
+  - Outro: shapes fly into the hero laptop, overlay bg fades, hero text settles (y 16 → 0, transform only).
+  - First paint (no GSAP yet): bars, S1 text and fact line are SSR; S1 shapes hidden in CSS. **S2–S4 are not SSR**: the lazy chunk inserts them (`scenes-html.ts`, static constants) → smaller HTML/RSC, less hydration + font-swap layout.
+  - The build runs in steps (S1 now, then markup / S2 / S3 / S4 / outro one task each, 16 ms apart): each step 2–25 ms at 4× CPU, so no long task. The timeline length is fixed up front (`tl.set({}, {}, OUT+1)`).
+  - Failsafes: JS blocked → CSS hides the overlay at 6 s (`html:not([data-intro])`); GSAP chunk error or not started in 5 s → skip. Skip = `progress(1)` (hero settled) + `data-intro=done`; Replay = `revert()` + rebuild. Reduced motion → no intro, GSAP never loaded.
+- **Hero laptop** (`features/hero/HeroLaptop.tsx` server markup, `laptop.ts` lazy after load + idle, started by StageBoot). Replaces `HeroStill`. Now also on phones, below the text.
+  - Canvas (not an LCP candidate) drawn at the frame's native size, so it stays sharp while scaled up.
+  - Float ±6 px / 4 s and desktop tilt (≤ 6°, lerped, `pointer: fine` + ≥ 1024 px) on the gsap.ticker; lid light sweep (gradient band, transform, `clip-path` lid polygon) + 6 pulsing dots in CSS; "6 layers inside ↓" link to #layers.
+  - Loops pause off-screen (IntersectionObserver on #top) and in hidden tabs (`data-paused`, ticker removed).
+  - **Handoff:** from scrollY 0 to the stage's ScrollTrigger start, `.lap-move` translates + scales (smoothstep) onto the stage's first frame, mapped through the shared 1928×1076 source (d = full frame, m = crop x 320–1600), so it also works when the hero shows d and the stage draws m (768–1023 px). Until then `.stage[data-handoff="hero"] .stage-media` is hidden; at the end the hero copy hides and the stage shows the identical frame. Engine dispatches `stage:ready` so the laptop tick re-queues after Lenis.
+  - `#main { overflow-x: clip }`: the scaled laptop can pass the viewport edge at 768 (clip, not hidden, so sticky still works).
+  - Class prefix `lap-*` (an earlier `hl-sweep` name collided with the Inspect PROOF highlighter).
+
+**Measured** (prod build, `next start`, Lighthouse 12.8):
+
+| Run | Perf | A11y | BP | SEO | FCP/LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|
+| Mobile, DevTools (5 runs) | 90–91 | 100 | 100 | 100 | 2.1–2.2 s | **220–250 ms ✗** (median 240) | 0.001 |
+| P8 baseline, same machine/session (3 runs) | — | — | — | — | 2.3 s | 190–280 ms (median 210) | 0.001 |
+| Mobile, simulated | 96 | 100 | 100 | 100 | 1.2 / 2.7 s | 50–60 ms | 0 |
+| Desktop | 100 | 100 | 100 | 100 | 0.3 / 0.6 s | 0 | 0 |
+
+- LCP element = the h1 everywhere. Initial JS **149.5 KB brotli** (unchanged). HTML 14.0 KB br.
+- Remaining long tasks are the framework hydration task (~205 ms) and the post-FCP font-swap layout (~120–130 ms); both also in the baseline. The first run before the fixes was 360–410 ms (GSAP eval + full timeline build in one 185 ms task).
+- **TBT budget < 200 is not met today, and the P8 baseline isn't either on this machine now** (P7 measured 130–190). Next ideas: Inter Tight swap relayout (display `optional` was declined before), smaller hydration (fewer server-rendered nodes in the first viewport).
+- CLS 0.001 under DevTools = the accepted horizontal Inter Tight swap (Decisions table), 0 simulated.
+- Playwright: 49 passed, 7 skipped by design. No horizontal scroll at 360/390/430/768/1440 during and after the intro; 0 console errors. Reduced motion: no intro, no GSAP request, static laptop (no sweep/dots/float), PROOF highlights intact.
 
 ## P7 results (2026-11-07) — mobile performance pass
 **Method:**
@@ -275,8 +313,8 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
 - OS: Windows 11. Shell scripts (`scripts/media.sh`) run in Git Bash.
 
 ## Next session — start here
-1. Read this file, then CLAUDE.md §8 P8 + `docs/PLAN.md` §7.
-2. If not done: commit P7.
+1. Read this file, then CLAUDE.md §1 (chapters 0–1 changed) and §6 rule 12b.
+2. Ask Ahmed for feedback on the new intro + laptop (localhost), then the TBT follow-up above.
 3. **P8:**
    - vercel-react-best-practices + web-design-guidelines skills (install needs Ahmed's OK) → fix the findings
    - Ahmed's security auditor + SEO/GEO auditor (github.com/AhmedNnasser11/...) → fix the findings; capture the real output for the layer 06 terminal replay
@@ -299,4 +337,4 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
   2. "RTL" (layer 01 chip "i18next · RTL", the RTL demo, llms.txt). The CV says "i18next (internationalization)".
   - Confirmed in CV: Arabic (native) + English → JSON-LD `knowsLanguage` OK; Monsha’at, Takaful, Paymob, Elli ~6 months, 2,000-row fix, RBAC tiers, two juniors, Kenzy Tours/First Mas on Google.
 - **Playwright** (`npm run test:e2e`, `playwright.config.ts`, `tests/e2e/`): 4 projects (360/390/768/1440), tests a–m + tab-bar visibility. **49 passed, 7 skipped by design, 0 failed** (re-run by the main session). Covers console errors, horizontal scroll, chapters, header, intro skip/replay, all 6 demos, EN/AR RTL, keyboard-only + focus rings, reduced motion, XSS inert (`window.__p` undefined, no `/x` request), JS off, `/_next/static` JS blocked, phone no blur/backdrop/preserve-3d, scroll-mode demo. Reduced-motion `#layers` height bound is < 5× viewport below 768px (six stacked cards), < 3× from 768px up.
-- **Left in P8:** real-device test with Ahmed; commit.
+- **Left in P8:** real-device test with Ahmed. Committed `bb5b6d0`.

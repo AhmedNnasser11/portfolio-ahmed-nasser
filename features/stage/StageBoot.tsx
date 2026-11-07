@@ -13,7 +13,8 @@ const INTENT = ["wheel", "touchstart", "keydown", "scroll"] as const;
  * page loaded. The engine (GSAP, ScrollTrigger, Lenis, frames) is a separate
  * chunk loaded with import(), so nothing of it is in the initial bundle or in
  * the load window (TBT, first-view transfer). Static tier loads nothing.
- * Also draws the desktop hero still (#hero-still) after load + idle, and opens the live demos: one delegated click listener for [data-demo]
+ * Also starts the hero laptop (features/hero/laptop.ts) after load + idle, and
+ * opens the live demos: one delegated click listener for [data-demo]
  * buttons; the dialog and each demo are lazy chunks (features/demos).
  */
 export function StageBoot({ targetId }: { targetId: string }) {
@@ -51,24 +52,13 @@ export function StageBoot({ targetId }: { targetId: string }) {
     for (const e of INTENT) window.addEventListener(e, onIntent, { passive: true, once: true });
     if (window.scrollY > 0) onIntent();
 
-    // Desktop hero laptop: decode off the critical path, draw once.
+    // Hero laptop (canvas, float, tilt, scroll handoff): a lazy chunk after load + idle.
+    let laptop: { destroy: () => void } | undefined;
     const cancelHero = afterLoadIdle(async () => {
-      const canvas = document.getElementById("hero-still") as HTMLCanvasElement | null;
-      if (!canvas || !matchMedia("(min-width: 1024px)").matches) return;
-      const img = new Image();
-      img.src = "/media/posters/k1-d.avif";
-      try {
-        await img.decode();
-      } catch {
-        return;
-      }
+      const { startHeroLaptop } = await import("@/features/hero/laptop");
       if (cancelled) return;
-      const r = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(r.width * dpr);
-      canvas.height = Math.round(r.height * dpr);
-      canvas.getContext("2d", { alpha: false })?.drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.dataset.ready = "1";
+      laptop = await startHeroLaptop(tier);
+      if (cancelled) laptop?.destroy();
     });
 
     const onDemo = (e: MouseEvent) => {
@@ -88,6 +78,7 @@ export function StageBoot({ targetId }: { targetId: string }) {
     return () => {
       cancelled = true;
       cancelHero();
+      laptop?.destroy();
       removeTriggers();
       document.removeEventListener("click", onDemo);
       for (const t of ["pointerover", "focusin", "pointerdown"] as const)

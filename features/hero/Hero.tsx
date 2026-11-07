@@ -2,14 +2,14 @@ import { CV_HREF, profile } from "@/content/profile";
 import { Chip } from "@/shared/ui/Chip";
 import { LinkButton } from "@/shared/ui/LinkButton";
 import { IntroToggle } from "@/features/intro/IntroToggle";
-import { HeroStill } from "./HeroStill";
+import { HeroLaptop } from "./HeroLaptop";
 
 /**
  * Final hero (chapter 1). Server-rendered at opacity 1 from the first byte so
  * the h1 is the LCP element (web.dev Optimize LCP; CLAUDE.md §6 rule 1).
  * Rule 0.1: Frontend Developer, Cairo, 4+ years and the core stack all sit in
- * the first viewport on a 390px phone. The hero fills the first viewport on
- * phones too, so the stage (and its images) start below the fold.
+ * the first viewport on a 390px phone. The laptop (a canvas, never the LCP)
+ * sits on the right from lg, and below the text on phones.
  */
 export function Hero() {
   return (
@@ -71,7 +71,7 @@ export function Hero() {
         </div>
       </div>
 
-      <HeroStill />
+      <HeroLaptop />
     </section>
   );
 }

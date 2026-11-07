@@ -120,6 +120,8 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
   setStep(st.progress);
   scene.onProgress(st.progress);
   cleanups.push(() => st.kill());
+  // The hero laptop's ticker callback re-queues after Lenis (features/hero/laptop.ts).
+  document.dispatchEvent(new Event("stage:ready"));
 
   // Jump to a step (hotspots, progress dots): scroll to the middle of its slice.
   const onJump = (e: MouseEvent) => {
