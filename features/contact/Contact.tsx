@@ -13,7 +13,7 @@ export function Contact() {
     <section
       id="contact"
       aria-labelledby="contact-title"
-      className="mx-auto max-w-7xl px-4 pt-16 pb-12 md:px-8 md:pt-24"
+      className="cv-auto mx-auto max-w-7xl px-4 pt-16 pb-12 md:px-8 md:pt-24"
     >
       <div className="rounded-(--radius-card) border border-line bg-surface p-6 md:p-12">
         <p className="mono-label mb-4">Contact</p>

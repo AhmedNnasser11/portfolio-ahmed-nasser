@@ -4,7 +4,7 @@
 > Update it at the end of every session: phase, what was done, what's next, credits.
 
 **Last updated:** 2026-11-07
-**Current phase:** **P6 done, not committed** (Inspect steps, hotspots, 6 live demos). Next is **P7** (mobile performance pass: DevTools TBT < 200 ms, initial JS headroom). P5 is committed (`5162dff`).
+**Current phase:** **P7 done, not committed** — DevTools-throttled TBT now 130–190 ms (was ~450). Next is **P8** (audits, Playwright suite, CV fact check). P6 is committed (`fe78d0b`).
 **Branch:** `feat/portfolio`. Commit only when Ahmed asks.
 
 ---
@@ -59,6 +59,42 @@
 - TBT: React hydration ~199 ms task + style/layout. P7 must get it < 200 ms with DevTools throttling.
 - `content-visibility:auto` was tried and reverted (it broke anchor jumps).
 - Checks: no horizontal scroll at 360/390/412/430/767/768/1024/1440. Tab bar 5 × (69–83)×64 px targets at 360–430, hidden ≥ 768. Active tab follows the scroll (Skills covers #layers + #stack). Footer clears the bar by 48 px. A tab tap lands under the header. JS off: hero + tabs work. 0 console errors / CSP violations.
+
+## P7 results (2026-11-07) — mobile performance pass
+**Method:**
+- Lighthouse 12 with `--throttling-method=devtools` (4× CPU, slow 4G) and `--save-assets`
+- a trace analyzer that breaks each long main-thread task down by event type
+- Playwright CDP with `Emulation.setCPUThrottlingRate(4)` for scroll and forced-relayout experiments
+- The Chrome DevTools MCP is registered (`claude mcp add chrome-devtools …`) but only loads after a Claude Code restart.
+
+**Diagnosis (before):**
+- pre-FCP `Layout` 856 ms
+- post-FCP `Layout` 250 ms (Inter Tight swap relayout)
+- framework script + RSC decode/hydration 270 ms (one task)
+- Key finding: with `experimental.inlineCss` the whole stylesheet was also carried **twice in the RSC payload** (2 × 35 KB rows of 154 K chars) and decoded during hydration.
+
+**Changes:**
+1. **`inlineCss` off** (reverses the approved P2 deviation): RSC payload 154 K → 75 K chars; the hydration task 270 → 160 ms; FCP 1.7 → 2.0 s (one small render-blocking CSS file). TBT budget wins (§6).
+2. **`content-visibility: auto`** (`.cv-auto`, `contain-intrinsic-size: auto 1100px`) on #stack, #experience, #work, #contact. A forced relayout is −28 % and the font-swap relayout shrinks. Anchor jumps re-settle after scrolling: `TabSync` on `scrollend` (native) and Lenis `onComplete` (desktop).
+3. **The tab bar is server-rendered**; the tiny `TabSync` island only moves `aria-current` and re-settles anchors, so the icons no longer ship as JS.
+4. **Full-stack cards:** skills are one text line (key skills bold) instead of chip elements.
+5. **Chips use short CSS classes** (`.chip/.chip-key/.chip-lg`): RSC payload 75 K → 70 K chars.
+- Tried and reverted:
+  - `<Suspense>` per section: React outlined the big boundaries as hidden HTML revealed by script (`<!--$?-->`), which breaks JS-off
+  - `content-visibility` on the stage: it sits at the fold, so it is always rendered and saves nothing
+
+**Measured (after):**
+
+| Run | Perf | A11y | BP | SEO | FCP/LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|
+| Mobile, DevTools (4 runs) | 94–96 | 100 | 100 | 100 | 2.0–2.1 s | **130–190 ms ✓** (median 140) | 0 |
+| Mobile, simulated | 96 | 100 | 100 | 100 | 1.2 / 2.7 s | 40 ms | 0 |
+| Desktop | 100 | 100 | 100 | 100 | 0.3 / 0.6 s | 0 | 0 |
+
+- LCP element = the h1. Initial JS 149.5 KB brotli. First-view transfer 295 KiB.
+- **Scrubbing** (phone profile 412×823 @1.75, 4× CPU, 5 full passes down and up the stage, 1,616 frames): median frame 17.6 ms, p95 18.2 ms, max 19 ms, **0 long tasks**, heap 4.5 → 4.0 MB (no leak).
+- Anchors with content-visibility land under the header (72/76 px) on phone (tab bar + direct `/#work` load) and desktop (Lenis). #contact stops at the page bottom.
+- Still open: a desktop scroll trace on the real-device profile (desktop TBT 0 and LH 100 already); real-device test in P8.
 
 ## P6 results (2026-11-07)
 **Built:**
@@ -239,14 +275,13 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
 - OS: Windows 11. Shell scripts (`scripts/media.sh`) run in Git Bash.
 
 ## Next session — start here
-1. Read this file (P5/P6 results + the TBT diagnosis), then `docs/PLAN.md` §7 + Amendments.
-2. If not done: commit P6.
-3. **P7** (CLAUDE.md §8 P7). Install the Chrome DevTools MCP first (needs Ahmed's OK) or use Lighthouse DevTools throttling + Playwright traces:
-   - **TBT < 200 ms with DevTools throttling** (now ~450). Targets: the pre-FCP document task (~850 ms), the post-FCP style/layout task (~250 ms), hydration (~275 ms). Ideas:
-     - the full-stack cards repeat every layer's chips → trim DOM
-     - smaller inline CSS
-     - check the font-swap relayout
-     - `content-visibility` on below-fold sections (re-test anchors)
-   - **Initial JS headroom** (149.9 / 150 KB br): e.g. trim IntroToggle/StageBoot, or check whether `partialPrefetching`/router features can go
-   - trace a full scroll on the phone profile: longest task while scrubbing, heap, open bitmaps
-4. In each summary, name the docs followed (rule 0.7) and update this file.
+1. Read this file, then CLAUDE.md §8 P8 + `docs/PLAN.md` §7.
+2. If not done: commit P7.
+3. **P8:**
+   - vercel-react-best-practices + web-design-guidelines skills (install needs Ahmed's OK) → fix the findings
+   - Ahmed's security auditor + SEO/GEO auditor (github.com/AhmedNnasser11/...) → fix the findings; capture the real output for the layer 06 terminal replay
+   - Playwright suite at 360/390/768/1440: intro skip/replay, every chapter renders, layer taps open demos, EN/AR RTL, keyboard-only, reduced motion, no console errors, no horizontal scroll, XSS test (`window.__p` stays 0, no probe request), `/_next/static` blocked → hero visible
+   - CV fact diff (every claim vs public/Ahmed_Nasser_Frontend_Developer_CV.pdf)
+   - real-device test with Ahmed (low-end Android + iPhone Safari, scroll the stage up/down 5×)
+4. Keep budgets: initial JS ≤ 150 KB br (149.5 now), DevTools TBT < 200 ms.
+5. In each summary, name the docs followed (rule 0.7) and update this file.

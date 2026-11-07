@@ -6,20 +6,15 @@ type Props = {
   index?: number;
 };
 
-/** Filled chip = key skill; outline chip = the rest (§2). */
+/**
+ * Filled chip = key skill; outline chip = the rest (§2). Styles live in
+ * globals.css (.chip / .chip-key / .chip-lg): short class names keep the RSC
+ * payload small, and there are ~45 chips on the page (P7).
+ */
 export function Chip({ children, filled = false, size = "sm", index }: Props) {
-  const sizing =
-    size === "lg"
-      ? "px-4 py-2 text-[clamp(15px,4vw,18px)]"
-      : "px-3 py-1 text-[13px]";
-  const look = filled
-    ? "bg-accent font-bold text-bg border-accent"
-    : "border-line text-secondary font-medium";
+  const cls = `chip${filled ? " chip-key" : ""}${size === "lg" ? " chip-lg" : ""}`;
   return (
-    <li
-      className={`inline-flex items-center rounded-full border leading-tight ${sizing} ${look}`}
-      style={index === undefined ? undefined : ({ "--i": index } as React.CSSProperties)}
-    >
+    <li className={cls} style={index === undefined ? undefined : ({ "--i": index } as React.CSSProperties)}>
       {children}
     </li>
   );

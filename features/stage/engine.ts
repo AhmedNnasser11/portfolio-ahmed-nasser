@@ -51,8 +51,14 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
       if (!el || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey) return;
       e.preventDefault();
       // Absolute target from the live layout (not Lenis' element lookup, which was off in testing).
-      const y = el.getBoundingClientRect().top + window.scrollY - px(header) - 8;
-      l.scrollTo(Math.max(0, y));
+      const target = () => el.getBoundingClientRect().top + window.scrollY - px(header) - 8;
+      // content-visibility placeholders can change size on the way: re-settle at the end.
+      l.scrollTo(Math.max(0, target()), {
+        onComplete: () => {
+          const y = target();
+          if (Math.abs(y - window.scrollY) > 4) l.scrollTo(Math.max(0, y), { immediate: true });
+        },
+      });
       history.pushState(null, "", `#${id}`);
     };
     document.addEventListener("click", onAnchor);

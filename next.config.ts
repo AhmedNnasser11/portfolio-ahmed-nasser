@@ -40,9 +40,11 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
     sri: { algorithm: "sha256" },
-    // inlineCss.md: Tailwind CSS is small; inlining removes the render-blocking
-    // stylesheet request for first-time visitors (most visitors here).
-    inlineCss: true,
+    // inlineCss is OFF (P7): with it on, the whole stylesheet was also carried
+    // twice in the RSC payload (2 × 35 KB rows) and decoded during hydration;
+    // turning it off cut DevTools-throttled TBT from ~370 to ~150–190 ms for
+    // +0.3 s FCP (one small render-blocking CSS file). The TBT budget wins.
+    inlineCss: false,
   },
   cacheComponents: true,
   partialPrefetching: true,

@@ -8,7 +8,7 @@ export function Experience() {
     <section
       id="experience"
       aria-labelledby="experience-title"
-      className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24"
+      className="cv-auto mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24"
     >
       <SectionHeading id="experience-title" eyebrow="Experience" title="4+ years *in production*" />
       <ol className="border-t border-line">

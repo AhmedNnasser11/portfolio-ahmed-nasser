@@ -584,3 +584,38 @@ html.lenis { scroll-behavior: auto; }
 @media (min-width: 48rem) {
   .demo-body { padding: 2rem; }
 }
+
+/* Below-the-stage sections: skip style/layout/paint until near the viewport
+   (web.dev content-visibility). Cuts first layout and the font-swap relayout
+   on 4x-CPU phones. "auto" remembers the real size once rendered. Anchor jumps
+   are re-settled after scrolling (TabSync / engine), since placeholders differ. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1100px;
+}
+
+
+/* Chips (§2): outline by default, filled for key skills. */
+@layer components {
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--color-secondary);
+  }
+  .chip-key {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    font-weight: 700;
+    color: var(--color-bg);
+  }
+  .chip-lg {
+    padding: 0.5rem 1rem;
+    font-size: clamp(15px, 4vw, 18px);
+  }
+}

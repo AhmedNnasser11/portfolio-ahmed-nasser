@@ -291,3 +291,9 @@ The fact-check found claims worded more strongly than the CV. The site will use 
 - **Demos = `import()` + their own React root + native `<dialog>`**, opened by one delegated listener in `StageBoot`. This replaces `next/dynamic`: no new client component in the initial bundle (the budget had 0.6 KB left).
 - **Layer 06 demo** is "The auditors" (facts + links) until P8 captures a real audit run; no invented terminal output.
 - **Hotspot click** = instant jump behind the modal + open the demo; the dots scroll smoothly.
+
+## Amendments after P7 (2026-11-07)
+- **`experimental.inlineCss` is OFF.** It duplicated the stylesheet in the RSC payload; turning it off took DevTools TBT from ~370 to 130–190 ms (+0.3 s FCP).
+- **`content-visibility: auto` on the sections below the stage**, with anchor re-settling (TabSync on `scrollend`, Lenis `onComplete`).
+- **Tab bar is server-rendered**; TabSync is the only tab-bar JS.
+- **Never wrap the big sections in `<Suspense>`:** React outlines large boundaries into script-revealed hidden HTML, which breaks JS-off.

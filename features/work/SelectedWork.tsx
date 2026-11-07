@@ -10,7 +10,7 @@ export function SelectedWork() {
     <section
       id="work"
       aria-labelledby="work-title"
-      className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24"
+      className="cv-auto mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24"
     >
       <SectionHeading id="work-title" eyebrow="Selected work" title="Shipped for *real clients*" />
       <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
