@@ -279,3 +279,9 @@ The fact-check found claims worded more strongly than the CV. The site will use 
 - **Phone media is 720×606, not 9:16:** centre crop `1280:1076:320:0` keeps the whole pedestal/stack. The black is graded to #08090B with feathered edges, so it blends into the page. No 9:16 regenerations were needed (0 credits).
 - **Posters are exact clip frames**, not the keyframe PNGs, so the poster → canvas handoff is pixel-identical.
 - **15 fps** for all clips; all budgets met (desktop 6.4 MB total, phone 2.25 MB total).
+
+## Amendments after P5 (2026-11-07)
+- **Intro = CSS keyframes, not a GSAP timeline/SplitText.** It must start at 0 s (rule 0.1), and GSAP may only load after first paint (Ahmed's P2 review). Line masks, highlighter sweep, odometer and chip pops are all transform/opacity, one animation per element (compositor).
+- **Engine boots on the first scroll intent**, not at load + idle. On phones the stage starts at the fold, so an IntersectionObserver trigger would fire at load.
+- **No hero laptop on phones.** The stage below the hero is the laptop. Desktop hero laptop = canvas drawn after load (not an LCP candidate).
+- **Lenis anchors:** custom click handler → `lenis.scrollTo(number)` (the built-in `anchors` / element targets landed wrong in testing).

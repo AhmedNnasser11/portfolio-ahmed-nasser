@@ -1,20 +1,22 @@
 import { CV_HREF, profile } from "@/content/profile";
 import { Chip } from "@/shared/ui/Chip";
 import { LinkButton } from "@/shared/ui/LinkButton";
-import { Poster } from "@/features/stage/Poster";
+import { IntroToggle } from "@/features/intro/IntroToggle";
+import { HeroStill } from "./HeroStill";
 
 /**
  * Final hero (chapter 1). Server-rendered at opacity 1 from the first byte so
  * the h1 is the LCP element (web.dev Optimize LCP; CLAUDE.md §6 rule 1).
  * Rule 0.1: Frontend Developer, Cairo, 4+ years and the core stack all sit in
- * the first viewport on a 390px phone.
+ * the first viewport on a 390px phone. The hero fills the first viewport on
+ * phones too, so the stage (and its images) start below the fold.
  */
 export function Hero() {
   return (
     <section
       id="top"
       aria-labelledby="hero-title"
-      className="mx-auto grid max-w-7xl gap-6 px-4 pt-6 pb-12 md:px-8 md:pt-12 lg:min-h-[calc(100svh-var(--header-h))] lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-12 lg:pb-16"
+      className="mx-auto grid min-h-[calc(100svh-var(--header-h)-var(--tabbar-h))] max-w-7xl content-start gap-6 px-4 pt-6 pb-10 md:px-8 md:pt-12 lg:grid-cols-[1.15fr_1fr] lg:content-center lg:items-center lg:gap-12 lg:pb-16"
     >
       <div>
         <p className="mb-4 flex items-center gap-2 font-mono text-[11px] tracking-[0.1em] whitespace-nowrap text-secondary uppercase min-[400px]:text-[12px]">
@@ -63,15 +65,13 @@ export function Hero() {
             Download CV
           </LinkButton>
         </div>
+
+        <div className="mt-6">
+          <IntroToggle />
+        </div>
       </div>
 
-      <div className="relative">
-        <Poster
-          name="k1"
-          loading="eager"
-          alt="A closed aluminium laptop on a black pedestal in a dark studio"
-        />
-      </div>
+      <HeroStill />
     </section>
   );
 }

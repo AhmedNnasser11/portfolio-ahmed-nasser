@@ -4,7 +4,7 @@
 > Update it at the end of every session: phase, what was done, what's next, credits.
 
 **Last updated:** 2026-11-07
-**Current phase:** **P4 done, not committed** (`scripts/media.sh`, `public/media/`, posters wired into hero + stage). Next is **P5** (scroll engine + intro). Ask Ahmed whether `public/media/` (~9 MB of frames) should be committed (Vercel deploys from git).
+**Current phase:** **P5 done, not committed** (intro reel, scroll stage engine, device tiers, Lenis). Next is **P6** (Inspect + demos). P4 is committed (`cfec028`).
 **Branch:** `feat/portfolio`. Commit only when Ahmed asks.
 
 ---
@@ -59,6 +59,59 @@
 - TBT: React hydration ~199 ms task + style/layout. P7 must get it < 200 ms with DevTools throttling.
 - `content-visibility:auto` was tried and reverted (it broke anchor jumps).
 - Checks: no horizontal scroll at 360/390/412/430/767/768/1024/1440. Tab bar 5 × (69–83)×64 px targets at 360–430, hidden ≥ 768. Active tab follows the scroll (Skills covers #layers + #stack). Footer clears the bar by 48 px. A tab tap lands under the header. JS off: hero + tabs work. 0 console errors / CSP violations.
+
+## P5 results (2026-11-07)
+**Built:**
+- **Intro reel** (`features/intro/IntroReel.tsx`, CSS in `globals.css`):
+  - pure CSS keyframes, so it starts at first paint with zero JS
+  - every animation is transform/opacity on its own element (compositor); `visibility` flips in a 0s animation
+  - S1 0–2.5 s, S2 (odometer "4+") 2.5–4.3, S3 chips 4.3–6.9, S4 6.9–9.3, fade 9.3–9.6
+  - persistent fact line (Cairo · 4+ years · core stack) from 0 s
+  - hidden with `@media (scripting: none)`, with reduced motion, and on `html[data-intro=done]`
+- **IntroToggle:** fixed "Skip intro", removed at the end, plus an inline "Replay intro" with reserved space, so there is no CLS. Skips on scroll, wheel, touchmove, scroll keys, or the end of the reel. Replay uses the Web Animations API (`cancel()` + `play()`).
+- **Stage** (`features/stage/*`):
+  - the 700svh wrapper + sticky stage live only under `@media (scripting: enabled) and (prefers-reduced-motion: no-preference)`
+  - static mode is plain flow with the K3 still
+  - `StageBoot` loads `engine.ts` with `import()` **on the first scroll intent** (or if the page loads already scrolled), never at load
+  - the engine dynamically imports GSAP, ScrollTrigger and Lenis (desktop)
+  - ScrollTrigger (no pin) → progress map A 0–15 %, B 15–33 %, hold 33–88 % (desktop mouse X → clip C, eased at the edges), D 88–100 %
+  - canvas: `alpha:false`, DPR cap 1.5/2, contain-fit, draw only when the bitmap changes, one `gsap.ticker` callback paused off-screen
+  - `BitmapWindow` ±6 phone / ±12 desktop with `close()`
+  - HTTP-cache warming clip by clip as the visitor approaches
+  - `data-chapter` drives the headline swaps (teardown / inspect / assemble)
+- **Tiers** (`device-tier.ts`, `?tier=` override) verified:
+  - desktop and phone → canvas
+  - low → K1/K3/K5 crossfade by opacity, canvas hidden
+  - static (reduced motion) → no intro, static K3
+- **JS off:** no intro, hero visible, static stage.
+- **Desktop hero laptop** = `HeroStill` canvas drawn after load + idle (a canvas is not an LCP candidate), with a `<noscript>` image. **Phones have no hero laptop:** the stage right below is the laptop, and the hero fills the first viewport.
+- **Lenis anchors:** Lenis' `anchors` option and `scrollTo(element)` landed off (144 / −310 px). Now a click handler computes `rect.top + scrollY − header − 8` and calls `lenis.scrollTo(number)`. All header and CTA anchors land 72 px from the top; `#top` → 0.
+
+**Measured:**
+- **Initial JS 149.4 KB brotli** (budget 150). Lazy chunks: about 46.7 KB brotli in total (GSAP core 24.2, ScrollTrigger 15.5, plus 4.8 and 2.2 for the engine/Lenis), none in the initial bundle.
+- **LCP element = the h1** (`span.block … Frontend Developer`) on phone and desktop. ✓
+- **CLS 0** (simulated and DevTools). The Skip→Replay move had caused 0.025; fixed with the two-button approach.
+- First-view transfer 305 KiB (frames load only after scroll intent). Heap stable after 5 full stage scrolls (5.0 → 5.1 MB).
+- No horizontal scroll at 360/390/430/768/1024/1440, during and after the intro. 0 console errors.
+
+| Run | Perf | A11y | BP | SEO | LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|
+| Mobile, simulated | 93 | 100 | 100 | 100 | 2.7 s | 190 ms | 0 |
+| Mobile, DevTools (3 runs) | 87–88 | 100 | 100 | 100 | 1.8–1.9 s | **430–460 ms ✗** | 0 |
+| Desktop | 100 | 100 | 100 | 100 | 0.6 s | 0 | 0 |
+
+**TBT diagnosis for P7 (DevTools 4× CPU):**
+- The long tasks are only:
+  - a pre-FCP document task of ~850 ms (P2: ~520), which also pushes FCP from 1.4 to 1.8 s
+  - a post-FCP document task of ~250 ms (P2: ~130)
+  - React hydration of ~275 ms (P2: ~165)
+- Main thread: styleLayout ~1.2 s (P2: 0.63), "other" ~0.57 s (P2: 0.15).
+- Growth comes from more DOM/CSS (intro overlay, stage) and a bigger RSC payload: HTML 221 KB raw / 19 KB br; inline RSC 140 KB raw / 14.5 KB br; ~570 elements.
+- P7 ideas:
+  - trim duplicate DOM: `LayerPanels` and `StackCards` both render all 6 layers' chips
+  - check the Inter Tight swap relayout
+  - `content-visibility` for below-fold sections, now that anchors use a computed target (desktop) — re-test native phone anchors
+  - smaller inline CSS
 
 ## P4 results (2026-11-07)
 - `scripts/media.sh` (Git Bash), ~2 min. Per clip: 15 fps → 76 frames. Desktop 1600×892 WebP q75; phone 720×606 WebP q70.
@@ -142,15 +195,14 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
 - OS: Windows 11. Shell scripts (`scripts/media.sh`) run in Git Bash.
 
 ## Next session — start here
-1. Read this file, then `docs/PLAN.md` §4 (GSAP architecture) + Amendments.
-2. If not done: ask Ahmed to commit P4 (`scripts/media.sh`, `public/media/`, Poster component).
-3. **P5** (CLAUDE.md §8 P5 + PLAN §4):
-   - device tiers (`device-tier.ts`, `?tier=` override)
-   - sticky stage (700svh wrapper, sticky stage, ref progress)
-   - canvas frame engine (`public/media/manifest.json`, ±6/±12 ImageBitmap window with `.close()`, DPR cap, draw on index change, one `gsap.ticker`)
-   - low/static tier: K1/K3/K5 poster crossfade
-   - intro reel with the CSS failsafe
-   - **GSAP + Lenis via dynamic `import()` after first paint**, never in the initial bundle (measure brotli)
-   - **h1 must become the LCP element** (see the P4 results)
-   - phone frames are 720×606 (not 9:16): the stage shows them centred, and the black blends into the page
-4. In each summary, name the docs followed (rule 0.7) and update this file.
+1. Read this file, then `docs/PLAN.md` §2/§4 (Inspect) + Amendments.
+2. If not done: commit P5.
+3. **P6** (CLAUDE.md §8 P6 + PLAN §4 Inspect):
+   - move `LayerPanels` into the sticky stage for the hold segment (33–88 %): 6 steps, each with a prebuilt paused enter/exit timeline
+   - desktop: left panel + hotspots/labels; phone: bottom sheet at `bottom: var(--tabbar-h)`, `z-index: var(--z-sheet)`
+   - static mode keeps the plain list
+   - the engine already sets `data-chapter=inspect`; add the step index
+   - `DemoDialog` + 6 demos via `next/dynamic`, loaded on open
+   - the XSS lab never uses `innerHTML`
+4. Keep the JS budget: anything new client-side must be lazy (`import()` / `next/dynamic`) and measured as brotli.
+5. In each summary, name the docs followed (rule 0.7) and update this file.

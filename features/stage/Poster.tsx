@@ -10,6 +10,7 @@ export type PosterName = "k1" | "k3" | "k5";
 
 type Props = {
   name: PosterName;
+  /** Empty string = decorative (another element already describes the scene). */
   alt: string;
   className?: string;
   loading?: "eager" | "lazy";
@@ -17,7 +18,7 @@ type Props = {
 
 export function Poster({ name, alt, className = "", loading = "lazy" }: Props) {
   return (
-    <picture>
+    <picture data-poster={name}>
       <source
         media="(min-width: 48rem)"
         srcSet={`/media/posters/${name}-d.avif`}

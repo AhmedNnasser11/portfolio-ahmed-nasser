@@ -110,3 +110,263 @@ body {
   }
 }
 
+
+/* ===================== Intro reel (chapter 0) =====================
+   CSS keyframes only: starts at first paint, zero JS, transform/opacity only
+   (CLAUDE.md §6 rule 7). Timeline: S1 0–2.5 s, S2 2.5–4.3, S3 4.3–6.9,
+   S4 6.9–9.3, overlay out 9.3–9.6. IntroToggle sets html[data-intro="done"]. */
+.intro {
+  position: fixed;
+  inset: var(--header-h) 0 var(--tabbar-h) 0;
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  padding: 2.5rem 1rem 6rem;
+  background: var(--color-bg);
+  text-align: center;
+  /* opacity fade on the compositor; visibility flips in a 0s animation (no frames) */
+  animation: intro-out 0.3s ease-in 9.3s forwards, intro-gone 0s linear 9.6s forwards;
+}
+.intro-scene {
+  grid-area: 1 / 1;
+  max-width: 44rem;
+}
+.intro-bars {
+  position: absolute;
+  top: 0.75rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 6px;
+}
+.intro-bar {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.14);
+}
+.intro-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--color-text);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: intro-bar linear both;
+}
+.intro-bar:nth-child(1) > span { animation-duration: 2.5s; animation-delay: 0s; }
+.intro-bar:nth-child(2) > span { animation-duration: 1.8s; animation-delay: 2.5s; }
+.intro-bar:nth-child(3) > span { animation-duration: 2.6s; animation-delay: 4.3s; }
+.intro-bar:nth-child(4) > span { animation-duration: 2.4s; animation-delay: 6.9s; }
+
+/* One animation per element so each stays on the compositor: the scene
+   fades out, its inner .intro-in fades in. */
+.s1 { animation: intro-scene-out 0.2s ease-in 2.3s forwards; }
+.s2 { --start: 2.5s; animation: intro-scene-out 0.2s ease-in 4.1s forwards; }
+.s3 { --start: 4.3s; animation: intro-scene-out 0.2s ease-in 6.7s forwards; }
+.s4 { --start: 6.9s; }
+.intro-in { animation: intro-scene-in 0.25s ease-out var(--start) both; }
+
+.intro-title {
+  font-size: clamp(38px, 9.5vw, 84px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+.intro-sweep {
+  position: relative;
+  z-index: 0;
+  display: inline-block;
+  padding-inline: 0.06em;
+}
+.intro-sweep::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: auto 0 0.06em 0;
+  height: 0.36em;
+  background: rgb(110 155 255 / 0.85);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: intro-sweep 0.6s cubic-bezier(0.3, 0.7, 0.2, 1) 0.35s forwards;
+}
+.intro-sweep ~ .intro-sweep::after { animation-delay: 0.6s; }
+.intro-sub {
+  margin-top: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+
+.intro-years {
+  display: flex;
+  justify-content: center;
+  font-size: clamp(104px, 28vw, 210px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+.odo { display: inline-block; height: 1em; overflow: hidden; }
+.odo > span {
+  display: block;
+  animation: intro-odo 0.8s steps(4, end) 2.75s both;
+}
+.intro-lines {
+  margin-top: 1rem;
+  font-size: clamp(24px, 6.4vw, 44px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+.ml { display: block; overflow: hidden; padding-bottom: 0.06em; }
+.ml > span {
+  display: inline-block;
+  animation: intro-line 0.5s cubic-bezier(0.2, 0.7, 0.2, 1)
+    calc(var(--start) + 0.15s + var(--i) * 0.09s) both;
+}
+.intro-small { font-size: 0.55em; font-weight: 600; letter-spacing: -0.01em; color: var(--color-muted); }
+
+.intro-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  max-width: 30rem;
+}
+.intro-chips li {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-size: clamp(18px, 5vw, 26px);
+  font-weight: 800;
+  animation: intro-pop 0.4s cubic-bezier(0.3, 1.4, 0.5, 1)
+    calc(var(--start) + 0.2s + var(--i) * 0.14s) both;
+}
+.intro-facts {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 4.75rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+@media (min-width: 48rem) {
+  .intro-facts { bottom: 1.5rem; }
+}
+
+@keyframes intro-out { to { opacity: 0; } }
+@keyframes intro-gone { to { visibility: hidden; pointer-events: none; } }
+@keyframes intro-bar { to { transform: scaleX(1); } }
+@keyframes intro-scene-in { from { opacity: 0; transform: translateY(16px); } }
+@keyframes intro-scene-out { to { opacity: 0; transform: translateY(-12px); } }
+@keyframes intro-sweep { to { transform: scaleX(1); } }
+@keyframes intro-odo { to { transform: translateY(-4em); } }
+@keyframes intro-line { from { transform: translateY(105%); } }
+@keyframes intro-pop { from { opacity: 0; transform: scale(0.6); } }
+
+/* Skip floats above the reel and is removed when it ends; Replay keeps its
+   space in the hero and only becomes visible (no layout shift). */
+.intro-skip {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(var(--tabbar-h) + 0.75rem);
+  z-index: 46;
+}
+html[data-intro="done"] .intro,
+html[data-intro="done"] .intro-skip { display: none; }
+html:not([data-intro="done"]) .intro-replay { visibility: hidden; }
+@media (scripting: none) {
+  .intro,
+  .intro-skip,
+  .intro-replay { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro,
+  .intro-skip,
+  .intro-replay { display: none; }
+}
+
+/* ===================== Stage (chapters 2–4) =====================
+   Static mode (base): plain flow, K3 still only. Scroll mode (JS on + motion OK):
+   700svh wrapper, sticky stage, layered posters + canvas. Sticky, not a GSAP
+   pin (docs/PLAN.md §4). Unlayered so it overrides the poster utilities. */
+.stage-sticky { display: flex; flex-direction: column; }
+.stage-head { order: -1; }
+.stage-media { max-width: 64rem; margin-inline: auto; padding-inline: 1rem; }
+.stage-media [data-poster="k1"],
+.stage-media [data-poster="k5"],
+.stage-media canvas,
+.stage-assembled { display: none; }
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  html:not([data-tier="static"]) .stage { height: 700svh; }
+  html:not([data-tier="static"]) .stage-sticky {
+    position: sticky;
+    top: var(--header-h);
+    display: grid;
+    height: calc(100svh - var(--header-h) - var(--tabbar-h));
+    overflow: hidden;
+  }
+  html:not([data-tier="static"]) .stage-sticky > * { grid-area: 1 / 1; }
+  html:not([data-tier="static"]) .stage-media {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  html:not([data-tier="static"]) .stage-media picture,
+  html:not([data-tier="static"]) .stage-media canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  html:not([data-tier="static"]) .stage-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  html:not([data-tier="static"]) .stage-media [data-poster="k3"] img,
+  html:not([data-tier="static"]) .stage-media [data-poster="k5"] img { opacity: 0; }
+  html:not([data-tier="static"]) .stage-media canvas { opacity: 0; }
+  html:not([data-tier="static"]) .stage-media canvas[data-ready] { opacity: 1; }
+  html[data-tier="low"] .stage-media canvas { display: none; }
+
+  html:not([data-tier="static"]) .stage-head {
+    z-index: 1;
+    align-self: start;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  html:not([data-tier="static"]) .stage-assembled {
+    z-index: 1;
+    display: block;
+    align-self: end;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .stage[data-chapter="inspect"] .stage-head,
+  .stage[data-chapter="assemble"] .stage-head { opacity: 0; transform: translateY(-16px); }
+  .stage[data-chapter="assemble"] .stage-assembled { opacity: 1; transform: none; }
+}
+
+/* Lenis (desktop only), from lenis/dist/lenis.css */
+html.lenis,
+html.lenis body { height: auto; }
+html.lenis { scroll-behavior: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
