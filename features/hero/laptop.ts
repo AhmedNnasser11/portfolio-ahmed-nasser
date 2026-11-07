@@ -178,7 +178,10 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
     }
     maybePlay();
   };
-  const mo = new MutationObserver(onIntro);
+  const mo = new MutationObserver(() => {
+    onIntro();
+    sync();
+  });
   mo.observe(html, { attributes: true, attributeFilter: ["data-intro"] });
 
   // ---- the loop
@@ -215,8 +218,13 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
     }
     move.style.transform = t;
   };
+  // Scroll position from a passive listener: reading window.scrollY inside the
+  // tick forces a style + layout pass every frame while the intro animates.
+  let scrollTop = window.scrollY;
+  const onScroll = () => (scrollTop = window.scrollY);
+  window.addEventListener("scroll", onScroll, { passive: true });
   const progress = () => {
-    const t = Math.min(1, Math.max(0, window.scrollY / yStart));
+    const t = Math.min(1, Math.max(0, scrollTop / yStart));
     return t * t * (3 - 2 * t); // smoothstep: leaves gently, lands gently
   };
   const tick = () => render(progress());
@@ -226,7 +234,8 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
   let running = false;
   const sync = () => {
     maybePlay();
-    const want = onScreen && !document.hidden;
+    // Not while the intro plays: the overlay hides the laptop (no per-frame work for nothing).
+    const want = onScreen && !document.hidden && html.dataset.intro !== "playing";
     if (want && !running) gsap.ticker.add(tick);
     if (!want && running) gsap.ticker.remove(tick);
     running = want;
@@ -256,6 +265,7 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
       ro.disconnect();
       if (running) gsap.ticker.remove(tick);
       document.removeEventListener("visibilitychange", sync);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("stage:ready", requeue);
       window.removeEventListener("pointermove", onPointer);
       move.style.removeProperty("transform");

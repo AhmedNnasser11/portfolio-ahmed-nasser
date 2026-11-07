@@ -4,7 +4,7 @@
 > Update it at the end of every session: phase, what was done, what's next, credits.
 
 **Last updated:** 2026-11-07
-**Current phase:** **P8 committed** (`bb5b6d0`) + **intro reel / hero laptop upgrade committed** (2026-11-07). Left: real-device test with Ahmed; DevTools TBT is 220–250 ms (budget < 200, see "Intro + laptop upgrade").
+**Current phase:** P1–P8 committed, P7 TBT follow-up done (DevTools TBT 140–160 ms). **Left: real-device test, P9, P10.**
 **Branch:** `feat/portfolio`. Commit only when Ahmed asks.
 
 ---
@@ -59,6 +59,36 @@
 - TBT: React hydration ~199 ms task + style/layout. P7 must get it < 200 ms with DevTools throttling.
 - `content-visibility:auto` was tried and reverted (it broke anchor jumps).
 - Checks: no horizontal scroll at 360/390/412/430/767/768/1024/1440. Tab bar 5 × (69–83)×64 px targets at 360–430, hidden ≥ 768. Active tab follows the scroll (Skills covers #layers + #stack). Footer clears the bar by 48 px. A tab tap lands under the header. JS off: hero + tabs work. 0 console errors / CSP violations.
+
+## P7 follow-up: TBT under 200 (2026-11-07) — committed
+**Diagnosis** (Lighthouse traces + CDP CPU profile, 4× CPU):
+- The ~160–210 ms "hydration" task is framework boot: react-dom evaluation runs the Turbopack entry (module factories) and the RSC decode. Next already hydrates inside `startTransition` (time-sliced). **Experiment:** below-fold sections + the six Inspect panels served as static HTML strings (`dangerouslySetInnerHTML`, React skips them): no change (eval 170 ms vs 170). All sections are already Server Components; client islands are only IntroToggle, StageBoot, TabSync (5.8 KB); demos already lazy. Reverted.
+- The Inter Tight swap relayout (95–118 ms) ends at FCP (Chrome holds first paint for the preloaded font), so it mostly falls before the TBT window. Fonts already match the ask: `next/font`, latin subset, `adjustFontFallback` (default, metric-adjusted Arial), only Inter Tight preloaded, mono not preloaded. next/font/google takes no weight range for a variable font, so "only used weights" = the one variable file. Left as is.
+- **The real waste was ours:** (1) the hero laptop tick read `window.scrollY` every frame, which forces style + layout while GSAP animates the intro (64 ms self time in the profile, 50–75 ms frame tasks); (2) the laptop loop ran under the intro overlay; (3) two intro build steps of 50–75 ms; (4) GSAP evaluation sometimes landing in the same window.
+
+**Changes:**
+- `laptop.ts`: scroll position from a passive `scroll` listener (no layout read in the tick); the loop is off while `html[data-intro=playing]`.
+- `intro-timeline.ts`: build split into 11 steps (bars | S1 draw | S1 exit | markup | S2 | S3 frame | S3 chips | S3 exit | S4 bars | S4 shield/map | outro), each ≤ 18 ms at 4× CPU.
+
+**Measured** (prod, Lighthouse 12.8, mobile, DevTools throttling 4× CPU + slow 4G, 3 runs each):
+
+| | Perf | FCP/LCP | TBT | CLS |
+|---|---|---|---|---|
+| Before (after the hero-open commit) | 88–91 | 2.1–2.3 s | 250–330 ms ✗ | 0.001 |
+| **After** | **95–96** | **2.0 s** | **140–160 ms ✓** | 0.001 |
+
+Remaining long tasks after FCP: framework boot ~160 ms (only one over 50 ms). LCP = h1.
+
+**Desktop scroll trace** (was skipped in P7; 1440×900, Lenis, 3 full passes down + up by wheel, after Skip intro):
+
+| | CPU 4× | CPU 1× |
+|---|---|---|
+| Frames | 2425 | 2582 |
+| Frame median / p95 / max | 16.7 / 33.4 / 100 ms | 16.7 / 16.8 / 33.4 ms |
+| Long tasks (max) | 17 (90 ms) | 0 |
+| Console errors | 0 | 0 |
+
+Unthrottled desktop is smooth. Under 4× the desktop path (1600 px frames, Lenis) drops some frames; desktops aren't the 4× profile in §6, but it's noted. Heap: `performance.memory` is too coarse in headless to judge (9.5 → 9.5 MB).
 
 ## Hero laptop ends open (2026-11-07) — committed
 Spec: CLAUDE.md §1 chapters 1–2, §6 rules 3, 5, 12 (updated first). CV link in CLAUDE.md fixed to `/Ahmed_Nasser_Frontend_Developer_CV.pdf`. "Available for work" and "RTL" confirmed as facts by Ahmed. 0 credits.
@@ -282,14 +312,9 @@ Docs followed: gsap.com Timeline + "Most common GSAP mistakes", web.dev "High-pe
 - Section headings were added as the only new copy: "Six layers, *one* developer", "4+ years *in production*", "Shipped for *real clients*" (CV: "real clients in Saudi Arabia and Egypt", "shipping products to production").
 
 ## Open items / waiting on Ahmed
-2. **CLAUDE.md CV path has no `.pdf`** (lines 15, 87, 269, 324: `/Ahmed_Nasser_Frontend_Developer_CV`). Suggest adding `.pdf`; don't change it without his OK.
-3. **Install prereqs (needs his OK):**
-   - `winget install ffmpeg`
-   - Chrome DevTools MCP: `claude mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest`
-   - GSAP skills, Vercel `agent-skills`, Remotion skills (review each SKILL.md first)
-4. **Higgsfield workspace not selected yet.** First step of P3: `hf workspace set 3eb5ac4a-bd25-4bc4-86bd-2334b36ebd5c`, then `higgsfield generate cost …` before every call, and his OK per call.
-5. **Fact wording changes in PLAN §8:** default is the CV-accurate wording; he can object.
-6. **Real-device test (P8):** needs him with a low-end Android and an iPhone.
+1. **Real-device test (P8):** needs Ahmed with a low-end Android and an iPhone (scroll the stage up/down 5×, watch the hero laptop open).
+2. **P9 (not started):** OG image 1200×630 (K3 + name + "Frontend Developer"), custom favicon (current one is the Create Next App default), custom 404 (`app/not-found.tsx`), twitter card `summary_large_image`, env vars, deploy steps. No deploy without his OK.
+3. **P10 (after deploy):** Reel 1 only (screen recording + Remotion).
 
 ## Higgsfield credit log
 | Date | Call | Model | Credits | Balance | Result |
@@ -324,18 +349,12 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
 - OS: Windows 11. Shell scripts (`scripts/media.sh`) run in Git Bash.
 
 ## Next session — start here
-1. Read this file, then CLAUDE.md §1 (chapters 0–1 changed) and §6 rule 12b.
-2. Ask Ahmed for feedback on the new intro + laptop (localhost), then the TBT follow-up above.
-3. **P8:**
-   - vercel-react-best-practices + web-design-guidelines skills (install needs Ahmed's OK) → fix the findings
-   - Ahmed's security auditor + SEO/GEO auditor (github.com/AhmedNnasser11/...) → fix the findings; capture the real output for the layer 06 terminal replay
-   - Playwright suite at 360/390/768/1440: intro skip/replay, every chapter renders, layer taps open demos, EN/AR RTL, keyboard-only, reduced motion, no console errors, no horizontal scroll, XSS test (`window.__p` stays 0, no probe request), `/_next/static` blocked → hero visible
-   - CV fact diff (every claim vs public/Ahmed_Nasser_Frontend_Developer_CV.pdf)
-   - real-device test with Ahmed (low-end Android + iPhone Safari, scroll the stage up/down 5×)
-4. Keep budgets: initial JS ≤ 150 KB br (149.5 now), DevTools TBT < 200 ms.
-5. In each summary, name the docs followed (rule 0.7) and update this file.
+1. Read this file, then CLAUDE.md §1 (chapters 0–2) and §6 rules 5, 12, 12b.
+2. Ask Ahmed for localhost feedback on the open-laptop hero and the handoff.
+3. Then P9 (see Open items), real-device test, P10.
+4. Keep budgets: initial JS ≤ 150 KB br, DevTools TBT < 200 ms. Name the docs followed in each summary; update this file.
 
-## P8 progress (2026-11-07) — in progress, not committed
+## P8 progress (2026-11-07) — committed (`bb5b6d0`)
 - P7 committed (`816893f`). Vercel skills installed at project level (`.claude/skills`, `skills-lock.json`).
 - **web-design-guidelines fixes:** dialog animation honors reduced motion; `touch-action: manipulation` + tap highlight; body safe-area side padding; hover states on stage dots/hotspots; `role="group"` on hotspots; `text-balance` on panel/contact titles; `translate="no"` on chips + stack lines; `tabular-nums` on BreakIt results; input `name`/`autoComplete`; curly apostrophes (Monsha’at, Let’s).
 - **vercel-react-best-practices:** demo chunks preload on hover/focus/press (`preloadDemo`); XSS demo lookups hoisted to Set/regex.
