@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
+/* CLAUDE.md §2 tokens. Tailwind v4 @theme: https://tailwindcss.com/docs/theme */
+@theme {
+  --color-bg: #08090b;
+  --color-surface: #0e1015;
+  --color-surface-2: #11141b;
+  --color-line: rgb(255 255 255 / 0.09);
+  --color-text: #f2f3f5;
+  --color-secondary: #dadde3;
+  --color-muted: #b7bcc6;
+  --color-subtle: #8a909c;
+  --color-accent: #6e9bff;
+  --color-ok: #4ade80;
+
+  --font-display: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --radius-card: 18px;
+}
+
+/* Layout tokens.
+   Stacking order (low → high): header = tabbar 50 < inspect sheet (P6) 55 < dialogs 60.
+   The P6 Inspect bottom sheet must sit above the tab bar: bottom: var(--tabbar-h). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --header-h: 4.25rem;
+  --tabbar-h: calc(4rem + env(safe-area-inset-bottom, 0px));
+  --z-header: 50;
+  --z-tabbar: 50;
+  --z-sheet: 55;
+  --z-dialog: 60;
+  color-scheme: dark;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (min-width: 48rem) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --tabbar-h: 0px; /* tab bar hidden from md up */
+  }
+}
+@media (min-width: 64rem) {
+  :root {
+    --header-h: 4rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+html {
+  background: var(--color-bg);
+  scroll-padding-top: calc(var(--header-h) + 0.5rem);
+  scroll-padding-bottom: var(--tabbar-h);
+  -webkit-text-size-adjust: 100%;
 }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  overflow-x: clip;
+  /* The fixed tab bar never covers the last content. */
+  padding-bottom: var(--tabbar-h);
+}
+
+::selection {
+  background: rgb(110 155 255 / 0.42);
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Highlighter band: a background sweep at ~38% height, bottom-aligned (§2). */
+  .hl {
+    background-image: linear-gradient(rgb(110 155 255 / 0.42), rgb(110 155 255 / 0.42));
+    background-repeat: no-repeat;
+    background-position: 0 92%;
+    background-size: 100% 38%;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding-inline: 0.08em;
+    color: var(--color-text);
+  }
+  .hl-strong {
+    background-image: linear-gradient(rgb(110 155 255 / 0.85), rgb(110 155 255 / 0.85));
+    background-size: 100% 34%;
+  }
+
+  /* Gradient keyword (§2). */
+  .grad {
+    background-image: linear-gradient(90deg, #8fb3ff, #c7a6ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-subtle);
+  }
+}
+

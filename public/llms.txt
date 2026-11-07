@@ -1,0 +1,36 @@
+# Ahmed Nasser — Frontend Developer
+
+> Frontend Developer in Cairo, Egypt with 4+ years building production React.js and Next.js apps. Core stack: React.js, Next.js, TypeScript, JavaScript. Builds enterprise SaaS dashboards with a focus on performance and security, for clients in Saudi Arabia and Egypt. Available for work.
+
+## Contact
+
+- Email: ahmednnasser111@gmail.com
+- GitHub: https://github.com/AhmedNnasser11
+- LinkedIn: https://www.linkedin.com/in/ahmed-nasser-931490212
+- npm: https://www.npmjs.com/~ahmednnasser111
+- CV (PDF): https://portfolio-ahmed-nasser.vercel.app/Ahmed_Nasser_Frontend_Developer_CV.pdf
+
+## Skills
+
+- Core: React.js, Next.js, TypeScript, JavaScript
+- Secondary: Tailwind CSS, TanStack Query, Redux Toolkit, Zustand, REST, WebSockets, Vitest, Playwright
+- Interface: Figma to code, responsive design, accessibility (WCAG), i18next and RTL
+- Components: Next.js App Router, Server Components, Server Actions, SSR, SSG, ISR, design systems, clean architecture
+- Data: TanStack Query, WebSockets, Pusher, React Hook Form + Zod, RBAC
+- Security: XSS and CSRF prevention, Content Security Policy, input validation, dependency audits
+- Performance: Core Web Vitals, code splitting, lazy loading, re-render optimization, technical SEO, GEO, AIO
+- AI & quality: Claude Code, OpenCode, AI coding agents, Vitest, Playwright, GitLab CI/CD
+
+## Experience
+
+- E2E County (Jan 2026 – Present, on-site, Cairo): sole frontend developer on Cyber-Guardian, a threat-intelligence SaaS (RBAC, advanced data tables, breach-trend analytics); TravWare ERP interfaces used in production by travel clients, plus a flights & hotels booking engine.
+- INCode (Feb 2024 – Dec 2025, hybrid, Cairo): sole frontend developer owning production releases, change requests and hotfixes; dashboards for Olimi.ai (Voice AI, first client Paymob) and Beesly AI; built Elli, an enterprise school platform, in about 6 months; led two junior developers.
+- Mazeed (Apr 2022 – Feb 2024, remote): migrated legacy HTML, Bootstrap and jQuery products to React for Saudi clients including Monsha'at and Takaful; optimized Core Web Vitals across all platforms.
+- Freelance (part-time, by referral): Ajzaa marketplace dashboard, Baian AI invoice extraction, Rayan Hajj water distribution platform, tourism platforms with Next.js SSR.
+
+## Open source
+
+- [Next.js & React Security Auditor](https://github.com/AhmedNnasser11/nextjs-react-security)
+- [Next.js Architecture Lab](https://github.com/AhmedNnasser11/nextjs-architecture-lab)
+- [Technical SEO & GEO Auditor](https://github.com/AhmedNnasser11/technical-seo-geo-claude-skill)
+- [6 NPM packages](https://www.npmjs.com/~ahmednnasser111)

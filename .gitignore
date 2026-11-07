@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local tooling output
+.playwright-mcp/
+
+# raw media (large source files; final assets go to public/media)
+assets-src/raw/
