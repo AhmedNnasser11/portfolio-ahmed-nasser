@@ -19,7 +19,7 @@ Rule: every generate call needs Ahmed's OK (CLAUDE.md 0.6). Check `higgsfield ge
 | B explode | K2 → K3 | 8.75 | 86.75 | b4e47893-acc7-4da9-9ffb-0338e420c5fd | clips/B.mp4 | accepted |
 | A lid opens | K1 → K2 | 8.75 | 78 | 943c21e6-6212-4d49-af05-1aa8c53b27ae | clips/A.mp4 | accepted |
 | D fold to phone | K3 → K5 | 8.75 | 69.25 | ad1b3236-604e-4381-9f29-1b36beedafc6 | clips/D.mp4 | accepted (mid-clip the stack flattens into a slab, then becomes the phone) |
-| C orbit (desktop) | K3 → K4 | 8.75 | 60.5 | e28b94a5-d95a-417e-89d1-ef931bdf0fc6 | clips/C.mp4 | accepted with a trim: the orbit is not monotonic (it eases back around frame 40). **P4: use frames 0–~30 only** for the mouse-X scrub (check the exact turnaround frame) |
+| C orbit (desktop) | K3 → K4 | 8.75 | 60.5 | e28b94a5-d95a-417e-89d1-ef931bdf0fc6 | clips/C.mp4 | accepted. Frame-difference check in P4: the orbit is monotonic over all 121 frames, so the full clip is used |
 
 **P3 total: 49.5 credits spent (14.5 keyframes + 35 clips). Balance 60.5.**
 

@@ -1,7 +1,7 @@
 import { CV_HREF, profile } from "@/content/profile";
 import { Chip } from "@/shared/ui/Chip";
 import { LinkButton } from "@/shared/ui/LinkButton";
-import { LaptopPoster } from "./LaptopPoster";
+import { Poster } from "@/features/stage/Poster";
 
 /**
  * Final hero (chapter 1). Server-rendered at opacity 1 from the first byte so
@@ -27,13 +27,10 @@ export function Hero() {
             {profile.name}
             <span className="sr-only"> — </span>
           </span>
+          {/* One text block (not one per word) so the h1 is a single, large LCP candidate. */}
           <span className="block text-[clamp(50px,11vw,100px)] leading-[0.95] tracking-[-0.05em]">
-            <span className="block">
-              <span className="hl hl-strong">Frontend</span>
-            </span>{" "}
-            <span className="block">
-              <span className="hl hl-strong">Developer</span>
-            </span>
+            <span className="hl hl-strong">Frontend</span> <br />
+            <span className="hl hl-strong">Developer</span>
           </span>
         </h1>
 
@@ -69,7 +66,11 @@ export function Hero() {
       </div>
 
       <div className="relative">
-        <LaptopPoster className="h-auto w-full" idPrefix="hero" />
+        <Poster
+          name="k1"
+          loading="eager"
+          alt="A closed aluminium laptop on a black pedestal in a dark studio"
+        />
       </div>
     </section>
   );

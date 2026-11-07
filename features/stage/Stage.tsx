@@ -1,6 +1,6 @@
 import { LayerPanels } from "@/features/inspect/LayerPanels";
 import { SectionHeading } from "@/shared/ui/SectionHeading";
-import { StackPoster } from "./StackPoster";
+import { Poster } from "./Poster";
 
 /**
  * Chapters 2–4 (Teardown → Inspect → Reassemble), P2 static version.
@@ -20,8 +20,14 @@ export function Stage() {
         title="Every interface is a *stack.*"
       />
 
-      <div className="mb-10 overflow-hidden rounded-(--radius-card) border border-line bg-bg md:mb-14">
-        <StackPoster className="mx-auto h-auto w-full max-w-3xl" />
+      {/* No frame around the still: its black is graded to the page bg so there is no visible edge (§5). */}
+      <div className="mb-10 md:mb-14">
+        <div className="mx-auto max-w-4xl">
+          <Poster
+            name="k3"
+            alt="The website taken apart into six floating layers above the laptop: interface, components, data, shield, engine, and a circuit board for AI and quality"
+          />
+        </div>
       </div>
 
       <LayerPanels />

@@ -273,3 +273,9 @@ The fact-check found claims worded more strongly than the CV. The site will use 
 - **Phone navigation:** fixed bottom tab bar below md (Home, Skills, Experience, Work, Contact; icon + label; 64px + `env(safe-area-inset-bottom)`; solid bg + top border; plain anchors; IntersectionObserver → `aria-current="page"`). The phone header stays slim: name + title + core stack line + Download CV. Top nav from md up.
 - **P6 Inspect bottom sheet** sits above the tab bar: `bottom: var(--tabbar-h)`, `z-index: var(--z-sheet)` (55 > tab bar 50).
 - Approved deviations: full variable font axis, mono `display: optional` + monospace fallback, `experimental.inlineCss`, the three section headings.
+
+## Amendments after P3/P4 (2026-11-07)
+- **Clips:** Kling 3.0 pro (8.75 credits each), not Seedance; all four made in P3 (49.5 credits total, 60.5 left).
+- **Phone media is 720×606, not 9:16:** centre crop `1280:1076:320:0` keeps the whole pedestal/stack. The black is graded to #08090B with feathered edges, so it blends into the page. No 9:16 regenerations were needed (0 credits).
+- **Posters are exact clip frames**, not the keyframe PNGs, so the poster → canvas handoff is pixel-identical.
+- **15 fps** for all clips; all budgets met (desktop 6.4 MB total, phone 2.25 MB total).

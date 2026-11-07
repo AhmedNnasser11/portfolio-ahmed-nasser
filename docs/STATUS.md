@@ -4,7 +4,7 @@
 > Update it at the end of every session: phase, what was done, what's next, credits.
 
 **Last updated:** 2026-11-07
-**Current phase:** **P3 done** (K1–K5 + clips A–D, 49.5 credits, balance 60.5). Next is **P4** (media pipeline). P3 is not committed (assets are binaries kept out of git).
+**Current phase:** **P4 done, not committed** (`scripts/media.sh`, `public/media/`, posters wired into hero + stage). Next is **P5** (scroll engine + intro). Ask Ahmed whether `public/media/` (~9 MB of frames) should be committed (Vercel deploys from git).
 **Branch:** `feat/portfolio`. Commit only when Ahmed asks.
 
 ---
@@ -60,6 +60,38 @@
 - `content-visibility:auto` was tried and reverted (it broke anchor jumps).
 - Checks: no horizontal scroll at 360/390/412/430/767/768/1024/1440. Tab bar 5 × (69–83)×64 px targets at 360–430, hidden ≥ 768. Active tab follows the scroll (Skills covers #layers + #stack). Footer clears the bar by 48 px. A tab tap lands under the header. JS off: hero + tabs work. 0 console errors / CSP violations.
 
+## P4 results (2026-11-07)
+- `scripts/media.sh` (Git Bash), ~2 min. Per clip: 15 fps → 76 frames. Desktop 1600×892 WebP q75; phone 720×606 WebP q70.
+- Processing:
+  - feathered edges: smoothstep over the outer 10% of the width / 8% of the height, to black
+  - black lifted to #08090B (corner measured 8,10,11), so no visible rectangle on the page
+  - phone crop `1280:1076:320:0` instead of 9:16: the K1 pedestal and the K3 stack are wider than a 9:16 crop
+- Weights (budget: desktop ≤ 6 MB/clip, phone ≤ 2.5 MB/clip):
+
+| Clip | Desktop | Phone |
+|---|---|---|
+| A lid | 1003 KB | 528 KB |
+| B explode | 1565 KB | 904 KB |
+| C orbit | 2439 KB | — (desktop only) |
+| D fold | 1428 KB | 819 KB |
+| **Total** | **6.4 MB** | **2.25 MB** |
+
+- Posters (AVIF 4:4:4, crf 30) are **exact clip frames** (K1 = A first, K3 = B last, K5 = D last), so poster and canvas match. Sizes: K1 4.0/2.7 KB, K3 20.1/13.3 KB, K5 5.8/3.9 KB (desktop/phone).
+- Clip C: frame-difference analysis shows the orbit is monotonic over all 121 frames, so no trim (the earlier "eases back" note was wrong).
+- `features/stage/Poster.tsx`: `<picture>` with art direction (desktop source ≥ 48rem) and width/height on both, so CLS stays 0. The SVG placeholders are deleted. The h1 is now a single text block.
+- Lighthouse after the posters:
+
+| Run | Perf | A11y | BP | SEO | LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|
+| Mobile, simulated | 96 | 100 | 100 | 100 | 2.7 s | 50 ms | 0 |
+| Mobile, DevTools (2 runs) | 91–93 | 100 | 100 | 100 | 1.5 s | 300–350 ms ✗ | 0.001 |
+| Desktop | 100 | 100 | 100 | 100 | 0.6 s | 0 | 0 |
+
+- **LCP element is now the K1 poster** at 360/390/430/768/1440, not the h1. The image is larger than the h1 block at every width.
+  - P5 must fix this. Options: the hero first viewport is text-only on phones (laptop below the fold → not a candidate); the laptop is drawn on the stage canvas, which is not an LCP candidate, with a `<noscript>`/static-tier `<img>` fallback; or a smaller hero image on desktop.
+  - This conflicts with CLAUDE.md §6 rule 5 ("poster K1 … priority first"). Ahmed's "h1 is the LCP element" rule wins.
+- **TBT regression:** DevTools TBT 190–200 → 300–350 ms. Bigger document paint/raster tasks (+60–130 ms) and the hydration task (+50–100 ms), consistent with decoding/rasterising the hero AVIF at 4× CPU. P7 must get it < 200 ms.
+
 ## P2 deviations (budget wins, rule 0.7)
 - **Fonts:** `next/font/google` takes no weight ranges, so both families load their full variable axis (one file each). Inter Tight is preloaded; mono is not.
 - **Mono font `display: "optional"`** instead of swap: the late swap re-wrapped the hero stack line, giving CLS 0.146.
@@ -91,11 +123,11 @@
 | 2026-11-07 | clip B K2→K3 | kling3_0 pro 5 s | 8.75 | 86.75 | accepted |
 | 2026-11-07 | clip A K1→K2 | kling3_0 pro 5 s | 8.75 | 78 | accepted |
 | 2026-11-07 | clip D K3→K5 | kling3_0 pro 5 s | 8.75 | 69.25 | accepted |
-| 2026-11-07 | clip C K3→K4 | kling3_0 pro 5 s | 8.75 | 60.5 | accepted; use frames 0–~30 only (orbit eases back mid-clip) |
+| 2026-11-07 | clip C K3→K4 | kling3_0 pro 5 s | 8.75 | 60.5 | accepted (orbit monotonic, full clip used) |
 
 Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`):
 - [x] K1  - [x] K2  - [x] K3  - [x] K4  - [x] K5   (14.5 credits spent, 95.5 left)
-- [x] clip B  - [x] clip A  - [x] clip D  - [x] clip C (trim to frames 0–~30)   (35 credits)
+- [x] clip B  - [x] clip A  - [x] clip D  - [x] clip C   (35 credits)
 
 ## Environment facts
 - Next **16.4.5**, React **19.3.0**, Tailwind **4.3.5**.
@@ -110,13 +142,15 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
 - OS: Windows 11. Shell scripts (`scripts/media.sh`) run in Git Bash.
 
 ## Next session — start here
-1. Read this file, then `docs/PLAN.md` §3 + §6 and `assets-src/PROGRESS.md`.
-2. **P4 media pipeline** (`scripts/media.sh`, Git Bash, ffmpeg path above):
-   - source: `assets-src/clips/{A,B,C,D}.mp4` (1928×1076, 24 fps, 121 frames) and `assets-src/keyframes/K1–K5.png`
-   - desktop WebP 1600w at 12–15 fps; phone 720w at 12–15 fps, q70
-   - clip C: frames 0–~30 only (find the turnaround frame first)
-   - grade the background to #08090B; remove banding with a little noise or dither if needed
-   - posters K1/K3/K5 as AVIF: desktop 16:9 1600w and phone 9:16 720w. The K1–K3 subject is wider than the centre third, so decide between a 9:16 regenerate (~2 credits each, needs OK) and a looser crop. K5 crops cleanly.
-   - weight report against the budget: ≤ 6 MB per clip on desktop, ≤ 2.5 MB per clip on phone
-3. Then swap the SVG placeholders for `<picture>` posters; P5 adds GSAP/Lenis after first paint, and the h1 must be the LCP element.
+1. Read this file, then `docs/PLAN.md` §4 (GSAP architecture) + Amendments.
+2. If not done: ask Ahmed to commit P4 (`scripts/media.sh`, `public/media/`, Poster component).
+3. **P5** (CLAUDE.md §8 P5 + PLAN §4):
+   - device tiers (`device-tier.ts`, `?tier=` override)
+   - sticky stage (700svh wrapper, sticky stage, ref progress)
+   - canvas frame engine (`public/media/manifest.json`, ±6/±12 ImageBitmap window with `.close()`, DPR cap, draw on index change, one `gsap.ticker`)
+   - low/static tier: K1/K3/K5 poster crossfade
+   - intro reel with the CSS failsafe
+   - **GSAP + Lenis via dynamic `import()` after first paint**, never in the initial bundle (measure brotli)
+   - **h1 must become the LCP element** (see the P4 results)
+   - phone frames are 720×606 (not 9:16): the stage shows them centred, and the black blends into the page
 4. In each summary, name the docs followed (rule 0.7) and update this file.
