@@ -14,10 +14,10 @@ export type IntroCtrl = {
   replay: () => void;
 };
 
-// Scene starts and durations (s), same as P5: S1 2.5, S2 1.8, S3 2.6, S4 2.4.
-const START = [0, 2.5, 4.3, 6.9] as const;
-const DUR = [2.5, 1.8, 2.6, 2.4] as const;
-const OUT = 9.3;
+// Scene starts and durations (s): S1 3.5, S2 2.8, S3 3.2, S4 4.5 (long enough to read each scene).
+const START = [0, 3.5, 6.3, 9.5] as const;
+const DUR = [3.5, 2.8, 3.2, 4.5] as const;
+const OUT = 14;
 const EXIT = { opacity: 0, y: -14, duration: 0.2, ease: "power2.in" } as const;
 
 export function playIntro(onDone: () => void): IntroCtrl {
@@ -100,17 +100,13 @@ function build(onDone: () => void): { tl: gsap.core.Timeline; steps: Array<() =>
   });
 
   steps.push(() => {
-    // ---------- S2: the Engine gauge fills in four steps with the 1 → 4 counter
+    // ---------- S2: "4+" slides up while the Engine gauge fills once
     const s2 = START[1];
     enter(1);
     const ring = $<SVGCircleElement>(".ring-fill");
     tl.fromTo($(".s2-gauge"), { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.3 }, s2 - 0.05);
-    tl.fromTo(ring, { strokeDashoffset: 1 }, { strokeDashoffset: 0.75, duration: 0.25, ease: "power2.out" }, s2 + 0.1);
-    for (let i = 1; i <= 3; i++) {
-      const at = s2 + 0.3 + (i - 1) * 0.26;
-      tl.to($(".odo > span"), { yPercent: -25 * i, duration: 0.2, ease: "power2.out" }, at);
-      tl.to(ring, { strokeDashoffset: 1 - (i + 1) / 4, duration: 0.24, ease: "power2.out" }, at);
-    }
+    tl.fromTo($(".intro-years"), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5 }, s2 + 0.05);
+    tl.fromTo(ring, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.9, ease: "power2.out" }, s2 + 0.1);
     tl.fromTo($$(".s2 .ml > span"), { yPercent: 105 }, { yPercent: 0, duration: 0.5, stagger: 0.09 }, s2 + 0.2);
     // Match cut: number + lines leave; the ring blows up into S3's frame.
     tl.to([$(".intro-years"), $(".s2 .intro-lines")], EXIT, START[2] - 0.2);
@@ -119,7 +115,7 @@ function build(onDone: () => void): { tl: gsap.core.Timeline; steps: Array<() =>
   });
 
   steps.push(() => {
-    // ---------- S3: each chip draws as a dashed wireframe, then fills, one after another
+    // ---------- S3: frame, label, then the chips
     const s3 = START[2];
     enter(2);
     tl.fromTo($(".s3-frame"), { scale: 0.55, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5 }, s3 - 0.1);
@@ -128,20 +124,8 @@ function build(onDone: () => void): { tl: gsap.core.Timeline; steps: Array<() =>
 
   steps.push(() => {
     const s3 = START[2];
-    $$(".ichip").forEach((chip, i) => {
-      const at = s3 + 0.25 + i * 0.42;
-      const wire = chip.querySelector("svg")!;
-      tl.fromTo(wire, { opacity: 0 }, { opacity: 1, duration: 0.08 }, at);
-      tl.fromTo(wire.firstElementChild, { strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 0.3, ease: "power1.inOut" }, at);
-      tl.fromTo(chip.querySelector(".ichip-ghost"), { opacity: 0 }, { opacity: 1, duration: 0.2 }, at + 0.05);
-      tl.fromTo(
-        chip.querySelector(".ichip-fill"),
-        { opacity: 0, scale: 0.82 },
-        { opacity: 1, scale: 1, duration: 0.24, ease: "back.out(2.2)" },
-        at + 0.3,
-      );
-      tl.to([wire, chip.querySelector(".ichip-ghost")], { opacity: 0, duration: 0.15 }, at + 0.42);
-    });
+    // All four chips slide up together (no one-by-one build).
+    tl.fromTo($$(".ichip-fill"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45 }, s3 + 0.3);
   });
 
   steps.push(() => {

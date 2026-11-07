@@ -1,7 +1,7 @@
 import { SITE_URL, links, profile } from "@/content/profile";
 
 // node_modules/next/dist/docs/01-app/02-guides/json-ld.md: render as <script>,
-// escape "<" as <. Facts from CLAUDE.md §4 / the CV only; no phone number.
+// escape "<" as <. Facts from CLAUDE.md §4 / the CV, plus the owner's phone.
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -15,6 +15,7 @@ const jsonLd = {
       worksFor: { "@type": "Organization", name: "E2E County" },
       url: SITE_URL,
       email: `mailto:${links.email}`,
+      telephone: "+201068692041",
       address: {
         "@type": "PostalAddress",
         addressLocality: "Cairo",

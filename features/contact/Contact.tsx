@@ -25,9 +25,15 @@ export function Contact() {
         </h2>
         <a
           href={`mailto:${links.email}`}
-          className="mt-8 inline-flex min-h-11 items-center text-[clamp(17px,4.6vw,28px)] font-semibold break-all underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent"
+          className="mt-8 flex min-h-11 items-center text-[clamp(17px,4.6vw,28px)] font-semibold break-all underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent"
         >
           {links.email}
+        </a>
+        <a
+          href={links.phoneHref}
+          className="mt-2 flex min-h-11 items-center text-[clamp(17px,4.6vw,28px)] font-semibold underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent"
+        >
+          {links.phone}
         </a>
         <ul className="mt-6 flex flex-wrap gap-3">
           {contactLinks.map((l) => (

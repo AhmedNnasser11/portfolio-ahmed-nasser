@@ -1,7 +1,7 @@
 import { profile } from "@/content/profile";
 
 /**
- * Chapter 0 — intro reel (~10 s), a trailer for the six layers (CLAUDE.md §1).
+ * Chapter 0 — intro reel (~14 s), a trailer for the six layers (CLAUDE.md §1).
  * One GSAP timeline (intro-timeline.ts, loaded after first paint) drives it.
  * Server-rendered: the story bars, S1 and the fact line, readable at first
  * paint before GSAP arrives (rule 0.1); S1's shapes start hidden in CSS.

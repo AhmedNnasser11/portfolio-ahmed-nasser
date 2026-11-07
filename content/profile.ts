@@ -1,5 +1,5 @@
 // Facts only from CLAUDE.md §4 and public/Ahmed_Nasser_Frontend_Developer_CV.pdf.
-// The CV phone number is never published.
+// Phone is published on the owner's explicit request.
 
 export const SITE_URL = "https://portfolio-ahmed-nasser.vercel.app";
 
@@ -30,6 +30,8 @@ export const profile = {
 
 export const links = {
   email: "ahmednnasser111@gmail.com",
+  phone: "+20 106 869 2041",
+  phoneHref: "tel:+201068692041",
   github: "https://github.com/AhmedNnasser11",
   linkedin: "https://www.linkedin.com/in/ahmed-nasser-931490212",
   npm: "https://www.npmjs.com/~ahmednnasser111",

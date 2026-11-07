@@ -28,7 +28,7 @@ export const SCENES_HTML = `
 <div class="intro-scene s2"><div class="intro-cam">
   <div class="s2-gauge">
     <svg class="s2-ring" viewBox="0 0 200 200"><circle class="ring-track" cx="100" cy="100" r="92"/><circle class="ring-fill" cx="100" cy="100" r="92" pathLength="1" transform="rotate(-90 100 100)"/>${ticks}</svg>
-    <p class="intro-years"><span class="odo"><span>1<br>2<br>3<br>4</span></span>+</p>
+    <p class="intro-years">4+</p>
   </div>
   <p class="intro-lines"><span class="ml"><span>years shipping</span></span><span class="ml"><span>production frontends</span></span></p>
 </div></div>

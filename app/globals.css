@@ -273,8 +273,6 @@ html:not([data-intro]) .intro { animation: intro-gone 0s linear 6s forwards; }
   line-height: 1;
   letter-spacing: -0.05em;
 }
-.odo { display: inline-block; height: 1em; overflow: hidden; }
-.odo > span { display: block; }
 .intro-lines {
   margin-top: 1rem;
   font-size: clamp(24px, 6.4vw, 44px);
