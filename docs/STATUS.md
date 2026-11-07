@@ -4,7 +4,7 @@
 > Update it at the end of every session: phase, what was done, what's next, credits.
 
 **Last updated:** 2026-11-07
-**Current phase:** **P5 done, not committed** (intro reel, scroll stage engine, device tiers, Lenis). Next is **P6** (Inspect + demos). P4 is committed (`cfec028`).
+**Current phase:** **P6 done, not committed** (Inspect steps, hotspots, 6 live demos). Next is **P7** (mobile performance pass: DevTools TBT < 200 ms, initial JS headroom). P5 is committed (`5162dff`).
 **Branch:** `feat/portfolio`. Commit only when Ahmed asks.
 
 ---
@@ -59,6 +59,50 @@
 - TBT: React hydration ~199 ms task + style/layout. P7 must get it < 200 ms with DevTools throttling.
 - `content-visibility:auto` was tried and reverted (it broke anchor jumps).
 - Checks: no horizontal scroll at 360/390/412/430/767/768/1024/1440. Tab bar 5 × (69–83)×64 px targets at 360–430, hidden ≥ 768. Active tab follows the scroll (Skills covers #layers + #stack). Footer clears the bar by 48 px. A tab tap lands under the header. JS off: hero + tabs work. 0 console errors / CSP violations.
+
+## P6 results (2026-11-07)
+**Built:**
+- **Inspect:** the six `LayerPanels` now live inside the sticky stage.
+  - Scroll mode: the panels are stacked in one grid cell (cell = tallest panel → no CLS). The engine flips `data-state` = past / active / next across the hold (33–88 %, 6 equal slices).
+  - CSS runs the choreography, transform/opacity only:
+    - number rises
+    - name mask reveal
+    - title rises
+    - chips pop with a stagger, max 6 staggered on phones
+    - PROOF highlighter sweeps in (`.hl-sweep::after` scaleX)
+    - demo button rises
+    - exit: up + fade
+  - Phone: bottom sheet (`z-index: var(--z-sheet)`); the stage sits above the tab bar, and the media moves up 17 % during Inspect.
+  - Desktop: panel on the left; the media moves right 18 %.
+  - Static mode: the same six cards as a plain grid.
+- **Progress:** "LAYER 0N / 06" (`aria-live`) plus 6 dot buttons (`data-jump`, `aria-current`), visible only during Inspect.
+- **Desktop hotspots** (`LayerHotspots`): 6 labelled 44px buttons on the stack, positioned in the frame's contain-fit box via container query units; hidden on phones (§6 rule 9).
+  - A click jumps to that step (instantly, behind the modal) and opens the demo.
+  - Positions were measured on k3-d.avif.
+- **Demos** (CLAUDE.md §4), each a lazy chunk of 0.6–1.9 KB br. `StageBoot` has a delegated `[data-demo]` click listener → `import('features/demos/open')` → its own React root with a native modal `<dialog>` (focus trap, Escape, focus returns to the trigger). Lenis stops while a demo is open; native scroll is locked on phones.
+  1. Interface: EN / عربي with `dir`/`lang` flip. The Arabic is a translation of existing copy only; system Arabic font.
+  2. Components: Architecture Lab card (CV facts) plus the GitHub link.
+  3. Data: Admin / Analyst / Viewer RBAC on one permission map; mock rows labelled as mock.
+  4. Shield: XSS playground.
+     - Only an inert `DOMParser` parse; nothing parsed enters the page; no innerHTML or srcdoc.
+     - **Verified:** `onerror`/`<script>` never ran (`window.__p` stayed 0) and the probe image was never requested.
+  5. Engine: Break it / Fix it, 2,000 rows, scripted typing "booking 01" at 30 ms/key.
+     - Measured, unthrottled desktop: **broken 17,099 row renders, longest frame 36 ms; fixed 0 renders, 18 ms**.
+     - Layout shift 0 (the run stays inside the 500 ms input window); page CLS 0.
+  6. AI & Quality: renamed **"The auditors"** (was "Terminal replay…"). Shows what each auditor checks (CV) plus links. **No invented output**; the real replay comes after P8 runs the auditors.
+- **Budget:** `HeroStill` became a server component and its drawing moved into `StageBoot` (one fewer client island). Tier detection moved to mount, so `?tier=static` / low apply before any scroll.
+- **CLS fix:** each intro scene is now `position:absolute; inset:0`, so the Inter Tight swap can't move a scene box (it had caused 0.004).
+
+**Measured:**
+- **Initial JS 149.9 KB brotli (budget 150; 0.1 KB headroom).** The framework re-split react-dom/client into its own chunk (+0.7 KB) once `open.tsx` imported it. P7 must create headroom.
+- LCP element = the h1 (phone and desktop). CLS: 0 (DevTools); simulated 0–0.001, the accepted hero-tagline horizontal font swap.
+- No horizontal scroll at 360/390/430/768/1024/1440 over a full scroll; 0 console errors.
+
+| Run | Perf | A11y | BP | SEO | LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|
+| Mobile, simulated (2 runs) | 94–95 | 100 | 100 | 100 | 2.8–2.9 s | 40–140 ms | 0–0.001 |
+| Mobile, DevTools | 88 | 100 | 100 | 100 | 1.7 s | **450 ms ✗** | 0 |
+| Desktop | 100 | 100 | 100 | 100 | 0.6 s | 0 | 0 |
 
 ## P5 results (2026-11-07)
 **Built:**
@@ -195,14 +239,14 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
 - OS: Windows 11. Shell scripts (`scripts/media.sh`) run in Git Bash.
 
 ## Next session — start here
-1. Read this file, then `docs/PLAN.md` §2/§4 (Inspect) + Amendments.
-2. If not done: commit P5.
-3. **P6** (CLAUDE.md §8 P6 + PLAN §4 Inspect):
-   - move `LayerPanels` into the sticky stage for the hold segment (33–88 %): 6 steps, each with a prebuilt paused enter/exit timeline
-   - desktop: left panel + hotspots/labels; phone: bottom sheet at `bottom: var(--tabbar-h)`, `z-index: var(--z-sheet)`
-   - static mode keeps the plain list
-   - the engine already sets `data-chapter=inspect`; add the step index
-   - `DemoDialog` + 6 demos via `next/dynamic`, loaded on open
-   - the XSS lab never uses `innerHTML`
-4. Keep the JS budget: anything new client-side must be lazy (`import()` / `next/dynamic`) and measured as brotli.
-5. In each summary, name the docs followed (rule 0.7) and update this file.
+1. Read this file (P5/P6 results + the TBT diagnosis), then `docs/PLAN.md` §7 + Amendments.
+2. If not done: commit P6.
+3. **P7** (CLAUDE.md §8 P7). Install the Chrome DevTools MCP first (needs Ahmed's OK) or use Lighthouse DevTools throttling + Playwright traces:
+   - **TBT < 200 ms with DevTools throttling** (now ~450). Targets: the pre-FCP document task (~850 ms), the post-FCP style/layout task (~250 ms), hydration (~275 ms). Ideas:
+     - the full-stack cards repeat every layer's chips → trim DOM
+     - smaller inline CSS
+     - check the font-swap relayout
+     - `content-visibility` on below-fold sections (re-test anchors)
+   - **Initial JS headroom** (149.9 / 150 KB br): e.g. trim IntroToggle/StageBoot, or check whether `partialPrefetching`/router features can go
+   - trace a full scroll on the phone profile: longest task while scrubbing, heap, open bitmaps
+4. In each summary, name the docs followed (rule 0.7) and update this file.

@@ -120,6 +120,6 @@ export const layers: Layer[] = [
     ],
     proof:
       "Uses *AI coding agents daily* and publishes auditing skills for *security and SEO / GEO*.",
-    demo: "Terminal replay of the auditors",
+    demo: "The auditors",
   },
 ];

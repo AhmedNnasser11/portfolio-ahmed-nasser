@@ -285,3 +285,9 @@ The fact-check found claims worded more strongly than the CV. The site will use 
 - **Engine boots on the first scroll intent**, not at load + idle. On phones the stage starts at the fold, so an IntersectionObserver trigger would fire at load.
 - **No hero laptop on phones.** The stage below the hero is the laptop. Desktop hero laptop = canvas drawn after load (not an LCP candidate).
 - **Lenis anchors:** custom click handler → `lenis.scrollTo(number)` (the built-in `anchors` / element targets landed wrong in testing).
+
+## Amendments after P6 (2026-11-07)
+- **Inspect choreography = CSS keyed on `data-state`** (set by the lazy engine), not GSAP timelines. Fast scrolls are safe: CSS restarts per state, with no timeline bookkeeping.
+- **Demos = `import()` + their own React root + native `<dialog>`**, opened by one delegated listener in `StageBoot`. This replaces `next/dynamic`: no new client component in the initial bundle (the budget had 0.6 KB left).
+- **Layer 06 demo** is "The auditors" (facts + links) until P8 captures a real audit run; no invented terminal output.
+- **Hotspot click** = instant jump behind the modal + open the demo; the dots scroll smoothly.

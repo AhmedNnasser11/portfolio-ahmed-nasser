@@ -15,6 +15,7 @@ type Clip = "a" | "b" | "c" | "d";
 const A_END = 0.15;
 const B_END = 0.33;
 const HOLD_END = 0.88;
+const STEP = (HOLD_END - B_END) / 6;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const px = (el: Element | null) => (el instanceof HTMLElement ? el.offsetHeight : 0);
@@ -32,11 +33,13 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
   const tabbar = document.querySelector('nav[aria-label="Sections"]');
 
   // Lenis: desktop only (§6 rule 8), synced to ScrollTrigger per the Lenis README.
+  let lenis: import("lenis").default | undefined;
   if (tier === "desktop") {
     const { default: Lenis } = await import("lenis");
-    const lenis = new Lenis();
-    lenis.on("scroll", ScrollTrigger.update);
-    const raf = (time: number) => lenis.raf(time * 1000);
+    lenis = new Lenis();
+    const l = lenis;
+    l.on("scroll", ScrollTrigger.update);
+    const raf = (time: number) => l.raf(time * 1000);
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
     // In-page anchors: one smooth scroll that stops under the sticky header.
@@ -49,14 +52,21 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
       e.preventDefault();
       // Absolute target from the live layout (not Lenis' element lookup, which was off in testing).
       const y = el.getBoundingClientRect().top + window.scrollY - px(header) - 8;
-      lenis.scrollTo(Math.max(0, y));
+      l.scrollTo(Math.max(0, y));
       history.pushState(null, "", `#${id}`);
     };
     document.addEventListener("click", onAnchor);
+    // Demos are modal: pause smooth scroll while one is open.
+    const stop = () => l.stop();
+    const start = () => l.start();
+    document.addEventListener("demo:open", stop);
+    document.addEventListener("demo:close", start);
     cleanups.push(() => {
       document.removeEventListener("click", onAnchor);
+      document.removeEventListener("demo:open", stop);
+      document.removeEventListener("demo:close", start);
       gsap.ticker.remove(raf);
-      lenis.destroy();
+      l.destroy();
     });
   }
 
@@ -65,6 +75,25 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
     const c = p < B_END ? "teardown" : p < HOLD_END ? "inspect" : "assemble";
     if (c !== chapter) root.dataset.chapter = chapter = c;
   };
+
+  // Inspect (chapter 3): six steps across the hold. The engine only flips
+  // data-state; CSS runs the enter/exit choreography (globals.css "Inspect").
+  const panels = Array.from(root.querySelectorAll<HTMLElement>(".stage-panel"));
+  const dots = Array.from(root.querySelectorAll<HTMLElement>(".stage-dot"));
+  const spots = Array.from(root.querySelectorAll<HTMLElement>(".stage-hotspot"));
+  const count = root.querySelector(".stage-count");
+  let step = -2;
+  const setStep = (p: number) => {
+    const s = p < B_END ? -1 : p >= HOLD_END ? 6 : Math.min(5, Math.floor((p - B_END) / STEP));
+    if (s === step) return;
+    step = s;
+    panels.forEach((el, i) => (el.dataset.state = i < s ? "past" : i === s ? "active" : "next"));
+    const shown = Math.min(5, Math.max(0, s));
+    dots.forEach((el, i) => el.toggleAttribute("aria-current", i === shown));
+    spots.forEach((el, i) => el.toggleAttribute("data-active", i === shown));
+    if (count) count.textContent = `Layer ${String(shown + 1).padStart(2, "0")} / 06`;
+  };
+  cleanups.push(() => panels.forEach((el) => delete el.dataset.state));
 
   const scene = tier === "low" ? posterScene(root) : canvasScene(root, tier, gsap);
   cleanups.push(scene.destroy);
@@ -77,12 +106,29 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
     end: () => `bottom ${window.innerHeight - px(tabbar)}px`,
     onUpdate: (self) => {
       setChapter(self.progress);
+      setStep(self.progress);
       scene.onProgress(self.progress);
     },
   });
   setChapter(st.progress);
+  setStep(st.progress);
   scene.onProgress(st.progress);
   cleanups.push(() => st.kill());
+
+  // Jump to a step (hotspots, progress dots): scroll to the middle of its slice.
+  const onJump = (e: MouseEvent) => {
+    const btn = (e.target as Element).closest?.<HTMLElement>("[data-jump]");
+    if (!btn || !root.contains(btn)) return;
+    const i = Number(btn.dataset.jump);
+    const p = B_END + (i + 0.5) * STEP;
+    const y = st.start + p * (st.end - st.start);
+    // Hotspots also open a demo (modal, pauses Lenis): jump instantly behind it.
+    const instant = btn.hasAttribute("data-demo");
+    if (lenis) lenis.scrollTo(y, { immediate: instant });
+    else window.scrollTo({ top: y, behavior: instant ? "instant" : "smooth" });
+  };
+  root.addEventListener("click", onJump);
+  cleanups.push(() => root.removeEventListener("click", onJump));
 
   return {
     destroy: () => {

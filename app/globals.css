@@ -127,10 +127,16 @@ body {
   /* opacity fade on the compositor; visibility flips in a 0s animation (no frames) */
   animation: intro-out 0.3s ease-in 9.3s forwards, intro-gone 0s linear 9.6s forwards;
 }
+/* Each scene fills the overlay box, so a font swap can never move a scene box (CLS). */
 .intro-scene {
-  grid-area: 1 / 1;
-  max-width: 44rem;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  padding: 2.5rem 1rem 6rem;
 }
+.intro-scene > * { max-width: 44rem; }
 .intro-bars {
   position: absolute;
   top: 0.75rem;
@@ -370,3 +376,211 @@ html.lenis { scroll-behavior: auto; }
 .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
 .lenis [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* ===================== Inspect (chapter 3) =====================
+   Static mode: the six panels are a plain grid. Scroll mode: stacked in one
+   grid cell inside the sticky stage (cell = tallest panel → no CLS); the engine
+   sets data-state and CSS runs the choreography (transform/opacity only). */
+.hl-sweep {
+  position: relative;
+  z-index: 0;
+  display: inline-block;
+  padding-inline: 0.08em;
+  color: var(--color-text);
+}
+.hl-sweep::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: auto 0 0.08em 0;
+  height: 0.38em;
+  background: rgb(110 155 255 / 0.42);
+  transform-origin: left;
+}
+.stage-progress,
+.stage-hotspots { display: none; }
+@media (scripting: none) {
+  .demo-open { display: none; }
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  html:not([data-tier="static"]) .stage-media {
+    container-type: size;
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .stage[data-chapter="inspect"] .stage-media { transform: translateY(-17%); }
+
+  /* Panels: phone bottom sheet (above the tab bar: the sticky stage already ends there). */
+  html:not([data-tier="static"]) .stage-panels-wrap {
+    z-index: var(--z-sheet);
+    align-self: end;
+    max-width: none;
+    padding: 0 0.5rem 0.5rem;
+    pointer-events: none;
+  }
+  html:not([data-tier="static"]) .stage-panels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  html:not([data-tier="static"]) .stage-panel {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(24px);
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s linear 0.35s;
+  }
+  html:not([data-tier="static"]) .stage-panel[data-state="past"] { transform: translateY(-24px); }
+  html:not([data-tier="static"]) .stage-panel[data-state="active"] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s;
+  }
+  html:not([data-tier="static"]) .panel-card { padding: 1rem 1.1rem; }
+
+  /* Enter choreography: number, name mask, title, chips (≤ 6 staggered on phones), PROOF sweep. */
+  .stage-panel[data-state="active"] .panel-num { animation: insp-up 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .stage-panel[data-state="active"] .panel-name .ml > span {
+    animation: intro-line 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) 0.05s both;
+  }
+  .stage-panel[data-state="active"] .panel-title { animation: insp-up 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) 0.08s both; }
+  .stage-panel[data-state="active"] .panel-chips > li {
+    animation: intro-pop 0.35s cubic-bezier(0.3, 1.4, 0.5, 1) calc(0.14s + min(var(--i), 5) * 40ms) both;
+  }
+  .stage-panel[data-state="active"] .hl-sweep::after {
+    animation: insp-sweep 0.55s cubic-bezier(0.3, 0.7, 0.2, 1) 0.4s both;
+  }
+  .stage-panel[data-state="active"] .demo-open { animation: insp-up 0.4s ease-out 0.3s both; }
+
+  /* Progress "LAYER 03 / 06" + dots (visible during Inspect only). */
+  html:not([data-tier="static"]) .stage-progress {
+    z-index: 2;
+    display: flex;
+    align-self: start;
+    justify-self: center;
+    align-items: center;
+    gap: 0.25rem;
+    padding-top: 0.25rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+  }
+  .stage[data-chapter="inspect"] .stage-progress {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.4s ease, visibility 0s;
+  }
+  .stage-dots { display: flex; }
+  .stage-dot {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 44px;
+    cursor: pointer;
+  }
+  .stage-dot > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.28);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  .stage-dot[aria-current] > span {
+    background: var(--color-accent);
+    transform: scaleX(2.2);
+  }
+
+  @media (min-width: 64rem) {
+    .stage[data-chapter="inspect"] .stage-media { transform: translateX(18%); }
+    html:not([data-tier="static"]) .stage-panels-wrap {
+      align-self: center;
+      justify-self: start;
+      width: min(460px, 38vw);
+      margin-left: max(2rem, calc((100vw - 80rem) / 2 + 2rem));
+      padding: 0;
+    }
+    html:not([data-tier="static"]) .panel-card { padding: 1.75rem; }
+    .stage-panel[data-state="active"] .panel-chips > li {
+      animation-delay: calc(0.14s + var(--i) * 40ms);
+    }
+  }
+
+  /* Desktop labels on the stack (no labels on phones, §6 rule 9). */
+  @media (min-width: 64rem) and (pointer: fine) {
+    html:not([data-tier="static"]) .stage-hotspots {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 1;
+      display: block;
+      width: min(100cqw, calc(100cqh * 1600 / 892));
+      aspect-ratio: 1600 / 892;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+    }
+    .stage[data-chapter="inspect"] .stage-hotspots {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.4s ease 0.2s, visibility 0s;
+    }
+  }
+}
+.stage-hotspot {
+  position: absolute;
+  display: flex;
+  min-width: 44px;
+  min-height: 44px;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transform: translate(-50%, -12px);
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+.stage-hotspot-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 4px rgb(110 155 255 / 0.25);
+  transition: transform 0.3s ease;
+}
+.stage-hotspot-label {
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: rgb(8 9 11 / 0.72);
+  white-space: nowrap;
+}
+.stage-hotspot[data-active] { color: var(--color-text); }
+.stage-hotspot[data-active] .stage-hotspot-dot { transform: scale(1.6); }
+
+@keyframes insp-up { from { opacity: 0; transform: translateY(18px); } }
+@keyframes insp-sweep { from { transform: scaleX(0); } }
+
+/* ===================== Demo dialog ===================== */
+.demo-dialog {
+  width: min(720px, calc(100vw - 1.5rem));
+  max-width: none;
+  max-height: calc(100svh - 1.5rem);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
+  overscroll-behavior: contain;
+}
+.demo-dialog[open] { animation: insp-up 0.3s ease-out; }
+.demo-dialog::backdrop { background: rgb(0 0 0 / 0.72); }
+.demo-body { padding: 1.25rem; }
+@media (min-width: 48rem) {
+  .demo-body { padding: 2rem; }
+}

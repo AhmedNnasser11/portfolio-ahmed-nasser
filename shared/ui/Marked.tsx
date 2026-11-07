@@ -2,8 +2,8 @@ import { Fragment } from "react";
 
 type Props = {
   text: string;
-  /** "hl" = highlighter band, "grad" = gradient keyword. */
-  variant?: "hl" | "grad";
+  /** "hl" = highlighter band, "grad" = gradient keyword, "sweep" = band that sweeps in (Inspect PROOF). */
+  variant?: "hl" | "grad" | "sweep";
 };
 
 /** Renders `*word*` segments from content/*.ts as highlights. */
@@ -13,7 +13,7 @@ export function Marked({ text, variant = "hl" }: Props) {
     <>
       {parts.map((part, i) =>
         i % 2 === 1 ? (
-          <span key={i} className={variant}>
+          <span key={i} className={variant === "sweep" ? "hl-sweep" : variant}>
             {part}
           </span>
         ) : (
