@@ -45,3 +45,7 @@ next-env.d.ts
 
 # raw media (large source files; final assets go to public/media)
 assets-src/raw/
+
+# generated keyframes/clips (large binaries; logged in assets-src/PROGRESS.md)
+assets-src/keyframes/
+assets-src/clips/

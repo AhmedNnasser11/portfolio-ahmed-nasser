@@ -4,7 +4,7 @@
 > Update it at the end of every session: phase, what was done, what's next, credits.
 
 **Last updated:** 2026-11-07
-**Current phase:** P2 done and committed on `feat/portfolio`. **P3 started**: the K1 prompt + credit cost go to Ahmed first, and nothing is generated without his OK.
+**Current phase:** **P3 done** (K1–K5 + clips A–D, 49.5 credits, balance 60.5). Next is **P4** (media pipeline). P3 is not committed (assets are binaries kept out of git).
 **Branch:** `feat/portfolio`. Commit only when Ahmed asks.
 
 ---
@@ -41,6 +41,8 @@
 | TBT | OK to fix in P7, but **P7 must get real-throttling (DevTools) TBT < 200 ms** |
 | LCP element | Make the `h1` "Ahmed Nasser — Frontend Developer" the LCP element in P5/P7 |
 | Phone nav | Bottom tab bar < md (no menu button). Layout tokens in `globals.css`: `--tabbar-h` (0 from md), z-order header = tabbar 50 < **Inspect sheet 55** (P6: `bottom: var(--tabbar-h)`) < dialog 60. `body` has `padding-bottom: var(--tabbar-h)` |
+| Clip model | **Kling 3.0 `pro`**, 5 s, start + end frame, sound off: **8.75 credits each** (~35 for A–D). Fits the current 110, so clips are no longer deferred. Each clip still needs a cost check + OK. Seedance 2.5 1080p (80/clip) rejected |
+| CLS | Accept 0.001 under DevTools throttling (horizontal Inter Tight swap). Keep `display: swap` so first visits see the display font |
 | P2 deviations | Approved: fonts (full variable axis, mono `optional`), `inlineCss`, the three section headings |
 | CV file | Keep `public/Ahmed_Nasser_Frontend_Developer_CV.pdf`; link `/Ahmed_Nasser_Frontend_Developer_CV.pdf` |
 
@@ -66,7 +68,6 @@
 - Section headings were added as the only new copy: "Six layers, *one* developer", "4+ years *in production*", "Shipped for *real clients*" (CV: "real clients in Saudi Arabia and Egypt", "shipping products to production").
 
 ## Open items / waiting on Ahmed
-1. **CLS 0.001 under real throttling** (Inter Tight swap, horizontal only): accept, or switch Inter Tight to `display: optional`?
 2. **CLAUDE.md CV path has no `.pdf`** (lines 15, 87, 269, 324: `/Ahmed_Nasser_Frontend_Developer_CV`). Suggest adding `.pdf`; don't change it without his OK.
 3. **Install prereqs (needs his OK):**
    - `winget install ffmpeg`
@@ -79,11 +80,22 @@
 ## Higgsfield credit log
 | Date | Call | Model | Credits | Balance | Result |
 |---|---|---|---|---|---|
-| 2026-11-07 | — (none spent) | — | 0 | 110 | — |
+| 2026-11-07 | — (none spent before P3) | — | 0 | 110 | — |
+| 2026-11-07 | K1 closed laptop, 16:9 2k | nano_banana_pro | 2 | 108 | accepted → `assets-src/keyframes/K1.png` |
+| 2026-11-07 | K2 try 1 | nano_banana_pro | 2 | 106 | rejected (angle drift, fake text) |
+| 2026-11-07 | K2 (edit of K1) | nano_banana_pro | 2 | 104 | accepted |
+| 2026-11-07 | K3 exploded | nano_banana_pro | 2 | 102 | accepted |
+| 2026-11-07 | K4 try 1 | nano_banana_pro | 2 | 100 | rejected (no orbit) |
+| 2026-11-07 | K5 phone (edit of K3) | nano_banana_pro | 2 | 98 | accepted |
+| 2026-11-07 | K4 orbit (retry) | 3d_jutsu_angles | 2.5 | 95.5 | accepted |
+| 2026-11-07 | clip B K2→K3 | kling3_0 pro 5 s | 8.75 | 86.75 | accepted |
+| 2026-11-07 | clip A K1→K2 | kling3_0 pro 5 s | 8.75 | 78 | accepted |
+| 2026-11-07 | clip D K3→K5 | kling3_0 pro 5 s | 8.75 | 69.25 | accepted |
+| 2026-11-07 | clip C K3→K4 | kling3_0 pro 5 s | 8.75 | 60.5 | accepted; use frames 0–~30 only (orbit eases back mid-clip) |
 
 Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`):
-- [ ] K1  - [ ] K2  - [ ] K3  - [ ] K4  - [ ] K5   ← now (110 credits)
-- [ ] clip B  - [ ] clip A  - [ ] clip D  - [ ] clip C (optional)   ← later
+- [x] K1  - [x] K2  - [x] K3  - [x] K4  - [x] K5   (14.5 credits spent, 95.5 left)
+- [x] clip B  - [x] clip A  - [x] clip D  - [x] clip C (trim to frames 0–~30)   (35 credits)
 
 ## Environment facts
 - Next **16.4.5**, React **19.3.0**, Tailwind **4.3.5**.
@@ -92,15 +104,19 @@ Asset progress (once P3 starts, it is also mirrored in `assets-src/PROGRESS.md`)
   - In Next 16, `next build` no longer prints JS bundle sizes; use `npx next analyze`.
   - `next/image` `priority` is deprecated → use `preload`/`fetchPriority`; `images.qualities` is required.
 - Versions to install: `gsap@3.15.1`, `@gsap/react@2.1.2`, `lenis@1.3.27`.
-- Connected MCPs: Playwright. Not installed: Chrome DevTools MCP, Higgsfield MCP. ffmpeg is not installed.
+- Connected MCPs: Playwright. Not installed: Chrome DevTools MCP, Higgsfield MCP.
+- **ffmpeg 9.0.2 installed** (winget `Gyan.FFmpeg`, 2026-11-07). Bash sessions started before the install don't have it on PATH; full path: `%LOCALAPPDATA%\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.2-full_build\bin\`.
+- Higgsfield lessons: Nano Banana Pro keeps the camera only with an "Edit this exact image… keep X the same" prompt; use `3d_jutsu_angles` for camera-angle changes; Kling 3.0 pro 5 s start+end = 8.75 credits.
 - OS: Windows 11. Shell scripts (`scripts/media.sh`) run in Git Bash.
 
 ## Next session — start here
-1. Read this file, then `docs/PLAN.md` §5–6.
-2. **P3 (in progress)**:
-   - `hf workspace set 3eb5ac4a-bd25-4bc4-86bd-2334b36ebd5c` (done when P3 started; re-check with `higgsfield account status`)
-   - for each K1–K5: `higgsfield generate cost …`, show the prompt + cost, **wait for his OK**, then generate
-   - save to `assets-src/`, log in `assets-src/PROGRESS.md` and the credit table above
-3. P4: swap the SVG placeholders (`features/hero/LaptopPoster.tsx`, `features/stage/StackPoster.tsx`) for real `<picture>` posters.
-4. P5: GSAP/Lenis via dynamic `import()` after first paint; h1 must be the LCP element.
-5. In each summary, name the docs followed (rule 0.7) and update this file.
+1. Read this file, then `docs/PLAN.md` §3 + §6 and `assets-src/PROGRESS.md`.
+2. **P4 media pipeline** (`scripts/media.sh`, Git Bash, ffmpeg path above):
+   - source: `assets-src/clips/{A,B,C,D}.mp4` (1928×1076, 24 fps, 121 frames) and `assets-src/keyframes/K1–K5.png`
+   - desktop WebP 1600w at 12–15 fps; phone 720w at 12–15 fps, q70
+   - clip C: frames 0–~30 only (find the turnaround frame first)
+   - grade the background to #08090B; remove banding with a little noise or dither if needed
+   - posters K1/K3/K5 as AVIF: desktop 16:9 1600w and phone 9:16 720w. The K1–K3 subject is wider than the centre third, so decide between a 9:16 regenerate (~2 credits each, needs OK) and a looser crop. K5 crops cleanly.
+   - weight report against the budget: ≤ 6 MB per clip on desktop, ≤ 2.5 MB per clip on phone
+3. Then swap the SVG placeholders for `<picture>` posters; P5 adds GSAP/Lenis after first paint, and the h1 must be the LCP element.
+4. In each summary, name the docs followed (rule 0.7) and update this file.
