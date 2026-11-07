@@ -60,6 +60,17 @@
 - `content-visibility:auto` was tried and reverted (it broke anchor jumps).
 - Checks: no horizontal scroll at 360/390/412/430/767/768/1024/1440. Tab bar 5 × (69–83)×64 px targets at 360–430, hidden ≥ 768. Active tab follows the scroll (Skills covers #layers + #stack). Footer clears the bar by 48 px. A tab tap lands under the header. JS off: hero + tabs work. 0 console errors / CSP violations.
 
+## Hero laptop ends open (2026-11-07) — committed
+Spec: CLAUDE.md §1 chapters 1–2, §6 rules 3, 5, 12 (updated first). CV link in CLAUDE.md fixed to `/Ahmed_Nasser_Frontend_Developer_CV.pdf`. "Available for work" and "RTL" confirmed as facts by Ahmed. 0 credits.
+- **Clip A plays once in the hero** (`features/hero/open-clip.ts`): K1 canvas after load + idle, then the 76 clip A frames of the stage's frame set (m on the phone tier, d on desktop) are fetched as blobs at idle, low priority. When `html[data-intro=done]` (or on load if the intro was skipped), they play forward by time in 1.5 s (sine in-out), decoded just ahead with `createImageBitmap` and closed after drawing (≤ 8 alive). Rests on the last frame (K2). Not ready at intro end → stays on K1 and plays when loaded. Scroll starts before it played → jumps to K2 (frames, else the K2 poster). Intro Replay closes it (K1) and plays it again at the end.
+- Float, sweep, dots, link and desktop tilt run on the open laptop. The lid sweep is now clipped to the open screen; the 6 dots moved onto the open laptop; sweep + dots start with `[data-open]`.
+- **Stage:** clip A removed from the scroll. Teardown = clip B over 0–33 %. Stage frame 0 = clip A's last frame file (the exact pixels the hero rests on), then B. Base poster K1 → **K2** (`scripts/media.sh` makes `k2-d/m.avif` = A's last frame; PSNR 49 dB vs frame 076). Low tier crossfades K2/K3/K5.
+- **768–1023 px:** the hero box is desktop-shaped but the stage (phone tier) draws the phone crop, which showed as an edge jump at the handoff. The hero canvas now draws the stage's frame set at its source position inside its box.
+- **Edges:** a dark rectangle showed (box feather + floor glow cut). `--frame-fade` radial `mask-image` (ellipse 62 % × 72 % at 50 % 30 %) on the hero canvas, the stage canvas and the posters, sized to the frame rect on both (hero via `--fade-w/--fade-x`, stage via `cqw/cqh` contain-fit), so the handoff still matches. The K2 poster under the stage canvas hides once the canvas draws (two faded layers would not match).
+- Reduced motion, low tier, JS off: K2 still (`<noscript>` K2), no clip A requests.
+- **Checked** (prod, headless Chromium): opens 1.43 s after intro end at 390/820/1000/1440; handoff before/after screenshots match (shift-compensated PSNR 42/37/37/41 dB, the rest is a 1–2 px scroll offset); no horizontal scroll; 0 console errors; LCP = h1; clip A fetch starts after the load event. Playwright 49 passed, 7 skipped.
+- Lighthouse mobile DevTools (3 runs): Perf 88–91, LCP 2.1–2.3 s, **TBT 250–330 ms**, CLS 0.001, total 927 KiB (clip A phone frames included). Fixed in P7 follow-up below.
+
 ## Intro + laptop upgrade (2026-11-07) — committed
 Spec: CLAUDE.md §1 chapters 0–1 and §6 rule 12b (updated first, then built). 0 Higgsfield credits.
 Docs followed: gsap.com Timeline + "Most common GSAP mistakes", web.dev "High-performance animations", MDN IntersectionObserver / Page Visibility.

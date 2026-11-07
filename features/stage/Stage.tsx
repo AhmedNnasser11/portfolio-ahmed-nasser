@@ -8,7 +8,7 @@ import { StageBoot } from "./StageBoot";
 /**
  * Chapters 2–4 (Teardown → Inspect → Reassemble).
  * Scroll mode (JS on, motion OK): a 700svh wrapper with a sticky stage; the
- * engine scrubs canvas frames (desktop/phone) or crossfades K1/K3/K5 (low),
+ * engine scrubs canvas frames (desktop/phone) or crossfades K2/K3/K5 (low),
  * and steps through the six Inspect panels during the hold (33–88 %).
  * Static mode (no JS, reduced motion, ?tier=static): plain flow with the K3
  * still and the six panels as a list — same HTML, different CSS.
@@ -18,7 +18,8 @@ export function Stage() {
     <section id="layers" aria-labelledby="layers-title" className="stage">
       <div className="stage-sticky">
         <div className="stage-media">
-          <Poster name="k1" alt="" />
+          {/* K2: the open laptop the hero rests on, i.e. the stage's first frame. */}
+          <Poster name="k2" alt="" />
           <Poster
             name="k3"
             alt="The website taken apart into six floating layers above the laptop: interface, components, data, shield, engine, and a circuit board for AI and quality"

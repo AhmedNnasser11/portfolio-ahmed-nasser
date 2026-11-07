@@ -63,7 +63,7 @@ manifest+="\n  }\n}\n"
 printf "$manifest" > "$OUT/manifest.json"
 
 # Posters = exact clip frames so poster and canvas match pixel for pixel:
-# K1 = first frame of A, K3 = last frame of B, K5 = last frame of D.
+# K1 = first frame of A, K2 = last frame of A, K3 = last frame of B, K5 = last frame of D.
 poster() { # name src select(first|last)
   local name=$1 src=$2 which=$3 sel
   if [ "$which" = first ]; then sel=(-i "$src" -frames:v 1); else sel=(-sseof -0.05 -i "$src" -frames:v 1); fi
@@ -73,6 +73,7 @@ poster() { # name src select(first|last)
     -c:v libaom-av1 -still-picture 1 -crf 30 -cpu-used 4 "$OUT/posters/$name-m.avif"
 }
 poster k1 "$SRC/A.mp4" first
+poster k2 "$SRC/A.mp4" last    # = A frame 076 (t 5.0 s): the open laptop the hero rests on
 poster k3 "$SRC/B.mp4" last
 poster k5 "$SRC/D.mp4" last
 

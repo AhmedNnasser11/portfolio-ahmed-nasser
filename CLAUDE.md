@@ -12,7 +12,7 @@
 2. **Mobile first.** Write every style for a 390px phone first, then enhance at `md` (768px) and `lg` (1024px). Test at 360, 390, 430, 768, 1280 and 1440.
 3. **Fast and never laggy on phones.** Section 6 is a hard budget. If an effect breaks the budget on mobile, it is removed on mobile, not "optimized later".
 4. **Progressive enhancement.** All content is real server-rendered HTML that works with JavaScript off. Video and animation sit on top of it.
-5. **Facts only.** Use only facts written in section 4 or in `public/Ahmed_Nasser_Frontend_Developer_CV`. Never invent metrics, clients, tools, testimonials or scores. Any number shown live (FPS, Web Vitals) must be measured, not hardcoded.
+5. **Facts only.** Use only facts written in section 4 or in `public/Ahmed_Nasser_Frontend_Developer_CV.pdf`. Never invent metrics, clients, tools, testimonials or scores. Any number shown live (FPS, Web Vitals) must be measured, not hardcoded.
 6. **Ask before spending Higgsfield credits.** Every `generate_image` or `generate_video` call needs my OK.
 7. **Official docs over memory.** Before building any feature, open the matching links in section 11 (WebFetch) and follow the current official best practice. APIs change, so never rely on memory for versions or APIs. If a doc conflicts with the budget in section 6, the budget wins. In each summary, say which doc you followed.
 
@@ -27,8 +27,8 @@ The portfolio presents the website itself as a product being taken apart, the wa
 | # | Chapter | Driven by | What happens |
 |---|---|---|---|
 | 0 | **Intro reel** | time (one GSAP timeline, ~10 s, skippable) | A trailer for the site: it should feel like a video, not text fading in. The text stays the hero (big, high contrast, readable); the shapes only support it, and they come from the 6 layers. 4 story bars at the top, then 4 scenes: **S1** "FRONTEND / DEVELOPER" (2.5 s): thin grid lines draw in and frame the words, the blue highlighter sweeps under DEVELOPER, an SVG pin drops onto "Cairo, Egypt". **S2** giant "4+" (1.8 s): a circular gauge ring (Engine layer) fills in sync with the 1→4 counter, "years shipping production frontends". **S3** "CORE STACK" (2.6 s): each chip (React.js, Next.js, TypeScript, JavaScript) first draws as a dashed wireframe box (Components layer), then fills into the solid chip, one after another. **S4** (2.4 s): small dashboard bars grow next to "Enterprise SaaS dashboards", a hexagon shield appears with "Security", a thin line connects two dots labeled KSA and Egypt. Enter ≈ 0.25 s, exit ≈ 0.2 s. **Match cuts, not fades:** the main shape at the end of each scene scales up and becomes the frame or background of the next (S1 grid → S2 background, S2 ring → S3 frame, S3 frame → S4 dashboard panel). **Camera:** each scene pushes in slowly (scale 1 → 1.04). **Outro:** the shapes collapse and fly into the hero laptop, the overlay fades, and the hero text settles into place (transform only). S1 text and the fact line are server-rendered and readable at first paint, before GSAP arrives. |
-| 1 | **Final hero** | stays | "● Available for work · Cairo, Egypt", name, huge **Frontend Developer** with a highlighter sweep, "4+ years building production React.js & Next.js apps", four big core-stack chips, a secondary stack line, buttons **See experience** and **Download CV**. Laptop on the right (desktop) or below the text (phone). A "Skip intro" button turns into "Replay intro". Any scroll skips the intro. **Live laptop:** idle float (translateY ~6 px, ~4 s loop) and a soft light sweep across the lid every few seconds (a gradient band moved with transform inside a clipped wrapper); desktop only (`pointer: fine`): parallax tilt following the mouse, lerped in rAF, max ~6°; 6 small pulsing hotspot dots around it and a "6 layers inside ↓" link to #layers. **Handoff:** while scrolling from the hero to the stage, the laptop moves and scales onto the stage's first frame, so clip A starts from the exact hero frame with no jump. Phones: float, sweep and dots, no tilt. |
-| 2 | **Teardown** | scroll 0–33% | Clip A (laptop opens), then clip B (screen explodes into 6 floating layers). Headline "Every interface is a **stack.**" |
+| 1 | **Final hero** | stays | "● Available for work · Cairo, Egypt", name, huge **Frontend Developer** with a highlighter sweep, "4+ years building production React.js & Next.js apps", four big core-stack chips, a secondary stack line, buttons **See experience** and **Download CV**. Laptop on the right (desktop) or below the text (phone). A "Skip intro" button turns into "Replay intro". Any scroll skips the intro. **Live laptop:** idle float (translateY ~6 px, ~4 s loop) and a soft light sweep across the lid every few seconds (a gradient band moved with transform inside a clipped wrapper); desktop only (`pointer: fine`): parallax tilt following the mouse, lerped in rAF, max ~6°; 6 small pulsing hotspot dots around it and a "6 layers inside ↓" link to #layers. **Ends open:** the laptop starts closed (K1); when the intro ends, clip A plays forward once by time (~1.5 s, the device's A frames, loaded at idle after first paint, never before the h1 LCP), so the hero rests on the open laptop with a glowing screen (K2 = last frame of A). If the frames are not ready when the intro ends, it stays on K1 and plays A as soon as they load. Float, sweep, dots, link and tilt run on the open laptop. Reduced motion, low-end phones and JS off: K2 as a still image. The frame edges blend into `#08090B` (radial `mask-image` fade if a rectangle shows). **Handoff:** while scrolling from the hero to the stage, the laptop moves and scales onto the stage's first frame, which is the same K2 frame, so clip B starts from the exact hero frame with no jump. Phones: float, sweep and dots, no tilt. |
+| 2 | **Teardown** | scroll 0–33% | Clip B (screen explodes into 6 floating layers), starting from the open laptop (K2) the hero ended on. Clip A is not on the scroll; it plays once in the hero. Headline "Every interface is a **stack.**" |
 | 3 | **Inspect** | scroll 33–88% | Holds the exploded frame. Six scroll steps, one per layer. On each step the active layer glows, and a panel shows: big outlined number, layer name (mask reveal), title with a gradient keyword, skill chips that stagger in (key skills filled and bold), and a PROOF line where the highlighter sweeps over the key facts. Exit: content moves up and fades. Progress "LAYER 03 / 06" plus dots. Desktop: the panel is on the left and the mouse orbits the stack (clip C). Phone: the panel is a bottom sheet, with no orbit. |
 | 4 | **Reassemble** | scroll 88–100% | Clip D: the layers fold into a phone. "Assembled. Shipped. Keep scrolling ↓" |
 | 5 | **The full stack** | normal scroll | 6 skill cards (one per layer), with the highlighter sweeping when they come into view. |
@@ -84,7 +84,7 @@ Highlight vocabulary (use consistently):
 - GitHub: https://github.com/AhmedNnasser11
 - LinkedIn: https://www.linkedin.com/in/ahmed-nasser-931490212
 - npm: https://www.npmjs.com/~ahmednnasser111
-- CV: `/Ahmed_Nasser_Frontend_Developer_CV`
+- CV: `/Ahmed_Nasser_Frontend_Developer_CV.pdf`
 
 **Core stack:** React.js, Next.js, TypeScript, JavaScript.
 **Secondary:** Tailwind CSS, TanStack Query, Redux Toolkit, Zustand, REST, WebSockets, Vitest, Playwright.
@@ -212,17 +212,17 @@ Limits: images up to 4K, videos up to 15 s per clip, video jobs are asynchronous
    |---|---|
    | Desktop | WebP frame sequences, 1600px, ~24 fps of source |
    | Phone | 9:16 center-crop, 720px wide, ~15 fps of source (60–90 frames per clip), WebP quality ~70 |
-   | Low-end phone (≤ 4 GB RAM, ≤ 4 cores, or Save-Data) | H.264 `<video>` with a keyframe on every frame, seeked by scroll, or static K1/K3/K5 images |
+   | Low-end phone (≤ 4 GB RAM, ≤ 4 cores, or Save-Data) | H.264 `<video>` with a keyframe on every frame, seeked by scroll, or static K2/K3/K5 images |
 
 4. **Memory:** never keep all frames decoded. Keep a sliding window of decoded `ImageBitmap`s (current ±12 frames) and call `.close()` on the rest. iOS Safari crashes when canvas memory gets too high.
-5. **Loading:** poster K1 (AVIF, `priority`) first. Clip A frames load after the load event via `requestIdleCallback`. Clips B, C and D stream only when the user gets near them. Never show a full-page loader.
+5. **Loading:** the h1 paints first; the hero laptop canvas draws K1 after load + idle, then clip A frames (phone or desktop set) load at idle and play once in the hero after the intro. Clip B frames load when the stage engine starts (first scroll intent); C and D stream only when the user gets near them. Never show a full-page loader.
 6. **Canvas:** backing size = CSS size × `min(devicePixelRatio, 1.5)` on phones (2 on desktop). Draw only when the frame index changes. Use one rAF loop (the `gsap.ticker`), paused when the tab is hidden or the stage is off screen.
 7. **Animate only `transform` and `opacity`.** On phones: no `filter: blur`, no `backdrop-filter`, no animated `box-shadow`, no `-webkit-text-stroke` on large text, and no CSS 3D `preserve-3d` stacks. The mockup uses blur and CSS 3D for presentation only; real site = video frames + 2D overlays.
 8. **Scroll:** Lenis on desktop only. Use `ScrollTrigger.config({ ignoreMobileResize: true })`. Pinned stage height uses `100svh` (not `100vh`) to avoid address-bar jumps. Use `scrub: true` with light smoothing; no heavy `normalizeScroll`.
 9. **Fewer moving parts on phones:** chip stagger ≤ 6 items, no mouse orbit (skip clip C), no labels on the stack, bottom-sheet panel.
 10. **Code splitting:** every live demo (`Break it`, XSS lab, RBAC, terminal) is `next/dynamic` and loads on open. No third-party scripts except Vercel Analytics (optional).
 11. **Images:** `next/image`, AVIF/WebP, correct `sizes`, real screenshots compressed to ≤ 120 KB each.
-12. **Accessibility:** `prefers-reduced-motion` → no intro animation (show the final hero), no scrubbing (static K1/K3/K5), no laptop float/sweep/tilt/handoff, all content the same. Keyboard focus visible. Text contrast AA.
+12. **Accessibility:** `prefers-reduced-motion` → no intro animation (show the final hero), no scrubbing (static K2/K3/K5), hero laptop = K2 still (no clip A, float, sweep, tilt or handoff), all content the same. Keyboard focus visible. Text contrast AA.
 12b. **Intro shapes and hero laptop motion:** shapes are inline SVG (straight grid lines may be 1px elements scaled with `transform`). Animate only `transform` and `opacity`; `stroke-dashoffset` only on small SVG strokes (chip wireframes, ring, shield, map line). No blur, filters, `backdrop-filter` or video for the shapes. The whole intro is **one GSAP timeline**; GSAP still loads after first paint (never in the initial bundle), so S1 is static HTML until it arrives, and the intro skips itself if GSAP fails to load. The `h1` stays the LCP element (the hero laptop is a `<canvas>`, drawn after load + idle), CLS stays 0. The laptop loops (float, sweep, tilt, dot pulse) run on the `gsap.ticker`/CSS and pause off-screen (IntersectionObserver) and when the tab is hidden.
 13. **Security headers without killing performance:** keep the page **statically generated** (CDN-cached, fastest LCP). Do **not** use nonce-based CSP: per the Next.js CSP guide, nonces force dynamic rendering on every request (no static generation, no CDN cache, slower loads). Instead, set the CSP in `next.config` `headers()` and use Next.js's hash-based **Subresource Integrity** (`experimental.sri`). If SRI is not stable enough in the installed version, fall back to the documented "without nonces" CSP. Also set `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and `frame-ancestors 'none'`.
 14. **SEO:** metadata, OG image, JSON-LD `Person` + `WebSite`, `sitemap.xml`, `robots.txt`, `llms.txt`. The `h1` is "Ahmed Nasser — Frontend Developer".
@@ -267,7 +267,7 @@ npx skills add remotion-dev/skills
 sudo apt install ffmpeg   # macOS: brew install ffmpeg · Windows: winget install ffmpeg
 
 # My CV inside the project (source of truth for facts + the Download CV button)
-cp Ahmed_Nasser_Frontend_Developer_CV.pdf public/Ahmed_Nasser_Frontend_Developer_CV
+cp Ahmed_Nasser_Frontend_Developer_CV.pdf public/Ahmed_Nasser_Frontend_Developer_CV.pdf
 ```
 After installing, restart Claude Code and check with `/mcp` and `/plugin` that everything is loaded.
 
@@ -322,7 +322,7 @@ Using the Chrome DevTools MCP: emulate a mid-range phone (390×844, 4× CPU, Slo
 1) Run vercel-react-best-practices and web-design-guidelines on the codebase and fix the findings.
 2) Run my security auditor and my SEO/GEO auditor and fix the findings.
 3) Playwright tests at 360, 390, 768 and 1440: intro skip/replay, every chapter renders, layer taps open demos, EN/AR RTL works, keyboard-only navigation, reduced-motion mode, no console errors, no horizontal scroll.
-4) Check every fact on the site against public/Ahmed_Nasser_Frontend_Developer_CV and list anything that is not in it.
+4) Check every fact on the site against public/Ahmed_Nasser_Frontend_Developer_CV.pdf and list anything that is not in it.
 ```
 
 **P9 — Deploy**

@@ -29,6 +29,11 @@
   --z-tabbar: 50;
   --z-sheet: 55;
   --z-dialog: 60;
+  /* Frame edge fade for K1/K2 and every clip frame: an ellipse instead of the
+     encoded box feather, so no dark rectangle shows against the page. Same
+     geometry on the hero canvas and the stage, relative to the frame rect.
+     High centre: the open screen reaches the top of the frame. */
+  --frame-fade: radial-gradient(ellipse 62% 72% at 50% 30%, #000 55%, transparent 100%);
   color-scheme: dark;
 }
 @media (min-width: 48rem) {
@@ -421,9 +426,10 @@ html:not([data-intro="done"]) .intro-replay { visibility: hidden; }
 }
 
 /* ===================== Hero laptop (chapter 1) =====================
-   features/hero/laptop.ts: canvas draw, float, desktop tilt and the scroll
-   handoff on .lap-move (JS transform). CSS: lid light sweep + dot pulse,
-   paused off-screen / hidden tab (data-paused) and with reduced motion. */
+   features/hero/laptop.ts: canvas draw (K1, clip A once, rests on K2), float,
+   desktop tilt and the scroll handoff on .lap-move (JS transform). CSS: screen
+   light sweep + dot pulse once the laptop is open ([data-open]), paused
+   off-screen / hidden tab (data-paused) and with reduced motion. */
 /* z-index auto: the stage (later in the DOM) paints its headline over the
    travelling laptop; the stage media itself is hidden until the handoff. */
 .hero-laptop { position: relative; }
@@ -441,12 +447,20 @@ html:not([data-intro="done"]) .intro-replay { visibility: hidden; }
   transition: opacity 0.7s ease;
 }
 .lap-box canvas[data-ready] { opacity: 1; }
-/* Light sweep: a gradient band moved with transform, clipped to the lid. */
+.lap-box canvas,
+.lap-box img {
+  mask-image: var(--frame-fade);
+  mask-repeat: no-repeat;
+  /* laptop.ts sets these when the drawn frame is narrower than the box (768–1023 px) */
+  mask-size: var(--fade-w, 100%) 100%;
+  mask-position: var(--fade-x, 0%) 0;
+}
+/* Light sweep: a gradient band moved with transform, clipped to the open screen (K2). */
 .lap-sweep {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  clip-path: polygon(36.9% 36.6%, 82.3% 44%, 62.6% 56.3%, 12% 45.7%);
+  clip-path: polygon(44.3% 5%, 88.4% 6%, 81.6% 43%, 36.2% 37.5%);
   pointer-events: none;
 }
 .lap-sweep > span {
@@ -456,14 +470,14 @@ html:not([data-intro="done"]) .intro-replay { visibility: hidden; }
   background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.2) 50%, transparent 80%);
   transform: translateX(-110%);
 }
-canvas[data-ready] ~ .lap-sweep > span { animation: lap-sweep 6s cubic-bezier(0.45, 0, 0.25, 1) 1.2s infinite; }
+.hero-laptop[data-open] .lap-sweep > span { animation: lap-sweep 6s cubic-bezier(0.45, 0, 0.25, 1) 1.2s infinite; }
 .lap-dots {
   position: absolute;
   inset: 0;
   opacity: var(--teaser, 1);
   pointer-events: none;
 }
-canvas:not([data-ready]) ~ .lap-dots { visibility: hidden; }
+.hero-laptop:not([data-open]) .lap-dots { visibility: hidden; }
 .lap-dot {
   position: absolute;
   left: var(--xm);
@@ -503,7 +517,7 @@ canvas:not([data-ready]) ~ .lap-dots { visibility: hidden; }
 .hero-laptop[data-paused] .lap-dot::after { animation-play-state: paused; }
 @media (min-width: 48rem) {
   .lap-box { aspect-ratio: 1600 / 892; }
-  .lap-sweep { clip-path: polygon(41.3% 36.8%, 71.6% 44.3%, 58.4% 56.6%, 24.7% 46%); }
+  .lap-sweep { clip-path: polygon(46% 5%, 75.3% 6%, 70.8% 43%, 40.6% 37.5%); }
   .lap-dot { left: var(--x); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -526,7 +540,8 @@ canvas:not([data-ready]) ~ .lap-dots { visibility: hidden; }
 .stage-sticky { display: flex; flex-direction: column; }
 .stage-head { order: -1; }
 .stage-media { max-width: 64rem; margin-inline: auto; padding-inline: 1rem; }
-.stage-media [data-poster="k1"],
+.stage-media img { mask-image: var(--frame-fade); mask-repeat: no-repeat; mask-size: 100% 100%; }
+.stage-media [data-poster="k2"],
 .stage-media [data-poster="k5"],
 .stage-media canvas,
 .stage-assembled { display: none; }
@@ -567,6 +582,21 @@ canvas:not([data-ready]) ~ .lap-dots { visibility: hidden; }
   html:not([data-tier="static"]) .stage-media canvas { opacity: 0; }
   html:not([data-tier="static"]) .stage-media canvas[data-ready] { opacity: 1; }
   html[data-tier="low"] .stage-media canvas { display: none; }
+  /* Frame fade on the contain-fit frame rect (same geometry as the hero laptop).
+     <picture> switches to the desktop frame at 48rem; the canvas follows the tier. */
+  html:not([data-tier="static"]) .stage-media :is(img, canvas) {
+    --fit-a: calc(720 / 606);
+    mask-position: center;
+    mask-size: min(100cqw, 100cqh * var(--fit-a)) min(100cqh, 100cqw / var(--fit-a));
+  }
+  html:not([data-tier="static"]) .stage-media canvas { mask-image: var(--frame-fade); mask-repeat: no-repeat; }
+  html[data-tier="desktop"] .stage-media canvas { --fit-a: calc(1600 / 892); }
+  /* Once the canvas draws, the K2 poster under it hides: two faded layers would
+     add up to a different edge than the hero's single canvas. */
+  .stage-media:has(> canvas[data-ready]) [data-poster="k2"] img { visibility: hidden; }
+  @media (min-width: 48rem) {
+    html:not([data-tier="static"]) .stage-media img { --fit-a: calc(1600 / 892); }
+  }
 
   html:not([data-tier="static"]) .stage-head {
     z-index: 1;

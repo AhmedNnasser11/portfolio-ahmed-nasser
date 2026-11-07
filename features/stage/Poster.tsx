@@ -6,7 +6,7 @@ const SIZES = {
   m: { width: 720, height: 606 },
 } as const;
 
-export type PosterName = "k1" | "k3" | "k5";
+export type PosterName = "k2" | "k3" | "k5";
 
 type Props = {
   name: PosterName;

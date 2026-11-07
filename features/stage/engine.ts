@@ -11,9 +11,11 @@ export type StageHandle = { destroy: () => void };
 type ActiveTier = Exclude<Tier, "static">;
 type Clip = "a" | "b" | "c" | "d";
 
-// Scroll progress map (CLAUDE.md §1): A 0–15 %, B 15–33 %, hold 33–88 % (Inspect), D 88–100 %.
-const A_END = 0.15;
+// Scroll progress map (CLAUDE.md §1): B 0–33 % (Teardown), hold 33–88 % (Inspect), D 88–100 %.
+// Clip A is not on the scroll: it plays once in the hero (features/hero/open-clip.ts),
+// and B starts from its last frame (K2).
 const B_END = 0.33;
+const WARM_REST = 0.15; // past this, warm C and D
 const HOLD_END = 0.88;
 const STEP = (HOLD_END - B_END) / 6;
 
@@ -148,7 +150,7 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
 
 type Scene = { onProgress: (p: number) => void; destroy: () => void };
 
-/** Low tier: crossfade the K1 / K3 / K5 stills by progress (opacity only). */
+/** Low tier: crossfade the K2 / K3 / K5 stills by progress (opacity only). */
 function posterScene(root: HTMLElement): Scene {
   const k3 = root.querySelector<HTMLElement>('[data-poster="k3"] img');
   const k5 = root.querySelector<HTMLElement>('[data-poster="k5"] img');
@@ -156,7 +158,7 @@ function posterScene(root: HTMLElement): Scene {
   let o5 = -1;
   return {
     onProgress(p) {
-      const n3 = p < A_END ? 0 : p < B_END ? (p - A_END) / (B_END - A_END) : 1;
+      const n3 = p < B_END ? p / B_END : 1;
       const n5 = p < HOLD_END ? 0 : (p - HOLD_END) / (1 - HOLD_END);
       if (k3 && Math.abs(n3 - o3) > 0.004) k3.style.opacity = String((o3 = n3));
       if (k5 && Math.abs(n5 - o5) > 0.004) k5.style.opacity = String((o5 = n5));
@@ -175,14 +177,19 @@ function canvasScene(
   gsap: typeof import("gsap").gsap,
 ): Scene {
   const dev = tier === "desktop" ? "d" : "m";
-  const order: Clip[] = tier === "desktop" ? ["a", "b", "c", "d"] : ["a", "b", "d"]; // no orbit on phones (§6 rule 9)
-  const urls: string[] = [];
+  const order: Clip[] = tier === "desktop" ? ["b", "c", "d"] : ["b", "d"]; // no orbit on phones (§6 rule 9)
+  const clips = manifest.clips as Record<string, Record<string, { count: number }>>;
+  const frame = (c: Clip, i: number) => `/media/clips/${c}/${dev}/${String(i).padStart(3, "0")}.webp`;
+  // Frame 0 is clip A's last frame: the exact file the hero laptop rests on (K2),
+  // so the handoff lands on identical pixels; B's own first frame follows.
+  const urls: string[] = [frame("a", clips.a[dev].count)];
   const seg = {} as Record<Clip, { start: number; n: number }>;
   for (const c of order) {
-    const info = (manifest.clips as Record<string, Record<string, { count: number }>>)[c][dev];
-    seg[c] = { start: urls.length, n: info.count };
+    const info = clips[c][dev];
+    const start = c === "b" ? 0 : urls.length; // B's segment includes frame 0 (A's last)
+    seg[c] = { start, n: urls.length - start + info.count };
     for (let i = 1; i <= info.count; i++) {
-      urls.push(`/media/clips/${c}/${dev}/${String(i).padStart(3, "0")}.webp`);
+      urls.push(frame(c, i));
     }
   }
 
@@ -199,8 +206,7 @@ function canvasScene(
   let drawn: ImageBitmap | null = null;
 
   const indexFor = (p: number) => {
-    if (p < A_END) return seg.a.start + (p / A_END) * (seg.a.n - 1);
-    if (p < B_END) return seg.b.start + ((p - A_END) / (B_END - A_END)) * (seg.b.n - 1);
+    if (p < B_END) return seg.b.start + (p / B_END) * (seg.b.n - 1);
     if (p < HOLD_END) {
       if (!seg.c) return seg.b.start + seg.b.n - 1;
       // Mouse X orbits the stack (clip C); eased in/out at the hold edges so B → C → D never jumps.
@@ -276,13 +282,12 @@ function canvasScene(
       }
     }
   };
-  warm("a");
+  warm("b");
 
   return {
     onProgress(p) {
       targetP = p;
-      if (p > 0) warm("b");
-      if (p > A_END) {
+      if (p > WARM_REST) {
         warm("c");
         warm("d");
       }

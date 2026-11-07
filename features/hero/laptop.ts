@@ -1,21 +1,30 @@
 // Hero laptop motion (chapter 1). Loaded with import() after load + idle by
 // StageBoot, so none of it is in the initial bundle or the load window.
-// - draws K1 on the hero <canvas> (not an LCP candidate)
+// - draws K1 (closed) on the hero <canvas> (not an LCP candidate), then plays
+//   clip A once after the intro so it rests open on K2 (open-clip.ts).
+//   Reduced motion and low-end phones: K2 still only.
 // - idle float (translateY ±6 px, 4 s) and desktop parallax tilt (≤ 6°, lerped)
 // - scroll handoff: from scrollY 0 to the moment the stage engages, .lap-move
-//   moves and scales onto the stage's first frame (same source frame), then the
-//   stage takes over, so clip A starts from the exact hero frame (no jump)
+//   moves and scales onto the stage's first frame (the same K2 frame file), then
+//   the stage takes over, so clip B starts from the exact hero frame (no jump)
 // One loop on the gsap.ticker (§6 rule 6), paused off-screen and in hidden tabs.
 // Docs: web.dev animations guide (transform/opacity only), MDN
 // IntersectionObserver + Page Visibility, gsap.com ticker.
+import manifest from "@/public/media/manifest.json";
 import type { Tier } from "@/features/stage/device-tier";
+import { loadClipA, playFrames, type Playback } from "./open-clip";
 
-type Variant = { src: string; x0: number; w: number; h: number; aspect: number };
+type Dev = "d" | "m";
+type Variant = { dev: Dev; x0: number; w: number; h: number; aspect: number; fw: number; fh: number };
 
 // Both frame sets come from the same 1928×1076 source (scripts/media.sh):
 // desktop = full frame; phone = crop x 320–1600, full height.
-const D: Variant = { src: "/media/posters/k1-d.avif", x0: 0, w: 1928, h: 1076, aspect: 1600 / 892 };
-const M: Variant = { src: "/media/posters/k1-m.avif", x0: 320, w: 1280, h: 1076, aspect: 720 / 606 };
+// fw × fh: the encoded frame / poster size.
+const D: Variant = { dev: "d", x0: 0, w: 1928, h: 1076, aspect: 1600 / 892, fw: 1600, fh: 892 };
+const M: Variant = { dev: "m", x0: 320, w: 1280, h: 1076, aspect: 720 / 606, fw: 720, fh: 606 };
+const poster = (name: "k1" | "k2", v: Variant) => `/media/posters/${name}-${v.dev}.avif`;
+
+const OPEN_DURATION = 1.5; // s, clip A played once by time
 
 const FLOAT_PX = 6;
 const FLOAT_PERIOD = 4; // s
@@ -32,22 +41,38 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
 
   // The hero box follows the CSS breakpoint (48rem); the stage draws the
   // tier's frames (desktop tier: d; phone tier: m; low tier: the <picture>).
+  // The hero canvas draws the stage's frame set inside its box, at its source
+  // position, so the handoff lands on identical pixels even when they differ
+  // (768–1023 px: desktop-shaped box, phone frames).
   const wide = matchMedia("(min-width: 48rem)").matches;
   const heroV = wide ? D : M;
   const stageV = tier === "desktop" ? D : tier === "phone" ? M : wide ? D : M;
 
-  const img = new Image();
-  img.src = heroV.src;
-  try {
-    await img.decode();
-  } catch {
-    return;
+  // Reduced motion and low-end phones: the open laptop (K2) as a still image, no clip A.
+  const still = tier === "static" || tier === "low";
+  const first = await decodeImage(poster(still ? "k2" : "k1", stageV));
+  const ctx = canvas.getContext("2d", { alpha: false });
+  if (!first || !ctx) return;
+  // The frames' native resolution: stays sharp while the handoff scales it up.
+  const cpx = stageV.fh / stageV.h; // canvas px per source px
+  canvas.width = heroV === stageV ? stageV.fw : Math.round(heroV.w * cpx);
+  canvas.height = stageV.fh;
+  const ox = Math.round((stageV.x0 - heroV.x0) * cpx);
+  ctx.fillStyle = "#08090b"; // page background where the frame doesn't reach
+  if (canvas.width !== stageV.fw) {
+    // The edge fade (globals.css --frame-fade) follows the frame rect, as on the stage.
+    canvas.style.setProperty("--fade-w", `${(stageV.fw / canvas.width) * 100}%`);
+    canvas.style.setProperty("--fade-x", `${(ox / (canvas.width - stageV.fw)) * 100}%`);
   }
-  // Native resolution: stays sharp while the handoff scales it up (up to the stage size).
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
-  canvas.getContext("2d", { alpha: false })?.drawImage(img, 0, 0);
+  const paint = (src: CanvasImageSource) => {
+    if (ox !== 0) ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(src, ox, 0, stageV.fw, stageV.fh);
+  };
+  paint(first);
   canvas.dataset.ready = "1";
+  // data-open: the lid sweep and the dots belong to the open laptop (CSS).
+  const setOpen = (open: boolean) => wrap.toggleAttribute("data-open", open);
+  if (still) setOpen(true);
 
   if (tier === "static") return { destroy() {} }; // reduced motion: still image only, no GSAP
   const { gsap } = await import("gsap"); // already loaded by the intro in most visits
@@ -104,12 +129,66 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
   };
   if (tilt) window.addEventListener("pointermove", onPointer, { passive: true });
 
+  // ---- clip A: closed (K1) → opens once by time after the intro → open (K2)
+  const html = document.documentElement;
+  let state: "closed" | "playing" | "open" = still ? "open" : "closed";
+  let blobs: Blob[] | null = null;
+  let k2: HTMLImageElement | null = null; // fallback if the visitor scrolls before the frames arrive
+  let playback: Playback | null = null;
+  const ac = new AbortController();
+  const maybePlay = () => {
+    if (state !== "closed" || html.dataset.intro !== "done") return;
+    const moving = progress() > 0; // the handoff has started: no time to play, show K2 now
+    if (blobs) {
+      if (document.hidden) return; // sync() calls again when the tab is visible
+      state = "playing";
+      playback = playFrames(blobs, paint, gsap.ticker, {
+        duration: OPEN_DURATION,
+        onEnd: () => {
+          state = "open";
+          playback = null;
+          setOpen(true);
+        },
+      });
+      if (moving) playback.finish();
+    } else if (moving && k2) {
+      paint(k2);
+      state = "open";
+      setOpen(true);
+    }
+  };
+  if (!still) {
+    decodeImage(poster("k2", stageV)).then((img) => (k2 = img));
+    const count = manifest.clips.a[stageV.dev].count;
+    loadClipA(stageV.dev, count, ac.signal)
+      .then((b) => {
+        blobs = b;
+        maybePlay();
+      })
+      .catch(() => {}); // stays on K1 until the visitor scrolls (then K2 from the poster)
+  }
+  // Intro replay closes the laptop again (only at rest); "done" plays clip A.
+  const onIntro = () => {
+    if (html.dataset.intro === "playing" && state !== "closed" && !still && progress() === 0) {
+      playback?.cancel();
+      playback = null;
+      paint(first);
+      state = "closed";
+      setOpen(false);
+    }
+    maybePlay();
+  };
+  const mo = new MutationObserver(onIntro);
+  mo.observe(html, { attributes: true, attributeFilter: ["data-intro"] });
+
   // ---- the loop
   let handed: boolean | null = null;
   let fade = -1;
   const t0 = performance.now();
   const render = (e: number) => {
     const done = e >= 1;
+    if (e > 0 && state === "closed") maybePlay();
+    if (done && state === "playing") playback?.finish(); // the stage shows K2 from here on
     if (done !== handed) {
       handed = done;
       move.style.opacity = done ? "0" : "";
@@ -146,6 +225,7 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
   let onScreen = false;
   let running = false;
   const sync = () => {
+    maybePlay();
     const want = onScreen && !document.hidden;
     if (want && !running) gsap.ticker.add(tick);
     if (!want && running) gsap.ticker.remove(tick);
@@ -169,6 +249,9 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
 
   return {
     destroy() {
+      ac.abort();
+      mo.disconnect();
+      playback?.cancel();
       io.disconnect();
       ro.disconnect();
       if (running) gsap.ticker.remove(tick);
@@ -181,4 +264,15 @@ export async function startHeroLaptop(tier: Tier): Promise<LaptopHandle | undefi
       if (stage) delete stage.dataset.handoff;
     },
   };
+}
+
+async function decodeImage(src: string): Promise<HTMLImageElement | null> {
+  const img = new Image();
+  img.src = src;
+  try {
+    await img.decode();
+    return img;
+  } catch {
+    return null;
+  }
 }
