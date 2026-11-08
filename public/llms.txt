@@ -23,10 +23,10 @@
 
 ## Experience
 
-- E2E County (Jan 2026 – Present, on-site, Cairo): sole frontend developer on Cyber-Guardian, a threat-intelligence SaaS (RBAC, advanced data tables, breach-trend analytics); TravWare ERP interfaces used in production by travel clients, plus a flights & hotels booking engine.
-- INCode (Feb 2024 – Dec 2025, hybrid, Cairo): sole frontend developer owning production releases, change requests and hotfixes; dashboards for Olimi.ai (Voice AI, first client Paymob) and Beesly AI; built Elli, an enterprise school platform, in about 6 months; led two junior developers.
-- Mazeed (Apr 2022 – Feb 2024, remote): migrated legacy HTML, Bootstrap and jQuery products to React for Saudi clients including Monsha'at and Takaful; optimized Core Web Vitals across all platforms.
-- Freelance (part-time, by referral): Ajzaa marketplace dashboard, Baian AI invoice extraction, Rayan Hajj water distribution platform, tourism platforms with Next.js SSR.
+- E2E County (Jan 2026 – Present, on-site, Cairo): sole frontend developer on Cyber-Guardian, a threat-intelligence SaaS (full Next.js frontend, RBAC with Admin/Analyst/Viewer tiers, advanced data tables, breach-trend analytics); team projects: TravWare SaaS ERP interfaces used in production by travel clients (with product, Laravel backend and design teams), including a fix for a page that froze at 2,000 rows; TravWare flights & hotels booking engine with per-client branding; co-developed a social media management dashboard.
+- INCode (Feb 2024 – Dec 2025, hybrid, Cairo): sole frontend developer owning production releases, change requests and hotfixes; Olimi.ai (Voice AI, first client Paymob) and Beesly AI dashboards; built Elli, an enterprise school management platform, single-handedly in about 6 months (first adopted by Forsan International Schools); led two junior developers on a multi-tenant restaurant system for three brands.
+- Mazeed (Apr 2022 – Feb 2024, remote): migrated legacy HTML, Bootstrap and jQuery products to React in a team of 4 frontend developers, for Saudi clients including Monsha'at and Takaful; optimized Core Web Vitals across all platforms; mentored a junior developer.
+- Freelance (part-time, by referral): Ajzaa multi-tenant marketplace dashboard, Baian AI invoice extraction, Rayan Hajj water distribution platform, Next.js SSR tourism platforms (Kenzy Tours and First Mas rank on Google for Hajj, Umrah and tourism searches).
 
 ## Open source
 
