@@ -67,6 +67,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      // Extensions (wallets) and our own boot scripts set data-* on <html> before hydration.
+      suppressHydrationWarning
       className={`${interTight.variable} ${jetbrainsMono.variable} antialiased`}
     >
       <body>

@@ -36,9 +36,12 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
 
   // Lenis: desktop only (§6 rule 8), synced to ScrollTrigger per the Lenis README.
   let lenis: import("lenis").default | undefined;
+  let wheelGate: ((dy: number, e: Event) => boolean) | undefined;
   if (tier === "desktop") {
     const { default: Lenis } = await import("lenis");
-    lenis = new Lenis();
+    // The wheel gate (below, once the trigger exists) can take a wheel event
+    // away from Lenis: returning false here skips Lenis' own smoothing.
+    lenis = new Lenis({ virtualScroll: (d) => !wheelGate?.(d.deltaY, d.event) });
     const l = lenis;
     l.on("scroll", ScrollTrigger.update);
     const raf = (time: number) => l.raf(time * 1000);
@@ -124,6 +127,58 @@ export async function startStage(root: HTMLElement, tier: ActiveTier): Promise<S
   cleanups.push(() => st.kill());
   // The hero laptop's ticker callback re-queues after Lenis (features/hero/laptop.ts).
   document.dispatchEvent(new Event("stage:ready"));
+
+  // Inspect steps one layer per wheel gesture (desktop): free scrolling plus
+  // Lenis momentum skipped layers (a flick landed on 02, a normal scroll on 04).
+  // Entering the hold lands on the first / last layer; leaving it hands the
+  // wheel back to Lenis. Keys, scrollbar and anchor links stay untouched.
+  if (lenis) {
+    const l = lenis;
+    const yFor = (p: number) => st.start + p * (st.end - st.start);
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    let lockUntil = 0;
+    let lastT = 0;
+    let lastAbs = 0;
+    const glide = (y: number) => {
+      lockUntil = performance.now() + 650;
+      l.scrollTo(y, { duration: 0.6, easing: ease });
+    };
+    const goStep = (i: number) => glide(yFor(B_END + (i + 0.5) * STEP));
+    wheelGate = (dy, e) => {
+      if (e.type !== "wheel" || !dy || (e as WheelEvent).ctrlKey || l.isStopped) return false;
+      if ((e.target as Element | null)?.closest?.("[data-lenis-prevent]")) return false;
+      const now = performance.now();
+      const abs = Math.abs(dy);
+      // A new gesture: a pause before it, or a delta that is not decaying (trackpad inertia decays).
+      const fresh = now - lastT > 120 || (abs >= lastAbs && abs >= 40);
+      lastT = now;
+      lastAbs = abs;
+      const take = () => {
+        if (e.cancelable) e.preventDefault();
+        return true;
+      };
+      if (now < lockUntil) return take();
+      const p = st.progress;
+      const next = l.targetScroll + dy;
+      if (p < B_END) {
+        if (dy < 0 || next < yFor(B_END)) return false;
+        goStep(0);
+        return take();
+      }
+      if (p >= HOLD_END) {
+        if (dy > 0 || next >= yFor(HOLD_END)) return false;
+        goStep(5);
+        return take();
+      }
+      if (!fresh) return take();
+      const i = Math.min(5, Math.floor((p - B_END) / STEP)) + (dy > 0 ? 1 : -1);
+      if (i < 0) glide(yFor(B_END) - 2);
+      else if (i > 5) glide(yFor(HOLD_END) + 2);
+      else goStep(i);
+      return take();
+    };
+    cleanups.push(() => (wheelGate = undefined));
+  }
 
   // Jump to a step (hotspots, progress dots): scroll to the middle of its slice.
   const onJump = (e: MouseEvent) => {
